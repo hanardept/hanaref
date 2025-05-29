@@ -8,7 +8,14 @@ const InfoSection = ({ title, elements, unclickable }: { title: string, elements
     return (
         <>
             <h2>{title}</h2>
-            {elements.map(m => <p onClick={() => { if (!unclickable) navigate(`/items/${m.cat}`) }} key={m.cat} className={!unclickable ? classes.clickable : ""}>{`${m.cat} - ${m.name}`}</p>)}
+            {elements.map(m => 
+                <div onClick={() => { if (!unclickable) navigate(`/items/${m.cat}`) }}
+                    key={m.cat}
+                    className={!unclickable ? classes.clickable : ""}>
+                <p>{`${m.cat} - ${m.name}`}</p>
+                {m.imageLink && <img className={classes.accessoryImage} src={m.imageLink} />}
+                </div>
+            )}
         </>   
     )
 };
