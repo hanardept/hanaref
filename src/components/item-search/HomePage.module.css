@@ -28,7 +28,7 @@
     border-bottom: 1px solid #e4e4e4;
     display: flex;
     flex-direction: column;
-    align-items: start;
+    align-items: flex-start;
     padding-right: 1rem;
 }
 .listItem h2 {
