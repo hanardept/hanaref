@@ -1,8 +1,5 @@
 {
   "projects": {
-    "default": "hanaref-fd006",
-    "production": "hanaref-prod"
-  },
-  "targets": {},
-  "etags": {}
+    "default": "hanaref-fd006"
+  }
 }
