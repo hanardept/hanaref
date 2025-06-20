@@ -8,6 +8,7 @@ import { Provider } from 'react-redux';
 import store from './store/redux-logic';
 
 console.log(`backend url: ${process.env.REACT_APP_BACKEND_URL}`);
+console.log(process.env);
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

@@ -19,4 +19,4 @@ jobs:
           channelId: live
           projectId: hanaref-fd006
         env:
-          REACT_APP_API_URL: ${{ vars.REACT_APP_BACKEND_URL_LIVE }}          
+          REACT_APP_BACKEND_URL: ${{ vars.REACT_APP_BACKEND_URL_LIVE }}          
