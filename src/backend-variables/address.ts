@@ -1,1 +1,1 @@
-export const backendFirebaseUri = "https://hanaref-backend-ynbk5s4llq-ez.a.run.app";
+export const backendFirebaseUri = process.env.REACT_APP_BACKEND_URL;
