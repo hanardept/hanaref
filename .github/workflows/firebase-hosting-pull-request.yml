@@ -19,3 +19,5 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_HANAREF_FD006 }}
           projectId: hanaref-fd006
+        env:
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_BACKEND_URL_PREVIEW }}
