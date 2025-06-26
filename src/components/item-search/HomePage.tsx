@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import ListItem from "./ListItem";
 import SearchMenu from "./SearchMenu";
@@ -8,6 +7,8 @@ import { UIEvent, useEffect } from "react";
 import { viewingActions } from "../../store/viewing-slice";
 import { itemsActions } from "../../store/item-slice";
 import { backendFirebaseUri } from "../../backend-variables/address";
+import { useNavigate, useSearchParams } from "react-router-dom"; // Add useSearchParams
+
 
 const HomePage = () => {
     const navigate = useNavigate();
@@ -22,9 +23,62 @@ const HomePage = () => {
         navigate(`/items/${cat}`);
     }
 
+//    useEffect(() => {
+ //       dispatch(viewingActions.emptySearchCriteria());
+ //   }, [dispatch]);
+
+        // NEW useEffect to read/write URL params
     useEffect(() => {
-        dispatch(viewingActions.emptySearchCriteria());
-    }, [dispatch]);
+        // Read from URL on initial load
+        const urlSector = searchParams.get('sector') || '';
+        const urlDepartment = searchParams.get('department') || '';
+        const urlSearchVal = searchParams.get('search') || '';
+        const urlPage = parseInt(searchParams.get('page') || '0', 10); // Parse page as integer
+
+        // If Redux state is empty but URL has values, dispatch to update Redux
+        // This makes sure the Redux state reflects the URL on initial load or browser back
+        if (sector === '' && urlSector !== '') {
+             dispatch(viewingActions.changeSearchCriteria({ sector: urlSector }));
+        }
+        if (department === '' && urlDepartment !== '') {
+            dispatch(viewingActions.changeSearchCriteria({ department: urlDepartment }));
+        }
+        if (searchVal === '' && urlSearchVal !== '') {
+            dispatch(viewingActions.changeSearchCriteria({ searchVal: urlSearchVal }));
+        }
+        // Only set page if it's different and not the default 0
+        if (page === 0 && urlPage > 0) {
+            dispatch(viewingActions.changeSearchCriteria({ page: urlPage }));
+        }
+
+
+        // Write to URL whenever Redux state changes (excluding initial empty state)
+        const currentSearchParams = new URLSearchParams();
+        if (searchVal) {
+            currentSearchParams.set('search', searchVal);
+        } else {
+            currentSearchParams.delete('search');
+        }
+        if (sector) {
+            currentSearchParams.set('sector', sector);
+        } else {
+            currentSearchParams.delete('sector');
+        }
+        if (department) {
+            currentSearchParams.set('department', department);
+        } else {
+            currentSearchParams.delete('department');
+        }
+        // Only add page to URL if it's not 0 (default) to keep URLs cleaner
+        if (page > 0) {
+            currentSearchParams.set('page', page.toString());
+        } else {
+            currentSearchParams.delete('page');
+        }
+
+        setSearchParams(currentSearchParams, { replace: true }); // Use replace to avoid polluting history stack
+
+    }, [searchVal, sector, department, page, dispatch, searchParams, setSearchParams]); // Add searchParams and setSearchParams to dependencies
 
     let scrollThrottler = true;
     const handleScroll = (event: UIEvent<HTMLDivElement>) => {
