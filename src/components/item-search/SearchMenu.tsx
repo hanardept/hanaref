@@ -34,16 +34,9 @@ const SearchMenu = () => {
     
     const sectorNames = sectors.map(s => s.sectorName);
     const selectedSectorData = sectors.find(s => s.sectorName === selectedSector);
-    const departmentsRaw = selectedSectorData?.departments || [];
     
-    // Convert (string | Department)[] to string[] - THIS IS THE KEY FIX
-    const departmentsToChooseFrom: string[] = departmentsRaw.map(dept => {
-        if (typeof dept === 'string') {
-            return dept;
-        }
-        // If dept is a Department object, extract the name property
-        return (dept as any).name || (dept as any).departmentName || String(dept);
-    });
+    // DEFINITIVE FIX: Force TypeScript to treat this as string[]
+    const departmentsToChooseFrom = (selectedSectorData?.departments || []) as string[];
     
     return (
         <div className={classes.searchMenu}>
