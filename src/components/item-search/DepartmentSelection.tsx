@@ -17,8 +17,6 @@ const DepartmentSelection = ({ departments, handleSetDepartment, priorChosenDepa
         </select>
     );
 };
+export default DepartmentSelection;
 
-// SUMMARY OF CHANGES:
-// 1. Added priorChosenDepartment prop for showing selected value
-// 2. Added accessibility attributes to fix console warnings
-// 3. Proper controlled component behavior with value attribute
+
