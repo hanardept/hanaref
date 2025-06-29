@@ -16,7 +16,6 @@ const SearchMenu = () => {
     const authToken = useAppSelector(state => state.auth.jwt);
 
     useEffect(() => {
-        // FETCH SECTORS FROM API + use setSectors on them.
         fetch(`${backendFirebaseUri}/sectors`, {
             headers: authToken ? {
                 'auth-token': authToken
@@ -29,34 +28,46 @@ const SearchMenu = () => {
     const handleSetSector = (value: string) => {
         dispatch(viewingActions.changeSearchCriteria({ sector: value, department: "" }));
     }
+    
     const handleSetDepartment = (value: string) => {
         dispatch(viewingActions.changeSearchCriteria({ department: value }));
     }
     
     const sectorNames = sectors.map(s => s.sectorName);
     
-    // THE FIX: Safe access to departments with proper null checking
+    // Fix: Safe access and convert Department objects to strings
     const selectedSectorData = sectors.find(s => s.sectorName === selectedSector);
     const departmentsToChooseFrom = selectedSectorData?.departments || [];
     
+    // Convert Department objects to string array if needed
+    const departmentNames = Array.isArray(departmentsToChooseFrom) 
+        ? departmentsToChooseFrom.map(d => typeof d === 'string' ? d : d.name || d.departmentName || String(d))
+        : [];
+    
     return (
         <div className={classes.searchMenu}>
-            <DebouncingSearchBar sectorsLoaded={!!sectors} sector={selectedSector} department={selectedDepartment} />
-            {!sectors && <>{/* LOADING SPINNER OR SHINING RECTANGLES */}</>}
-            {sectors && <>
-                <SectorSelection 
-                    sectorNames={sectorNames} 
-                    handleSetSector={handleSetSector} 
-                    priorChosenSector={selectedSector} 
-                />
-                <DepartmentSelection 
-                    departments={departmentsToChooseFrom} 
-                    handleSetDepartment={handleSetDepartment} 
-                    priorChosenDepartment={selectedDepartment}
-                />
-            </>}
+            <DebouncingSearchBar 
+                sectorsLoaded={!!sectors} 
+                sector={selectedSector} 
+                department={selectedDepartment} 
+            />
+            {!sectors.length && <>{/* LOADING SPINNER */}</>}
+            {sectors.length > 0 && (
+                <>
+                    <SectorSelection 
+                        sectorNames={sectorNames} 
+                        handleSetSector={handleSetSector} 
+                        priorChosenSector={selectedSector} 
+                    />
+                    <DepartmentSelection 
+                        departments={departmentNames} 
+                        handleSetDepartment={handleSetDepartment} 
+                        priorChosenDepartment={selectedDepartment}
+                    />
+                </>
+            )}
         </div>
-    )
-}
+    );
+};
 
 export default SearchMenu;
