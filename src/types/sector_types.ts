@@ -1,11 +1,11 @@
-export type Department = {
-    departmentName: string,
-    _id?: string
-};
+export interface Department {
+    name?: string;
+    departmentName?: string;
+    [key: string]: any;
+}
 
-export type Sector = {
-    _id?: string,
-    sectorName: string,
-    departments: Department[],
-    visibleToPublic: boolean
-};
+export interface Sector {
+    sectorName: string;
+    departments: Department[] | string[];
+    [key: string]: any;
+}
