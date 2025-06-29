@@ -28,24 +28,32 @@ const SearchMenu = () => {
 
     const handleSetSector = (value: string) => {
         dispatch(viewingActions.changeSearchCriteria({ sector: value, department: "" }));
-        // setSelectedSector(value);
-        // setSelectedDepartment("");
     }
     const handleSetDepartment = (value: string) => {
         dispatch(viewingActions.changeSearchCriteria({ department: value }));
-        // setSelectedDepartment(value);
     }
+    
     const sectorNames = sectors.map(s => s.sectorName);
-const selectedSectorData = sectors.find(s => s.sectorName === selectedSector);
-const departmentsToChooseFrom = selectedSectorData?.departments || [];
+    
+    // THE FIX: Safe access to departments with proper null checking
+    const selectedSectorData = sectors.find(s => s.sectorName === selectedSector);
+    const departmentsToChooseFrom = selectedSectorData?.departments || [];
     
     return (
         <div className={classes.searchMenu}>
             <DebouncingSearchBar sectorsLoaded={!!sectors} sector={selectedSector} department={selectedDepartment} />
             {!sectors && <>{/* LOADING SPINNER OR SHINING RECTANGLES */}</>}
             {sectors && <>
-                <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} />
-                <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} />
+                <SectorSelection 
+                    sectorNames={sectorNames} 
+                    handleSetSector={handleSetSector} 
+                    priorChosenSector={selectedSector} 
+                />
+                <DepartmentSelection 
+                    departments={departmentsToChooseFrom} 
+                    handleSetDepartment={handleSetDepartment} 
+                    priorChosenDepartment={selectedDepartment}
+                />
             </>}
         </div>
     )
