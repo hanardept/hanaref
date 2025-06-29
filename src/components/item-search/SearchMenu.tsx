@@ -28,50 +28,23 @@ const SearchMenu = () => {
     const handleSetSector = (value: string) => {
         dispatch(viewingActions.changeSearchCriteria({ sector: value, department: "" }));
     }
-    
     const handleSetDepartment = (value: string) => {
         dispatch(viewingActions.changeSearchCriteria({ department: value }));
     }
-    
     const sectorNames = sectors.map(s => s.sectorName);
-    
-    // Fix: Safe access and convert to string array
     const selectedSectorData = sectors.find(s => s.sectorName === selectedSector);
-    const departmentsRaw = selectedSectorData?.departments || [];
-    
-    // Convert Department objects/strings to string array
-    const departmentNames: string[] = departmentsRaw.map(dept => {
-        if (typeof dept === 'string') {
-            return dept;
-        }
-        // If dept is an object, extract the name property
-        return dept?.name || dept?.departmentName || String(dept);
-    });
+    const departmentsToChooseFrom = selectedSectorData?.departments || [];
     
     return (
         <div className={classes.searchMenu}>
-            <DebouncingSearchBar 
-                sectorsLoaded={!!sectors.length} 
-                sector={selectedSector} 
-                department={selectedDepartment} 
-            />
-            {!sectors.length && <>{/* LOADING SPINNER */}</>}
-            {sectors.length > 0 && (
-                <>
-                    <SectorSelection 
-                        sectorNames={sectorNames} 
-                        handleSetSector={handleSetSector} 
-                        priorChosenSector={selectedSector} 
-                    />
-                    <DepartmentSelection 
-                        departments={departmentNames} 
-                        handleSetDepartment={handleSetDepartment} 
-                        priorChosenDepartment={selectedDepartment}
-                    />
-                </>
-            )}
+            <DebouncingSearchBar sectorsLoaded={!!sectors} sector={selectedSector} department={selectedDepartment} />
+            {!sectors && <>{/* LOADING SPINNER OR SHINING RECTANGLES */}</>}
+            {sectors && <>
+                <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} />
+                <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} />
+            </>}
         </div>
-    );
-};
+    )
+}
 
 export default SearchMenu;
