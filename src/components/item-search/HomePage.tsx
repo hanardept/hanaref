@@ -40,6 +40,28 @@ const HomePage = () => {
         }
     }, [dispatch, searchParams]);
 
+    // NEW: Fetch data whenever search criteria change
+    useEffect(() => {
+        // Clear existing items first
+        dispatch(itemsActions.clearItemList());
+        
+        // Fetch new data
+        fetch(encodeURI(`${backendFirebaseUri}/items?search=${searchVal}&sector=${sector}&department=${department}&page=0`), {
+            headers: {
+                'auth-token': authToken
+            }
+        })
+        .then((res) => res.json())
+        .then((jsonedRes) => {
+            dispatch(itemsActions.addItems(jsonedRes));
+            dispatch(viewingActions.changeSearchCriteria({ page: 1 })); // Reset page for infinite scroll
+            dispatch(viewingActions.changeBlockSearcScroll(false)); // Re-enable scrolling
+        })
+        .catch((error) => {
+            console.error("Failed to fetch items:", error);
+        });
+    }, [searchVal, sector, department, authToken, dispatch]);
+
     // Update URL when filters change
     useEffect(() => {
         const params = new URLSearchParams();
