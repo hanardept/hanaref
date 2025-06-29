@@ -35,19 +35,23 @@ const SearchMenu = () => {
     
     const sectorNames = sectors.map(s => s.sectorName);
     
-    // Fix: Safe access and convert Department objects to strings
+    // Fix: Safe access and convert to string array
     const selectedSectorData = sectors.find(s => s.sectorName === selectedSector);
-    const departmentsToChooseFrom = selectedSectorData?.departments || [];
+    const departmentsRaw = selectedSectorData?.departments || [];
     
-    // Convert Department objects to string array if needed
-    const departmentNames = Array.isArray(departmentsToChooseFrom) 
-        ? departmentsToChooseFrom.map(d => typeof d === 'string' ? d : d.name || d.departmentName || String(d))
-        : [];
+    // Convert Department objects/strings to string array
+    const departmentNames: string[] = departmentsRaw.map(dept => {
+        if (typeof dept === 'string') {
+            return dept;
+        }
+        // If dept is an object, extract the name property
+        return dept?.name || dept?.departmentName || String(dept);
+    });
     
     return (
         <div className={classes.searchMenu}>
             <DebouncingSearchBar 
-                sectorsLoaded={!!sectors} 
+                sectorsLoaded={!!sectors.length} 
                 sector={selectedSector} 
                 department={selectedDepartment} 
             />
