@@ -36,7 +36,8 @@ const SearchMenu = () => {
         // setSelectedDepartment(value);
     }
     const sectorNames = sectors.map(s => s.sectorName);
-    const departmentsToChooseFrom = selectedSector ? sectors.filter(s => s.sectorName === selectedSector)[0].departments : [];
+const selectedSectorData = sectors.find(s => s.sectorName === selectedSector);
+const departmentsToChooseFrom = selectedSectorData?.departments || [];
     
     return (
         <div className={classes.searchMenu}>
