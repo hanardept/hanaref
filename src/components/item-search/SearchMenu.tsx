@@ -31,17 +31,35 @@ const SearchMenu = () => {
     const handleSetDepartment = (value: string) => {
         dispatch(viewingActions.changeSearchCriteria({ department: value }));
     }
+    
     const sectorNames = sectors.map(s => s.sectorName);
     const selectedSectorData = sectors.find(s => s.sectorName === selectedSector);
-    const departmentsToChooseFrom = selectedSectorData?.departments || [];
+    const departmentsRaw = selectedSectorData?.departments || [];
+    
+    // Convert (string | Department)[] to string[] - THIS IS THE KEY FIX
+    const departmentsToChooseFrom: string[] = departmentsRaw.map(dept => {
+        if (typeof dept === 'string') {
+            return dept;
+        }
+        // If dept is a Department object, extract the name property
+        return (dept as any).name || (dept as any).departmentName || String(dept);
+    });
     
     return (
         <div className={classes.searchMenu}>
             <DebouncingSearchBar sectorsLoaded={!!sectors} sector={selectedSector} department={selectedDepartment} />
             {!sectors && <>{/* LOADING SPINNER OR SHINING RECTANGLES */}</>}
             {sectors && <>
-                <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} />
-                <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} />
+                <SectorSelection 
+                    sectorNames={sectorNames} 
+                    handleSetSector={handleSetSector} 
+                    priorChosenSector={selectedSector} 
+                />
+                <DepartmentSelection 
+                    departments={departmentsToChooseFrom} 
+                    handleSetDepartment={handleSetDepartment} 
+                    priorChosenDepartment={selectedDepartment}
+                />
             </>}
         </div>
     )
