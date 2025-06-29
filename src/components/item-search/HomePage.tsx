@@ -64,7 +64,7 @@ const HomePage = () => {
         }
 
         // We have filters, so fetch the first page of results
-        dispatch(itemsActions.clearItems()); // Clear old items before fetching new ones
+        dispatch(itemsActions.clearItemList()); // Clear old items before fetching new ones
 
         fetch(encodeURI(`${backendFirebaseUri}/items?search=${searchVal}&sector=${sector}&department=${department}&page=0`), {
             headers: { 'auth-token': authToken }
