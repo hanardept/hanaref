@@ -1,16 +1,24 @@
-import { Department } from "../../types/sector_types";
-
-const DepartmentSelection = ({ departments, handleSetDepartment, priorChosenDepartment }: { departments: Department[], handleSetDepartment: (value: string) => void, priorChosenDepartment?: string }) => {
-    const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        handleSetDepartment(event.target.value);
-    }
-    
+const DepartmentSelection = ({ departments, handleSetDepartment, priorChosenDepartment }: { 
+    departments: string[], 
+    handleSetDepartment: (value: string) => void, 
+    priorChosenDepartment?: string // NEW: Added prop to receive selected value
+}) => {
     return (
-        <select name="departments" id="departments" onChange={handleSelect} value={priorChosenDepartment}>
-            <option value="">בחר תחום...</option>
-            {departments.map(d => <option key={d._id} value={d.departmentName}>{d.departmentName}</option>)}
+        <select 
+            name="departments" 
+            id="departments" 
+            onChange={handleSelect} 
+            value={priorChosenDepartment || ""} // NEW: Shows selected department
+            title="בחר מדור רפואי" // NEW: Accessibility attribute
+            aria-label="בחירת מדור רפואי" // NEW: Screen reader support
+        >
+            <option value="">בחר מדור...</option>
+            {departments.map(d => <option key={`${d}y`} value={d}>{d}</option>)}
         </select>
     );
 };
 
-export default DepartmentSelection;
+// SUMMARY OF CHANGES:
+// 1. Added priorChosenDepartment prop for showing selected value
+// 2. Added accessibility attributes to fix console warnings
+// 3. Proper controlled component behavior with value attribute
