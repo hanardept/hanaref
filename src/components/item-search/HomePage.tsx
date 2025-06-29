@@ -23,24 +23,22 @@ const HomePage = () => {
         navigate(`/items/${cat}`);
     }
 
-    // Initialize from URL params on mount only
+    // Initialize from URL on mount only
     useEffect(() => {
         const urlSector = searchParams.get('sector') || '';
         const urlDepartment = searchParams.get('department') || '';
         const urlSearchVal = searchParams.get('search') || '';
 
-        // Only update if URL has values and Redux state is empty (first load)
-        if ((urlSector || urlDepartment || urlSearchVal) && !sector && !department && !searchVal) {
+        if (urlSector || urlDepartment || urlSearchVal) {
             dispatch(viewingActions.changeSearchCriteria({
                 sector: urlSector,
                 department: urlDepartment,
                 searchVal: urlSearchVal
             }));
-        } else if (!urlSector && !urlDepartment && !urlSearchVal) {
-            // Clear everything if URL is empty (fresh start)
+        } else {
             dispatch(viewingActions.emptySearchCriteria());
         }
-    }, []); // Empty dependency array - run only on mount
+    }, [dispatch, searchParams]);
 
     // Update URL when filters change
     useEffect(() => {
