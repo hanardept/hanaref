@@ -6,6 +6,6 @@ export interface Department {
 
 export interface Sector {
     sectorName: string;
-    departments: Department[] | string[];
+    departments: (Department | string)[];
     [key: string]: any;
 }
