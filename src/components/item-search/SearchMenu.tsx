@@ -16,7 +16,6 @@ const SearchMenu = () => {
     const authToken = useAppSelector(state => state.auth.jwt);
 
     useEffect(() => {
-        // FETCH SECTORS FROM API + use setSectors on them.
         fetch(`${backendFirebaseUri}/sectors`, {
             headers: authToken ? {
                 'auth-token': authToken
@@ -28,23 +27,32 @@ const SearchMenu = () => {
 
     const handleSetSector = (value: string) => {
         dispatch(viewingActions.changeSearchCriteria({ sector: value, department: "" }));
-        // setSelectedSector(value);
-        // setSelectedDepartment("");
     }
     const handleSetDepartment = (value: string) => {
         dispatch(viewingActions.changeSearchCriteria({ department: value }));
-        // setSelectedDepartment(value);
     }
+    
     const sectorNames = sectors.map(s => s.sectorName);
-    const departmentsToChooseFrom = selectedSector ? sectors.filter(s => s.sectorName === selectedSector)[0].departments : [];
+    const selectedSectorData = sectors.find(s => s.sectorName === selectedSector);
+    
+    // DEFINITIVE FIX: Force TypeScript to treat this as string[]
+    const departmentsToChooseFrom = (selectedSectorData?.departments || []) as string[];
     
     return (
         <div className={classes.searchMenu}>
             <DebouncingSearchBar sectorsLoaded={!!sectors} sector={selectedSector} department={selectedDepartment} />
             {!sectors && <>{/* LOADING SPINNER OR SHINING RECTANGLES */}</>}
             {sectors && <>
-                <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} />
-                <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} />
+                <SectorSelection 
+                    sectorNames={sectorNames} 
+                    handleSetSector={handleSetSector} 
+                    priorChosenSector={selectedSector} 
+                />
+                <DepartmentSelection 
+                    departments={departmentsToChooseFrom} 
+                    handleSetDepartment={handleSetDepartment} 
+                    priorChosenDepartment={selectedDepartment}
+                />
             </>}
         </div>
     )
