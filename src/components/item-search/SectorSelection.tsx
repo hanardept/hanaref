@@ -6,8 +6,15 @@ const SectorSelection = ({ sectorNames, handleSetSector, priorChosenSector }: { 
     }
     
     return (
-        <select name="sectors" id="sectors" onChange={handleSelect} value={priorChosenSector}>
-            <option value="">בחר מדור...</option>
+        <select 
+            name="sectors" 
+            id="sectors" 
+            onChange={handleSelect} 
+            value={priorChosenSector || ""} 
+            title="בחר תחום רפואי"
+            aria-label="בחירת תחום רפואי"
+        >
+            <option value="">בחר תחום...</option>
             {sectorNames.map(s => <option key={`${s}x`} value={s}>{s}</option>)}
         </select>
     );
