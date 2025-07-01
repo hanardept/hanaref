@@ -63,7 +63,7 @@ const HomePage = () => {
         .catch((error) => {
             console.error("Failed to fetch items:", error);
         });
-    }, [searchVal, sector, department, authToken, dispatch]);
+    }, [searchVal, sector, department, authToken, dispatch, initialized]);
 
     // Update URL when filters change
     useEffect(() => {
