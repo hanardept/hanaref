@@ -19,14 +19,13 @@ function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
         const output = {...i};
         output.cat = output.cat.replace(/ /g, '');
         return output;
-    })
+    });
 }
 
 const ItemMenu = () => {
     const params = useParams();
     const authToken = useAppSelector(state => state.auth.jwt);
-    // OLD: const [sectorsToChooseFrom, setSectorsToChooseFrom] = useState([]);
-const [sectorsToChooseFrom, setSectorsToChooseFrom] = useState<Sector[]>([]);
+    const [sectorsToChooseFrom, setSectorsToChooseFrom] = useState<Sector[]>([]);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [name, setName] = useState("");
@@ -36,14 +35,13 @@ const [sectorsToChooseFrom, setSectorsToChooseFrom] = useState<Sector[]>([]);
     const [catType, setCatType] = useState("מקט רגיל");
     const [description, setDescription] = useState("");
     const [imageLink, setImageLink] = useState("");
-    // OLD: useState([{ cat: "", name: "" }])
-const [models, setModels] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-const [accessories, setAccessories] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-const [consumables, setConsumables] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-const [belongsToKits, setBelongsToKits] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-const [similarItems, setSimilarItems] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-const [kitItem, setKitItem] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-    const [kitItem, setKitItem] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+    const [qaStandardLink, setQaStandardLink] = useState(""); // FIXED: Added missing state variable
+    const [models, setModels] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+    const [accessories, setAccessories] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+    const [consumables, setConsumables] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+    const [belongsToKits, setBelongsToKits] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+    const [similarItems, setSimilarItems] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+    const [kitItem, setKitItem] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]); // FIXED: Removed duplicate
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
     const itemDetails = {
@@ -63,6 +61,7 @@ const [kitItem, setKitItem] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }
         kitItem: kitItem
     };
 
+    // FIXED: Proper useEffect structure
     useEffect(() => {
         const getSectors = async () => {
             const fetchedSectors = await fetch(`${backendFirebaseUri}/sectors`, {
@@ -82,6 +81,7 @@ const [kitItem, setKitItem] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }
                 });
                 return await fetchedItem.json();
             };
+            
             getSectors().then(s => {
                 setSectorsToChooseFrom(s);
                 return getItem();
@@ -93,7 +93,7 @@ const [kitItem, setKitItem] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }
                 setCatType(i.catType);
                 setDescription(i.description);
                 if (i.imageLink) setImageLink(i.imageLink);
-                if (i.qaStandardLink) setQaStandardLink(i.qaStandardLink)
+                if (i.qaStandardLink) setQaStandardLink(i.qaStandardLink); // FIXED: Added semicolon
                 if (i.models && i.models.length > 0) setModels(i.models);
                 if (i.accessories && i.accessories.length > 0) setAccessories(i.accessories);
                 if (i.consumables && i.consumables.length > 0) setConsumables(i.consumables);
@@ -101,54 +101,44 @@ const [kitItem, setKitItem] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }
                 if (i.similarItems && i.similarItems.length > 0) setSimilarItems(i.similarItems);
                 if (i.kitItem && i.kitItem.length > 0) setKitItem(i.kitItem);
             }).catch(e => console.log(`Error fetching item details: ${e}`));
-        }
-        if (!params.itemid) {
+        } else {
+            // FIXED: Proper else block for non-edit mode
             getSectors().then(s => {
                 setSectorsToChooseFrom(s);
-const handleInput = (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => {
-  setFunc(event.target.value);
-  dispatch(viewingActions.changesAppliedToItem(true));
-}
+            }).catch(e => console.log(`Error fetching sectors: ${e}`));
+        }
+    }, [params.itemid, authToken]); // FIXED: Proper dependency array and closing brace
 
-const handleDescription = (event: ChangeEvent<HTMLTextAreaElement>) => {
-  setDescription(event.target.value);
-  dispatch(viewingActions.changesAppliedToItem(true));
-}
+    // FIXED: Handler functions moved outside useEffect
+    const handleInput = (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => {
+        setFunc(event.target.value);
+        dispatch(viewingActions.changesAppliedToItem(true));
+    };
 
-const handleSetSector = (value: string) => {
-  setSector(value);
-  setDepartment("");
-  dispatch(viewingActions.changesAppliedToItem(true));
-}
+    const handleDescription = (event: ChangeEvent<HTMLTextAreaElement>) => {
+        setDescription(event.target.value);
+        dispatch(viewingActions.changesAppliedToItem(true));
+    };
 
-const handleSetDepartment = (value: string) => {
-  setDepartment(value);
-  dispatch(viewingActions.changesAppliedToItem(true));
-}
+    const handleSetSector = (value: string) => {
+        setSector(value);
+        setDepartment("");
+        dispatch(viewingActions.changesAppliedToItem(true));
+    };
 
-const sectorNames = sectorsToChooseFrom.map(s => s.sectorName);
-
-// FIX: Convert (string | Department)[] to DeptObj[]
-const rawDepartments = (sector && sectorsToChooseFrom.length > 0) 
-  ? sectorsToChooseFrom.filter(s => s.sectorName === sector)[0].departments 
-  : [];
-
-const departmentsToChooseFrom: { departmentName: string }[] = rawDepartments.map(d => {
-  if (typeof d === 'string') {
-    return { departmentName: d };
-  }
-  return d; // d is already a Department object with departmentName
-});
-    }
     const handleSetDepartment = (value: string) => {
         setDepartment(value);
         dispatch(viewingActions.changesAppliedToItem(true));
-    }
+    };
+
     const sectorNames = sectorsToChooseFrom.map(s => s.sectorName);
-    const departmentsToChooseFrom = (sector && sectorsToChooseFrom.length > 0) ? sectorsToChooseFrom.filter(s => s.sectorName === sector)[0].departments : [];
+    const selectedSectorData = sectorsToChooseFrom.find(s => s.sectorName === sector);
+    const departmentsToChooseFrom = selectedSectorData?.departments || [];
+
     const handleSetCatType = (catType: "מקט רגיל" | "מקט ערכה") => {
         setCatType(catType);
-    }
+    };
+
     const handleSave = () => {
         itemDetails.models = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.models);
         itemDetails.belongsToKits = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.belongsToKits);
@@ -167,12 +157,11 @@ const departmentsToChooseFrom: { departmentName: string }[] = rawDepartments.map
         }
 
         if (!itemDetails.name || !itemDetails.cat || !itemDetails.sector || !itemDetails.department) {
-            // if the required fields of the Item mongo schema are not filled then don't save
             console.log("Please make sure to enter a name, catalog number, sector and department");
             return;
         }
 
-        if (!params.itemid) { // creating a new item
+        if (!params.itemid) {
             fetch(`${backendFirebaseUri}/items`, {
                 method: 'POST',
                 headers: {
@@ -187,8 +176,7 @@ const departmentsToChooseFrom: { departmentName: string }[] = rawDepartments.map
                 navigate(-1);
             })
             .catch((err) => console.log(`Error saving item: ${err}`));
-        }
-        if (params.itemid) { // editing existing iten
+        } else {
             fetch(encodeURI(`${backendFirebaseUri}/items/${params.itemid}`), {
                 method: 'PUT',
                 headers: {
@@ -204,8 +192,8 @@ const departmentsToChooseFrom: { departmentName: string }[] = rawDepartments.map
             })
             .catch((err) => console.log(`Error updating item: ${err}`));
         }
-    }
-    // edit mode only:
+    };
+
     const handleDelete = () => {
         fetch(encodeURI(`${backendFirebaseUri}/items/${params.itemid}`), {
             method: 'DELETE',
@@ -219,7 +207,7 @@ const departmentsToChooseFrom: { departmentName: string }[] = rawDepartments.map
                 setAreYouSureDelete(false);
                 navigate("/");
             }).catch((err) => console.log(`Error deleting item: ${err}`));
-    }
+    };
 
     return (
         <div className={classes.itemMenu}>
@@ -242,7 +230,7 @@ const departmentsToChooseFrom: { departmentName: string }[] = rawDepartments.map
             {params.itemid && <BigButton text="מחק פריט" action={() => setAreYouSureDelete(true)} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} />}
             {areYouSureDelete && <AreYouSure text="האם באמת למחוק פריט?" leftText='מחק' leftAction={handleDelete} rightText='לא' rightAction={() => setAreYouSureDelete(false)} />}
         </div>
-    )
+    );
 };
 
 export default ItemMenu;
