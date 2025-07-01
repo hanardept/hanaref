@@ -25,7 +25,8 @@ function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
 const ItemMenu = () => {
     const params = useParams();
     const authToken = useAppSelector(state => state.auth.jwt);
-    const [sectorsToChooseFrom, setSectorsToChooseFrom] = useState<Sector[]>([]);
+    // OLD: const [sectorsToChooseFrom, setSectorsToChooseFrom] = useState([]);
+const [sectorsToChooseFrom, setSectorsToChooseFrom] = useState<Sector[]>([]);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [name, setName] = useState("");
@@ -35,12 +36,13 @@ const ItemMenu = () => {
     const [catType, setCatType] = useState("מקט רגיל");
     const [description, setDescription] = useState("");
     const [imageLink, setImageLink] = useState("");
-    const [qaStandardLink, setQaStandardLink] = useState("");
-    const [models, setModels] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-    const [accessories, setAccessories] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-    const [consumables, setConsumables] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-    const [belongsToKits, setBelongsToKits] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-    const [similarItems, setSimilarItems] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+    // OLD: useState([{ cat: "", name: "" }])
+const [models, setModels] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+const [accessories, setAccessories] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+const [consumables, setConsumables] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+const [belongsToKits, setBelongsToKits] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+const [similarItems, setSimilarItems] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+const [kitItem, setKitItem] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [kitItem, setKitItem] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
@@ -103,22 +105,40 @@ const ItemMenu = () => {
         if (!params.itemid) {
             getSectors().then(s => {
                 setSectorsToChooseFrom(s);
-            }).catch(err => console.log(`Error fetching sectors: ${err}`));
-        }
-    }, [params.itemid, authToken]);
+const handleInput = (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => {
+  setFunc(event.target.value);
+  dispatch(viewingActions.changesAppliedToItem(true));
+}
 
-    const handleInput = (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => {
-        setFunc(event.target.value);
-        dispatch(viewingActions.changesAppliedToItem(true));
-    }
-    const handleDescription = (event: ChangeEvent<HTMLTextAreaElement>) => {
-        setDescription(event.target.value);
-        dispatch(viewingActions.changesAppliedToItem(true));
-    }
-    const handleSetSector = (value: string) => {
-        setSector(value);
-        setDepartment("");
-        dispatch(viewingActions.changesAppliedToItem(true));
+const handleDescription = (event: ChangeEvent<HTMLTextAreaElement>) => {
+  setDescription(event.target.value);
+  dispatch(viewingActions.changesAppliedToItem(true));
+}
+
+const handleSetSector = (value: string) => {
+  setSector(value);
+  setDepartment("");
+  dispatch(viewingActions.changesAppliedToItem(true));
+}
+
+const handleSetDepartment = (value: string) => {
+  setDepartment(value);
+  dispatch(viewingActions.changesAppliedToItem(true));
+}
+
+const sectorNames = sectorsToChooseFrom.map(s => s.sectorName);
+
+// FIX: Convert (string | Department)[] to DeptObj[]
+const rawDepartments = (sector && sectorsToChooseFrom.length > 0) 
+  ? sectorsToChooseFrom.filter(s => s.sectorName === sector)[0].departments 
+  : [];
+
+const departmentsToChooseFrom: { departmentName: string }[] = rawDepartments.map(d => {
+  if (typeof d === 'string') {
+    return { departmentName: d };
+  }
+  return d; // d is already a Department object with departmentName
+});
     }
     const handleSetDepartment = (value: string) => {
         setDepartment(value);
