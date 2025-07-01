@@ -217,7 +217,7 @@ const ItemMenu: React.FC = () => {
       />
       <input
         type="text"
-        placeholder={"מק\"ט"}
+        placeholder='מק\"ט'
         value={cat}
         onChange={e => handleInput(setCat, e)}
       />
