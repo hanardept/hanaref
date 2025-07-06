@@ -18,7 +18,7 @@ const HomePage = () => {
     const dispatch = useAppDispatch();
     const items = useAppSelector(state => state.items.items);
     const searchComplete = useAppSelector(state => state.items.searchComplete);
-    const { searchVal, sector, department, page, blockScrollSearch } = useAppAppSelector(state => state.viewing.searching);
+    const { searchVal, sector, department, page, blockScrollSearch } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
     const isAdmin = useAppSelector(state => state.auth.frontEndPrivilege === "admin");
 
