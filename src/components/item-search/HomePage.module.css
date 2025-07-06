@@ -70,3 +70,27 @@
     color: #888;
     justify-self: end;
 }
+/* Add this to HomePage.module.css */
+.archiveToggle {
+  padding: 10px 15px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Aligns to the right */
+}
+
+.archiveToggle label {
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.archiveToggle input {
+  margin-left: 8px; /* Space between checkbox and text */
+}
+
+.noResults {
+  text-align: center;
+  margin-top: 3rem;
+  color: #888;
+}
