@@ -46,11 +46,11 @@ const HomePage = () => {
                 // Reset pagination and scroll lock for the new search
                 dispatch(viewingActions.changeSearchCriteria({ page: 2 }));
                 dispatch(viewingActions.changeBlockSearcScroll(false));
-                dispatch(itemsActions.searchIsComplete(true));
+                dispatch(itemsActions.declareSearchComplete(true));
             })
             .catch(err => {
                 console.error("Error during new search:", err);
-                dispatch(itemsActions.searchIsComplete(true));
+                dispatch(itemsActions.declareSearchComplete(true));
             });
         };
 
