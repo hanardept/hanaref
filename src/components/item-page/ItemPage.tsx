@@ -79,7 +79,7 @@ const ItemPage = () => {
             setItem(null);
         }
         // We removed `frontEndPrivilege`, `dispatch`, and `navigate` because they are stable and don't need to trigger re-fetches.
-    }, [params.itemid, authToken, navigate]);
+    }, [params.itemid, authToken, navigate, dispatch, frontEndPrivilege]);
 
 
     // highlight-start
