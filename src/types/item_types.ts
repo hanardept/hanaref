@@ -15,4 +15,5 @@ export type Item = {
     belongsToKits?: AbbreviatedItem[],
     similarItems?: AbbreviatedItem[],
     kitItem?: AbbreviatedItem[]
+    archived?: boolean;
 };
