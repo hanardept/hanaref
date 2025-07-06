@@ -1,16 +1,36 @@
-import { CSSProperties } from "react";
+import React, { CSSProperties } from "react";
 import classes from "./Button.module.css";
 
-const BigButton = ({ text, action, overrideStyle }: { text: string, action: () => void, overrideStyle?: CSSProperties }) => {
+interface BigButtonProps {
+    text: string;
+    action: () => void;
+    overrideStyle?: CSSProperties;
+    disabled?: boolean;
+}
+
+const BigButton: React.FC<BigButtonProps> = ({ text, action, overrideStyle, disabled }) => {
     const handleClick = () => {
+        if (disabled) {
+            return;
+        }
         action();
-    }
+    };
+
+    const combinedStyles: CSSProperties = {
+        ...overrideStyle,
+        ...(disabled && { opacity: 0.5, cursor: 'not-allowed' }),
+    };
 
     return (
-        <div className={classes.bigBtn} onClick={handleClick} style={overrideStyle}>
+        <button
+            className={classes.bigBtn}
+            onClick={handleClick}
+            style={combinedStyles}
+            disabled={disabled}
+        >
             {text}
-        </div>
-    )
+        </button>
+    );
 };
 
 export default BigButton;
