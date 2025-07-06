@@ -87,7 +87,8 @@ const ItemPage = () => {
     const handleArchiveToggle = async () => {
         if (!item) return;
 
-        const actionText = item.archived ? "לשחזר" : "לארכב";
+        const isArchived = item.archived ?? false;
+        const actionText = isArchived ? "לשחזר" : "לארכב";
         if (!window.confirm(`האם אתה בטוח שברצונך ${actionText} את הפריט "${item.name}"?`)) {
             return;
         }
@@ -96,7 +97,8 @@ const ItemPage = () => {
         try {
             const updatedItem = await toggleItemArchiveStatus(item.cat, authToken);
             setItem(updatedItem); // Update the local state with the new item status
-            alert(`הפריט ${item.archived ? 'שוחזר' : 'אורכב'} בהצלחה`);
+            // Use the state of the item *before* the toggle for the confirmation message
+            alert(`הפריט ${isArchived ? 'שוחזר' : 'אורכב'} בהצלחה`);
         } catch (error) {
             console.error(error);
             alert('הפעולה נכשלה. נסה שוב.');
@@ -133,10 +135,10 @@ const ItemPage = () => {
                 {/* The new Archive/Restore button, only for admins */}
                 {frontEndPrivilege === 'admin' && (
                     <BigButton
-                        text={isArchiving ? 'מעבד...' : (item.archived ? 'שחזר מארכיון' : 'שלח לארכיון')}
+                        text={isArchiving ? 'מעבד...' : ((item.archived ?? false) ? 'שחזר מארכיון' : 'שלח לארכיון')}
                         action={handleArchiveToggle}
                         disabled={isArchiving}
-                        overrideStyle={{ marginTop: "2rem", backgroundColor: item.archived ? "#3498db" : "#e67e22" }}
+                        overrideStyle={{ marginTop: "2rem", backgroundColor: (item.archived ?? false) ? "#3498db" : "#e67e22" }}
                     />
                 )}
                 {/* highlight-end */}
