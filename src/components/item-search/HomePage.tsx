@@ -1,10 +1,14 @@
+// src/components/item-search/HomePage.tsx
+
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import ListItem from "./ListItem";
 import SearchMenu from "./SearchMenu";
 import classes from './HomePage.module.css';
 import LoadingSpinner from "../UI/LoadingSpinner";
-import { UIEvent, useEffect } from "react";
+// highlight-start
+import { UIEvent, useEffect, useState } from "react"; // Add useState
+// highlight-end
 import { viewingActions } from "../../store/viewing-slice";
 import { itemsActions } from "../../store/item-slice";
 import { backendFirebaseUri } from "../../backend-variables/address";
@@ -14,50 +18,99 @@ const HomePage = () => {
     const dispatch = useAppDispatch();
     const items = useAppSelector(state => state.items.items);
     const searchComplete = useAppSelector(state => state.items.searchComplete);
-    const { searchVal, sector, department, page, blockScrollSearch } = useAppSelector(state => state.viewing.searching); 
+    const { searchVal, sector, department, page, blockScrollSearch } = useAppAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
     const isAdmin = useAppSelector(state => state.auth.frontEndPrivilege === "admin");
+
+    // highlight-start
+    // 1. Add local state to manage the archive checkbox
+    const [showArchived, setShowArchived] = useState(false);
+    // highlight-end
 
     const goToItemPage = (cat: string) => {
         navigate(`/items/${cat}`);
     }
 
+    // This useEffect will now trigger a new search whenever the checkbox state changes.
     useEffect(() => {
-        dispatch(viewingActions.emptySearchCriteria());
-    }, [dispatch]);
+        // This function will be called to start a new search
+        const triggerNewSearch = () => {
+            const archiveStatus = showArchived ? 'all' : 'active';
+            fetch(encodeURI(`${backendFirebaseUri}/items?search=${searchVal}&sector=${sector}&department=${department}&page=1&status=${archiveStatus}`), {
+                headers: { 'auth-token': authToken }
+            })
+            .then(res => res.json())
+            .then(jsonedRes => {
+                // Replace the current list with the new results
+                dispatch(itemsActions.setItems(jsonedRes)); 
+                // Reset pagination and scroll lock for the new search
+                dispatch(viewingActions.changeSearchCriteria({ page: 2 }));
+                dispatch(viewingActions.changeBlockSearcScroll(false));
+                dispatch(itemsActions.searchIsComplete(true));
+            })
+            .catch(err => {
+                console.error("Error during new search:", err);
+                dispatch(itemsActions.searchIsComplete(true));
+            });
+        };
+
+        // We clear the old search criteria when the component mounts.
+        // We trigger a new search when the checkbox changes.
+        if (searchVal === "" && sector === "" && department === "") {
+             dispatch(viewingActions.emptySearchCriteria());
+        }
+        triggerNewSearch();
+
+    }, [dispatch, showArchived, searchVal, sector, department, authToken]); // This effect now depends on showArchived
 
     let scrollThrottler = true;
     const handleScroll = (event: UIEvent<HTMLDivElement>) => {
-        if (!blockScrollSearch && scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70))  {
+        if (!blockScrollSearch && scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
             scrollThrottler = false;
-            fetch(encodeURI(`${backendFirebaseUri}/items?search=${searchVal}&sector=${sector}&department=${department}&page=${page}`), {
-                headers: {
-                    'auth-token': authToken
-                }
+            // 2. Ensure the infinite scroll also respects the archive status
+            const archiveStatus = showArchived ? 'all' : 'active';
+            fetch(encodeURI(`${backendFirebaseUri}/items?search=${searchVal}&sector=${sector}&department=${department}&page=${page}&status=${archiveStatus}`), {
+                headers: { 'auth-token': authToken }
             })
-                .then((res) => res.json())
-                .then((jsonedRes) => {
-                    if (jsonedRes.length > 0) {
-                        dispatch(viewingActions.changeSearchCriteria({ page: page + 1 }));
-                        dispatch(itemsActions.addItems(jsonedRes));
-                    } else {
-                        dispatch(viewingActions.changeBlockSearcScroll(true));
-                    }
-                });
+            .then((res) => res.json())
+            .then((jsonedRes) => {
+                if (jsonedRes.length > 0) {
+                    dispatch(viewingActions.changeSearchCriteria({ page: page + 1 }));
+                    dispatch(itemsActions.addItems(jsonedRes));
+                } else {
+                    dispatch(viewingActions.changeBlockSearcScroll(true));
+                }
+            });
         }
     }
 
     return (
         <>
             <SearchMenu />
+            {/* highlight-start */}
+            {/* 3. Add the checkbox UI, visible only to admins */}
+            {isAdmin && (
+                <div className={classes.archiveToggle}>
+                    <label>
+                        <input
+                            type="checkbox"
+                            checked={showArchived}
+                            onChange={(e) => setShowArchived(e.target.checked)}
+                        />
+                        הצג פריטים בארכיון
+                    </label>
+                </div>
+            )}
+            {/* highlight-end */}
             <div className={classes.listItemPusher}></div>
             {!searchComplete && <LoadingSpinner />}
-            {searchComplete && items.length === 0 && <></>}
+            {searchComplete && items.length === 0 && <p className={classes.noResults}>לא נמצאו פריטים</p>}
             <div className={classes.itemsWrapper} onScroll={handleScroll}>
-                {items.map(i => <ListItem key={i._id} name={i.name} cat={i.cat} shouldBeColored={i.imageLink === "" && isAdmin} goToItemPage={goToItemPage} />)}
+                {/* 4. Pass the `isArchived` prop down to the ListItem component */}
+                {items.map(i => <ListItem key={i._id} name={i.name} cat={i.cat} shouldBeColored={i.imageLink === "" && isAdmin} goToItemPage={goToItemPage} isArchived={i.archived} />)}
             </div>
         </>
     )
-}; 
+};
 
 export default HomePage;
