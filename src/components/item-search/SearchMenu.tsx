@@ -43,7 +43,7 @@ const SearchMenu = ({ hideArchive = false }: { hideArchive?: boolean }) => {
         // setSelectedDepartment(value);
     }
     const sectorNames = sectors.map(s => s.sectorName);
-    const departmentsToChooseFrom = selectedSector ? sectors.filter(s => s.sectorName === selectedSector)[0].departments : [];
+    const departmentsToChooseFrom = selectedSector ? (sectors.filter(s => s.sectorName === selectedSector)?.[0]?.departments ?? []) : [];
     
     return (
         <div className={classes.searchMenu}> 
@@ -66,8 +66,8 @@ const SearchMenu = ({ hideArchive = false }: { hideArchive?: boolean }) => {
             </div>
             {!sectors && <>{/* LOADING SPINNER OR SHINING RECTANGLES */}</>}
             {sectors && <>
-                <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} />
-                <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} />
+                <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} priorChosenSector={selectedSector} />
+                <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} priorChosenDepartment={selectedDepartment} />
             </>}
         </div>
     )
