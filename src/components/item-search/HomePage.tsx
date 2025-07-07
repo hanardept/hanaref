@@ -20,7 +20,13 @@ const HomePage = () => {
     const searchComplete = useAppSelector(state => state.items.searchComplete);
     const { searchVal, sector, department, page, blockScrollSearch } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
-    const isAdmin = useAppSelector(state => state.auth.frontEndPrivilege === "admin");
+    const userPrivilege = useAppSelector(state => state.auth.frontEndPrivilege); // Debug
+    const isAdmin = userPrivilege === "admin";
+
+    // For debugging admin status
+    useEffect(() => {
+        console.log("[HomePage] User Privilege:", userPrivilege, "Is Admin:", isAdmin);
+    }, [userPrivilege, isAdmin]);
 
     // highlight-start
     // 1. Add local state to manage the archive checkbox
