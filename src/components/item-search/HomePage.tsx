@@ -18,7 +18,7 @@ const HomePage = () => {
     const dispatch = useAppDispatch();
     const items = useAppSelector(state => state.items.items);
     const searchComplete = useAppSelector(state => state.items.searchComplete);
-    const { searchVal, sector, department, page, blockScrollSearch } = useAppSelector(state => state.viewing.searching);
+    const { searchVal, sector, department, showArchived, page, blockScrollSearch } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
     const userPrivilege = useAppSelector(state => state.auth.frontEndPrivilege); // Debug
     const isAdmin = userPrivilege === "admin";
@@ -27,11 +27,6 @@ const HomePage = () => {
     useEffect(() => {
         console.log("[HomePage] User Privilege:", userPrivilege, "Is Admin:", isAdmin);
     }, [userPrivilege, isAdmin]);
-
-    // highlight-start
-    // 1. Add local state to manage the archive checkbox
-    const [showArchived, setShowArchived] = useState(false);
-    // highlight-end
 
     const goToItemPage = (cat: string) => {
         navigate(`/items/${cat}`);
@@ -62,7 +57,7 @@ const HomePage = () => {
 
         // We clear the old search criteria when the component mounts.
         // We trigger a new search when the checkbox changes.
-        if (searchVal === "" && sector === "" && department === "") {
+        if (searchVal === "" && sector === "" && department === "" && (showArchived === null || showArchived === undefined)) {
              dispatch(viewingActions.emptySearchCriteria());
         }
         triggerNewSearch();
@@ -92,22 +87,7 @@ const HomePage = () => {
 
     return (
         <>
-            <SearchMenu />
-            {/* highlight-start */}
-            {/* 3. Add the checkbox UI, visible only to admins */}
-            {isAdmin && (
-                <div className={classes.archiveToggle}>
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={showArchived}
-                            onChange={(e) => setShowArchived(e.target.checked)}
-                        />
-                        הצג פריטים בארכיון
-                    </label>
-                </div>
-            )}
-            {/* highlight-end */}
+            <SearchMenu hideArchive={!isAdmin}/>
             <div className={classes.listItemPusher}></div>
             {!searchComplete && <LoadingSpinner />}
             {searchComplete && items.length === 0 && <p className={classes.noResults}>לא נמצאו פריטים</p>}

@@ -53,9 +53,19 @@
     height: calc(100vh - var(--navbarHeight) - var(--searchInputHeight) - 2*var(--searchSelectHeight) - 6*var(--searchPadding) - 2*0.5rem);
 }
 
+.searchRow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
 .searchBarWrapper {
-    display: grid;
-    grid-template: "container";
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
 }
 .searchBarWrapper input {
     font-size: 1.6rem;
@@ -63,6 +73,7 @@
     height: var(--searchInputHeight);
     border: 1px solid #999;
     grid-area: container;
+    width: 100%;
 }
 .xButton {
     grid-area: container;
@@ -73,12 +84,8 @@
 }
 
 .archiveToggle {
-  padding: 10px 15px;
-  background-color: #f9f9f9;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end; /* Aligns to the right */
+    flex: 0 0 auto;
+    margin-left: 0.5rem;
 }
 
 .archiveToggle label {
