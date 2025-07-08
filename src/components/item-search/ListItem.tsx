@@ -11,6 +11,8 @@ interface ListItemProps {
 }
 
 const ListItem = (props: ListItemProps) => {
+    console.log('ListItem props:', props.name, 'isArchived:', props.isArchived, 'shouldBeColored:', props.shouldBeColored); // DEBUG LINE
+
     const handleClick = () => {
         props.goToItemPage(props.cat);
     }
