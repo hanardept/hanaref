@@ -49,7 +49,7 @@ const SearchMenu = ({ hideArchive = false }: { hideArchive?: boolean }) => {
         <div className={classes.searchMenu}> 
             <div className={classes.searchRow}>
                 <div className={classes.searchBarWrapper}>
-                    <DebouncingSearchBar sectorsLoaded={!!sectors} sector={selectedSector} department={selectedDepartment} />
+                    <DebouncingSearchBar />
                 </div>
                 {!hideArchive && (
                     <div className={classes.archiveToggle}>
