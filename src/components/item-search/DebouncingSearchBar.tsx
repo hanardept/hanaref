@@ -7,9 +7,7 @@ const DEBOUNCE_LAG = 800;
 
 const DebouncingSearchBar = () => {
     const dispatch = useAppDispatch();
-    const noItemsLoaded = useAppSelector(state => state.items.items.length === 0);
     const searchVal = useAppSelector(state => state.viewing.searching.searchVal);
-    const authToken = useAppSelector(state => state.auth.jwt);
 
     const [localSearchVal, setLocalSearchVal] = useState("");
 
