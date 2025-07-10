@@ -13,6 +13,7 @@ const initialViewState = {
         searchVal: "",
         sector: "",
         department: "",
+        showArchived: false,
         page: 1,
         blockScrollSearch: false
     }
@@ -34,10 +35,11 @@ const viewingSlice = createSlice({
         changesAppliedToItem(state, action: PayloadAction<boolean>) {
             state.itemManagement.changesApplied = action.payload;
         },
-        changeSearchCriteria(state, action: PayloadAction<{ searchVal?: string, sector?: string, department?: string, page?: number }>) {
+        changeSearchCriteria(state, action: PayloadAction<{ searchVal?: string, sector?: string, department?: string, showArchived?: boolean, page?: number }>) {
             if (typeof action.payload.searchVal === "string") state.searching.searchVal = action.payload.searchVal;
             if (typeof action.payload.sector === "string") state.searching.sector = action.payload.sector;
             if (typeof action.payload.department === "string") state.searching.department = action.payload.department;
+            if (typeof action.payload.showArchived === "boolean") state.searching.showArchived = action.payload.showArchived;
             if (typeof action.payload.page === "number") state.searching.page = action.payload.page;
         },
         emptySearchCriteria(state) {

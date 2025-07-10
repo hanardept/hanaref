@@ -30,6 +30,7 @@
     flex-direction: column;
     align-items: flex-start;
     padding-right: 1rem;
+    position: relative; /* This is needed for the badge positioning */
 }
 .listItem h2 {
     font-size: 1.1rem;
@@ -52,9 +53,19 @@
     height: calc(100vh - var(--navbarHeight) - var(--searchInputHeight) - 2*var(--searchSelectHeight) - 6*var(--searchPadding) - 2*0.5rem);
 }
 
+.searchRow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
 .searchBarWrapper {
-    display: grid;
-    grid-template: "container";
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
 }
 .searchBarWrapper input {
     font-size: 1.6rem;
@@ -62,6 +73,7 @@
     height: var(--searchInputHeight);
     border: 1px solid #999;
     grid-area: container;
+    width: 100%;
 }
 .xButton {
     grid-area: container;
@@ -69,4 +81,37 @@
     font-size: 2rem;
     color: #888;
     justify-self: end;
+}
+
+.archiveToggle {
+    flex: 0 0 auto;
+    margin-left: 0.5rem;
+}
+
+.archiveToggle label {
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.archiveToggle input {
+  margin-left: 8px; /* Space between checkbox and text */
+}
+
+.noResults {
+  text-align: center;
+  margin-top: 3rem;
+  color: #888;
+}
+
+.archivedBadge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: #7f8c8d; /* A muted grey color for the badge */
+  color: white;
+  padding: 2px 8px;
+  font-size: 10px;
+  border-radius: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
 }

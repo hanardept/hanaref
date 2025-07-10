@@ -1,4 +1,4 @@
-export type AbbreviatedItem = { _id?: string, name: string, cat: string, imageLink?: string };
+export type AbbreviatedItem = { _id?: string, name: string, cat: string, imageLink?: string, archived?: boolean };
 export type Item = {
     _id: string,
     name: string,
@@ -15,4 +15,5 @@ export type Item = {
     belongsToKits?: AbbreviatedItem[],
     similarItems?: AbbreviatedItem[],
     kitItem?: AbbreviatedItem[]
+    archived?: boolean;
 };
