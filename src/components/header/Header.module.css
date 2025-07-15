@@ -2,7 +2,7 @@
 
 .navbar {
     display: grid;
-    grid-template-columns: 5rem 1fr 2rem 2rem;
+    grid-template-columns: 5rem 1fr 5rem;
     background-color: #6f0707;
     color: white;
     position: fixed;
@@ -20,4 +20,11 @@
 }
 .navbar span {
     margin: auto;
+}
+
+.toolbarSpan {
+    margin: 0.3rem;
+    display: flex;
+    align-items: flex-start;
+    column-gap: 1rem;
 }
