@@ -14,7 +14,7 @@ const LeftHeaderSide = () => {
     const loggedInAs = useAppSelector(state => state.auth.frontEndPrivilege);
     const addItemAndManageSectors = 
         <span className={classes.toolbarSpan}>
-            <span onClick={() => dispatch(exportDataToCsv())} style={{ lineHeight: 0 }}><CiExport/></span>
+            {loggedInAs === "admin" && <span onClick={() => dispatch(exportDataToCsv())} style={{ lineHeight: 0 }}><CiExport/></span>}
             {loggedInAs === "admin" && <span onClick={() => navigate('/itemmenu')} style={{ lineHeight: 0 }}>+</span>}
             {loggedInAs === "admin" && <span onClick={() => navigate('/managesectors')} style={{ lineHeight: 0 }}>⋮</span>}
         </span>
