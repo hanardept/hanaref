@@ -25,13 +25,19 @@
 
 .listItem {
     border-top: 1px solid #e4e4e4;
-    border-bottom: 1px solid #e4e4e4;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
     padding-right: 1rem;
     position: relative; /* This is needed for the badge positioning */
+
+    flex-direction: row; /* Arrange children in a row (default, but explicit for clarity) */
+    align-items: center; /* Vertically align items (text and image) in the center */
+    justify-content: flex-start;
+    padding-left: 1rem; /* Add padding to the left side */
+    gap: 15px; /* Space between the text content and the image */
+    height: 80px; /* Define a fixed height for the list item, adjust as needed */
+    box-sizing: border-box; /* Include padding and border in the total height */
 }
+
 .listItem h2 {
     font-size: 1.1rem;
     margin: 0.5rem 0;
@@ -44,6 +50,24 @@
 .listItem p {
     margin: 0;
     margin-bottom: 0.5rem;
+}
+
+.itemImage {
+    /* Image sizing */
+    height: 90%; /* Make image height fit the parent .listItem's height */
+    width: auto; /* Maintain aspect ratio */
+    object-fit: contain; /* Ensures the whole image is visible without cropping */
+    max-width: 80px; /* Optional: Set a max width to prevent extremely wide images. Adjust as needed based on your 80px height. */
+    flex-shrink: 0; /* Prevent the image from shrinking if space is tight */
+    margin: 1.2rem
+}
+
+.itemTextContent {
+    display: flex; /* Make this a flex container too, for column layout of name/cat */
+    flex-direction: column; /* Stack name and cat number */
+    justify-content: center; /* Center them vertically within their own container */
+    width: 50%;
+    /* No margin-right here because gap on .listItem handles spacing */
 }
 
 .itemsWrapper {

@@ -7,6 +7,7 @@ import classes from './HomePage.module.css'; // Uses the same CSS file as HomePa
 interface ListItemProps {
     name: string;
     cat: string;
+    imageLink?: string;
     shouldBeColored: boolean;
     goToItemPage: (cat: string) => void;
     isArchived?: boolean; // It's optional so existing uses don't break.
@@ -36,8 +37,11 @@ const ListItem = (props: ListItemProps) => { // Use the new interface
     return (
         // 3. Apply the combined style object.
         <div onClick={handleClick} className={classes.listItem} style={style}>
-            <h2>{props.name}</h2>
-            <p>{props.cat}</p>
+            <div className={classes.itemTextContent}>
+                <h2>{props.name}</h2>
+                <p>{props.cat}</p>
+            </div>
+            {props.imageLink?.length !== undefined && props.imageLink?.length > 0 && <img src={props.imageLink} alt={props.cat} className={classes.itemImage} />}
             {/* 4. Add a visual marker for archived items using a span. */}
             {props.isArchived && <span className={classes.archivedBadge}>בארכיון</span>}
         </div>
