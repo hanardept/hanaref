@@ -10,7 +10,7 @@ const Header = () => {
         <nav className={classes.navbar}>
             <RightHeaderSide loggedIn={loggedInAs !== "public"} />
             <h1>hanaref</h1>
-            <LeftHeaderSide />
+            {loggedInAs === "admin" && <LeftHeaderSide />}
         </nav>
     )
 };
