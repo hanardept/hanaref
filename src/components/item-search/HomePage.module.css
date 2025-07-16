@@ -50,6 +50,7 @@
 .listItem p {
     margin: 0;
     margin-bottom: 0.5rem;
+    text-align: right;
 }
 
 .itemImage {
@@ -65,7 +66,7 @@
 .itemTextContent {
     display: flex; /* Make this a flex container too, for column layout of name/cat */
     flex-direction: column; /* Stack name and cat number */
-    justify-content: center; /* Center them vertically within their own container */
+    justify-content: flex-end; /* Center them vertically within their own container */
     width: 50%;
     /* No margin-right here because gap on .listItem handles spacing */
 }
