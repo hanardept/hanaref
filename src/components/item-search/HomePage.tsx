@@ -162,7 +162,7 @@ const HomePage = () => {
             {searchComplete && items.length === 0 && <p className={classes.noResults}>לא נמצאו פריטים</p>}
             <div className={classes.itemsWrapper} onScroll={handleScroll}>
                 {/* 4. Pass the `isArchived` prop down to the ListItem component */}
-                {items.map(i => <ListItem key={i._id} name={i.name} cat={i.cat} shouldBeColored={i.imageLink === "" && isAdmin} goToItemPage={goToItemPage} isArchived={i.archived} />)}
+                {items.map(i => <ListItem key={i._id} name={i.name} cat={i.cat} shouldBeColored={i.imageLink === "" && isAdmin} imageLink={i.imageLink} goToItemPage={goToItemPage} isArchived={i.archived} />)}
             </div>
         </>
     )
