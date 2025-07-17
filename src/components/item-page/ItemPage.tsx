@@ -122,7 +122,7 @@ const ItemPage = () => {
                 <h1>{item.name}</h1>
                 <p>{`מק"ט: ${item.cat}`}</p>
                 {item.description && <p>{item.description}</p>}
-                {item.imageLink && <img crossOrigin="anonymous" src={item.imageLink} alt={item.name} />}
+                {item.imageLink && <img src={item.imageLink} alt={item.name} />}
                 {(["admin", "hanar"].includes(frontEndPrivilege) && item.qaStandardLink) && <a href={item.qaStandardLink}>לחץ להגעה לתקן בחינה</a>}
                 {item.models && item.models.length > 0 && <InfoSection title="דגמים" elements={item.models} unclickable={true} />}
                 {item.kitItem && item.kitItem.length > 0 && <InfoSection title="מכשיר" elements={item.kitItem} />}
