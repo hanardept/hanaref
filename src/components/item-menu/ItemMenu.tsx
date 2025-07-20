@@ -127,10 +127,6 @@ const ItemMenu = () => {
         setFunc(event.target.value);
         dispatch(viewingActions.changesAppliedToItem(true));
     }
-    const handleDescription = (event: ChangeEvent<HTMLTextAreaElement>) => {
-        setDescription(event.target.value);
-        dispatch(viewingActions.changesAppliedToItem(true));
-    }
     const handleSetSector = (value: string) => {
         setSector(value);
         setDepartment("");
