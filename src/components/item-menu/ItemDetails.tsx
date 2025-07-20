@@ -10,12 +10,10 @@ interface ItemDetailsProps {
     cat: string;
     sector: string;
     department: string;
-    description: string;
     imageLink: string;
     qaStandardLink: string;
     sectorsToChooseFrom: Sector[];
     handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => void;
-    handleDescription: (event: ChangeEvent<HTMLTextAreaElement>) => void;
     handleSetSector: (value: string) => void;
     handleSetDepartment: (value: string) => void;
     handleSetCatType: (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף") => void;
@@ -26,7 +24,7 @@ interface ItemDetailsProps {
 }
 
 const ItemDetails = (props: ItemDetailsProps) => {
-    const { name, cat, sector, department, description, imageLink, qaStandardLink, sectorsToChooseFrom, handleInput, handleDescription, handleSetSector, handleSetDepartment, handleSetCatType, setName, setCat, setImageLink, setQaStandardLink } = props;
+    const { name, cat, sector, department, imageLink, qaStandardLink, sectorsToChooseFrom, handleInput, handleSetSector, handleSetDepartment, handleSetCatType, setName, setCat, setImageLink, setQaStandardLink } = props;
     const sectorNames = sectorsToChooseFrom.map(s => s.sectorName);
     const departmentsToChooseFrom = (sector && sectorsToChooseFrom.length > 0) ? sectorsToChooseFrom.filter(s => s.sectorName === sector)[0].departments : [];
 
@@ -37,7 +35,6 @@ const ItemDetails = (props: ItemDetailsProps) => {
             <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} priorChosenSector={sector} />
             <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} priorChosenDepartment={department} />
             <CatTypeSelection selectCatType={handleSetCatType} />
-            <textarea value={description} onChange={handleDescription} placeholder="תיאור" />
             <LabeledInput label="קישור לתמונה" value={imageLink} onChange={(e) => handleInput(setImageLink, e)} placeholder="קישור לתמונה" />
             <LabeledInput label="קישור לתקן בחינה" value={qaStandardLink} onChange={(e) => handleInput(setQaStandardLink, e)} placeholder="קישור לתקן בחינה" />
         </>

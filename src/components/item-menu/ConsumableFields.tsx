@@ -27,7 +27,6 @@ const ConsumableFields = (props: ConsumableFieldsProps) => {
 
     return (
         <>
-            <textarea value={description} onChange={handleDescription} placeholder="תיאור המתכלה" />
             <LabeledInput label="אורך חיים בחודשים" value={lifeSpan} onChange={(e) => handleInput(setLifeSpan, e)} placeholder="אורך חיים בחודשים" />
             <LabeledInput label="קישור לתמונה" value={imageLink} onChange={(e) => handleInput(setImageLink, e)} placeholder="קישור לתמונה" />
             <LabeledInput label="User manual" value={userManualLink} onChange={(e) => handleInput(setUserManualLink, e)} placeholder="User manual" />

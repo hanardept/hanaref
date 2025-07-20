@@ -35,7 +35,6 @@ const DeviceFields = (props: DeviceFieldsProps) => {
 
     return (
         <>
-            <textarea value={description} onChange={handleDescription} placeholder="תיאור המכשיר" />
             <LabeledInput label="קישור לתמונה" value={imageLink} onChange={(e) => handleInput(setImageLink, e)} placeholder="קישור לתמונה" />
             <LabeledInput label="User manual" value={userManualLink} onChange={(e) => handleInput(setUserManualLink, e)} placeholder="User manual" />
             <LabeledInput label="הוראות הפעלה בעברית" value={hebrewManualLink} onChange={(e) => handleInput(setHebrewManualLink, e)} placeholder="הוראות הפעלה בעברית" />

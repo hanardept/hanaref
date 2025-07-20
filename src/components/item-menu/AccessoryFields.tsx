@@ -25,7 +25,6 @@ const AccessoryFields = (props: AccessoryFieldsProps) => {
 
     return (
         <>
-            <textarea value={description} onChange={handleDescription} placeholder="תיאור האביזר" />
             <LabeledInput label="קישור לתמונה" value={imageLink} onChange={(e) => handleInput(setImageLink, e)} placeholder="קישור לתמונה" />
             <LabeledInput label="User manual" value={userManualLink} onChange={(e) => handleInput(setUserManualLink, e)} placeholder="User manual" />
             <LabeledInput label="ספק בארץ" value={supplier} onChange={(e) => handleInput(setSupplier, e)} placeholder="ספק בארץ" />
