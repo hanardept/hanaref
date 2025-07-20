@@ -225,7 +225,7 @@ const ItemMenu = () => {
             </div>
             <div className={classes.relations}>
                 <ItemRelations
-                    catType={catType}
+                    catType={catType as "מקט רגיל" | "מקט ערכה"}
                     kitItem={kitItem}
                     models={models}
                     accessories={accessories}
