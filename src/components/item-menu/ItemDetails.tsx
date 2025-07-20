@@ -32,14 +32,14 @@ const ItemDetails = (props: ItemDetailsProps) => {
 
     return (
         <>
-            <LabeledInput label="שם הפריט" value={name} onChange={(e) => handleInput(setName, e)} />
-            <LabeledInput label='מק"ט' value={cat} onChange={(e) => handleInput(setCat, e)} />
+            <LabeledInput label="שם הפריט" value={name} onChange={(e) => handleInput(setName, e)} placeholder="שם הפריט" />
+            <LabeledInput label='מק"ט' value={cat} onChange={(e) => handleInput(setCat, e)} placeholder='מק"ט' />
             <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} priorChosenSector={sector} />
             <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} priorChosenDepartment={department} />
             <CatTypeSelection selectCatType={handleSetCatType} />
             <textarea value={description} onChange={handleDescription} placeholder="תיאור" />
-            <LabeledInput label="קישור לתמונה" value={imageLink} onChange={(e) => handleInput(setImageLink, e)} />
-            <LabeledInput label="קישור לתקן בחינה" value={qaStandardLink} onChange={(e) => handleInput(setQaStandardLink, e)} />
+            <LabeledInput label="קישור לתמונה" value={imageLink} onChange={(e) => handleInput(setImageLink, e)} placeholder="קישור לתמונה" />
+            <LabeledInput label="קישור לתקן בחינה" value={qaStandardLink} onChange={(e) => handleInput(setQaStandardLink, e)} placeholder="קישור לתקן בחינה" />
         </>
     )
 }

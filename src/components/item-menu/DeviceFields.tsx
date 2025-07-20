@@ -36,13 +36,13 @@ const DeviceFields = (props: DeviceFieldsProps) => {
     return (
         <>
             <textarea value={description} onChange={handleDescription} placeholder="תיאור המכשיר" />
-            <LabeledInput label="קישור לתמונה" value={imageLink} onChange={(e) => handleInput(setImageLink, e)} />
-            <LabeledInput label="User manual" value={userManualLink} onChange={(e) => handleInput(setUserManualLink, e)} />
-            <LabeledInput label="הוראות הפעלה בעברית" value={hebrewManualLink} onChange={(e) => handleInput(setHebrewManualLink, e)} />
-            <LabeledInput label="הוראות הנר" value={qaStandardLink} onChange={(e) => handleInput(setQaStandardLink, e)} />
-            <LabeledInput label="תקן בחינה" value={qaStandardLink} onChange={(e) => handleInput(setQaStandardLink, e)} />
-            <LabeledInput label="Service manual" value={serviceManualLink} onChange={(e) => handleInput(setServiceManualLink, e)} />
-            <LabeledInput label="ספק בארץ" value={supplier} onChange={(e) => handleInput(setSupplier, e)} />
+            <LabeledInput label="קישור לתמונה" value={imageLink} onChange={(e) => handleInput(setImageLink, e)} placeholder="קישור לתמונה" />
+            <LabeledInput label="User manual" value={userManualLink} onChange={(e) => handleInput(setUserManualLink, e)} placeholder="User manual" />
+            <LabeledInput label="הוראות הפעלה בעברית" value={hebrewManualLink} onChange={(e) => handleInput(setHebrewManualLink, e)} placeholder="הוראות הפעלה בעברית" />
+            <LabeledInput label="הוראות הנר" value={qaStandardLink} onChange={(e) => handleInput(setQaStandardLink, e)} placeholder="הוראות הנר" />
+            <LabeledInput label="תקן בחינה" value={qaStandardLink} onChange={(e) => handleInput(setQaStandardLink, e)} placeholder="תקן בחינה" />
+            <LabeledInput label="Service manual" value={serviceManualLink} onChange={(e) => handleInput(setServiceManualLink, e)} placeholder="Service manual" />
+            <LabeledInput label="ספק בארץ" value={supplier} onChange={(e) => handleInput(setSupplier, e)} placeholder="ספק בארץ" />
             <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />
             <InfoSectionMenu title="אביזרים" items={accessories} setItems={setAccessories} />
             <InfoSectionMenu title="מתכלים" items={consumables} setItems={setConsumables} />

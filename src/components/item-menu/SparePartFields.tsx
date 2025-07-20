@@ -26,9 +26,9 @@ const SparePartFields = (props: SparePartFieldsProps) => {
     return (
         <>
             <textarea value={description} onChange={handleDescription} placeholder="תיאור חלק החילוף" />
-            <LabeledInput label="קישור לתמונה" value={imageLink} onChange={(e) => handleInput(setImageLink, e)} />
-            <LabeledInput label="User manual" value={userManualLink} onChange={(e) => handleInput(setUserManualLink, e)} />
-            <LabeledInput label="ספק בארץ" value={supplier} onChange={(e) => handleInput(setSupplier, e)} />
+            <LabeledInput label="קישור לתמונה" value={imageLink} onChange={(e) => handleInput(setImageLink, e)} placeholder="קישור לתמונה" />
+            <LabeledInput label="User manual" value={userManualLink} onChange={(e) => handleInput(setUserManualLink, e)} placeholder="User manual" />
+            <LabeledInput label="ספק בארץ" value={supplier} onChange={(e) => handleInput(setSupplier, e)} placeholder="ספק בארץ" />
             <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />
             <InfoSectionMenu title="שייך למכשיר" items={belongsToDevice} setItems={setBelongsToDevice} />
         </>
