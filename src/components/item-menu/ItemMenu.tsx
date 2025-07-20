@@ -238,7 +238,6 @@ const ItemMenu = () => {
             </div>
             <div className={classes.relations}>
                 {catType === "מכשיר" && <DeviceFields
-                    description={description}
                     imageLink={imageLink}
                     qaStandardLink={qaStandardLink}
                     userManualLink={userManualLink}
@@ -249,9 +248,7 @@ const ItemMenu = () => {
                     accessories={accessories}
                     consumables={consumables}
                     spareParts={spareParts}
-                    handleDescription={handleDescription}
                     handleInput={handleInput}
-                    setDescription={setDescription}
                     setImageLink={setImageLink}
                     setQaStandardLink={setQaStandardLink}
                     setUserManualLink={setUserManualLink}
@@ -264,15 +261,12 @@ const ItemMenu = () => {
                     setSpareParts={setSpareParts}
                 />}
                 {catType === "אביזר" && <AccessoryFields
-                    description={description}
                     imageLink={imageLink}
                     userManualLink={userManualLink}
                     supplier={supplier}
                     models={models}
                     belongsToDevice={belongsToDevice}
-                    handleDescription={handleDescription}
                     handleInput={handleInput}
-                    setDescription={setDescription}
                     setImageLink={setImageLink}
                     setUserManualLink={setUserManualLink}
                     setSupplier={setSupplier}
@@ -280,16 +274,13 @@ const ItemMenu = () => {
                     setBelongsToDevice={setBelongsToDevice}
                 />}
                 {catType === "מתכלה" && <ConsumableFields
-                    description={description}
                     imageLink={imageLink}
                     userManualLink={userManualLink}
                     supplier={supplier}
                     lifeSpan={lifeSpan}
                     models={models}
                     belongsToDevice={belongsToDevice}
-                    handleDescription={handleDescription}
                     handleInput={handleInput}
-                    setDescription={setDescription}
                     setImageLink={setImageLink}
                     setUserManualLink={setUserManualLink}
                     setSupplier={setSupplier}
@@ -298,15 +289,12 @@ const ItemMenu = () => {
                     setBelongsToDevice={setBelongsToDevice}
                 />}
                 {catType === "חלקי חילוף" && <SparePartFields
-                    description={description}
                     imageLink={imageLink}
                     userManualLink={userManualLink}
                     supplier={supplier}
                     models={models}
                     belongsToDevice={belongsToDevice}
-                    handleDescription={handleDescription}
                     handleInput={handleInput}
-                    setDescription={setDescription}
                     setImageLink={setImageLink}
                     setUserManualLink={setUserManualLink}
                     setSupplier={setSupplier}
