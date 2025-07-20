@@ -126,10 +126,10 @@ const ItemPage = () => {
                 {(["admin", "hanar"].includes(frontEndPrivilege) && item.qaStandardLink) && <a href={item.qaStandardLink}>לחץ להגעה לתקן בחינה</a>}
                 {item.models && item.models.length > 0 && <InfoSection title="דגמים" elements={item.models} unclickable={true} />}
                 {item.kitItem && item.kitItem.length > 0 && <InfoSection title="מכשיר" elements={item.kitItem} />}
-                {item.belongsToKits && item.belongsToKits.length > 0 && <InfoSection title="שייך לערכות" elements={item.belongsToKits} />}
-                {item.similarItems && item.similarItems.length > 0 && <InfoSection title="קשור ל..." elements={item.similarItems} />}
+                {item.belongsToDevice && item.belongsToDevice.length > 0 && <InfoSection title="שייך למכשיר" elements={item.belongsToDevice} />}
                 {item.accessories && item.accessories.length > 0 && <InfoSection title="אביזרים" elements={item.accessories} />}
                 {item.consumables && item.consumables.length > 0 && <InfoSection title="מתכלים" elements={item.consumables} />}
+                {item.spareParts && item.spareParts.length > 0 && <InfoSection title="חלקי חילוף" elements={item.spareParts} />}
 
                 {/* highlight-start */}
                 {/* The new Archive/Restore button, only for admins */}
