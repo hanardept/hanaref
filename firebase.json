@@ -1,16 +1,79 @@
 {
+
   "hosting": {
-    "public": "build",
+
+    "public": "build", // Your website files are in the 'build' directory
+
     "ignore": [
+
       "firebase.json",
+
       "**/.*",
+
       "**/node_modules/**"
+
     ],
+
     "rewrites": [
+
+      // Rule 1: DENY SPECIFIC IP ADDRESSES (MOST SPECIFIC)
+
+      // This rule goes first because you want to block these IPs BEFORE anything else.
+
+      // If a request comes from one of these IPs, it will be redirected to the "access-denied-ip.html" page,
+
+      // regardless of their country.
+
+      // IMPORTANT: Replace "XXX.XXX.XXX.XXX" and "YYY.YYY.YYY.YYY/ZZ" with the actual IPs/CIDR ranges you want to block.
+
+      // You can list multiple individual IPs or CIDR ranges here.
+
       {
-        "source": "**",
-        "destination": "/index.html"
+
+        "source": "**", // Applies to all paths
+
+        "destination": "/access-denied-ip.html", // Send them to a specific "access denied by IP" page
+
+        "ip": ["62.128.45.97"] // EXAMPLE IPs/CIDR ranges
+
+      },
+
+
+      // Rule 2: ALLOW ONLY ISRAEL (SPECIFIC COUNTRY ALLOW)
+
+      // This rule processes requests that were *not* blocked by the IP rule above.
+
+      // If a request originates from Israel ('il'), it will be served your main application.
+
+      {
+
+        "source": "**", // Applies to all paths
+
+        "destination": "/index.html", // Your main application entry point
+
+        "region": ["il"] // 'il' is the ISO 3166-1 alpha-2 country code for Israel
+
+      },
+
+
+      // Rule 3: DENY ALL OTHER COUNTRIES (GENERAL FALLBACK)
+
+      // This rule acts as a catch-all. Any request that *didn't* match Rule 1 (blocked IP)
+
+      // and *didn't* match Rule 2 (from Israel) will fall through to this rule.
+
+      // This effectively blocks all countries except Israel.
+
+      {
+
+        "source": "**", // Applies to all paths
+
+        "destination": "/access-denied-country.html" // Send them to a specific "access denied by country" page
+
       }
+
     ]
+
   }
+
 }
