@@ -1,12 +1,14 @@
-const CatTypeSelection = ({ selectCatType }: { selectCatType: (catType: "מקט רגיל" | "מקט ערכה") => void }) => {
+const CatTypeSelection = ({ selectCatType }: { selectCatType: (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף") => void }) => {
     const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        selectCatType(event.target.value as "מקט רגיל" | "מקט ערכה");
+        selectCatType(event.target.value as "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף");
     }
 
     return (
         <select name="cattype" id="cattype" onChange={handleSelect}>
-            <option>מקט רגיל</option>
-            <option>מקט ערכה</option>
+            <option>מכשיר</option>
+            <option>אביזר</option>
+            <option>מתכלה</option>
+            <option>חלקי חילוף</option>
         </select>
     )
 };

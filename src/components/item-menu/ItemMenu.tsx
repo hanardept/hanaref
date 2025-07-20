@@ -10,6 +10,10 @@ import BigButton from '../UI/BigButton';
 import classes from './ItemMenu.module.css';
 import ItemDetails from './ItemDetails';
 import ItemRelations from './ItemRelations';
+import DeviceFields from './DeviceFields';
+import AccessoryFields from './AccessoryFields';
+import ConsumableFields from './ConsumableFields';
+import SparePartFields from './SparePartFields';
 
 function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
     const filteredList = itemList.filter(i => i.cat !== "" || i.name !== "");
@@ -30,15 +34,20 @@ const ItemMenu = () => {
     const [cat, setCat] = useState(params.newitemid || "");
     const [sector, setSector] = useState("");
     const [department, setDepartment] = useState("");
-    const [catType, setCatType] = useState("מקט רגיל");
+    const [catType, setCatType] = useState<"מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף">("מכשיר");
     const [description, setDescription] = useState("");
     const [imageLink, setImageLink] = useState("");
     const [qaStandardLink, setQaStandardLink] = useState("");
+    const [userManualLink, setUserManualLink] = useState("");
+    const [serviceManualLink, setServiceManualLink] = useState("");
+    const [hebrewManualLink, setHebrewManualLink] = useState("");
+    const [supplier, setSupplier] = useState("");
+    const [lifeSpan, setLifeSpan] = useState("");
     const [models, setModels] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [accessories, setAccessories] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [consumables, setConsumables] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-    const [belongsToKits, setBelongsToKits] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-    const [similarItems, setSimilarItems] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+    const [spareParts, setSpareParts] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+    const [belongsToDevice, setBelongsToDevice] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [kitItem, setKitItem] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
@@ -51,11 +60,16 @@ const ItemMenu = () => {
         description: description,
         imageLink: imageLink,
         qaStandardLink: qaStandardLink,
+        userManualLink: userManualLink,
+        serviceManualLink: serviceManualLink,
+        hebrewManualLink: hebrewManualLink,
+        supplier: supplier,
+        lifeSpan: lifeSpan,
         models: models,
         accessories: accessories,
         consumables: consumables,
-        belongsToKits: belongsToKits,
-        similarItems: similarItems,
+        spareParts: spareParts,
+        belongsToDevice: belongsToDevice,
         kitItem: kitItem
     };
 
@@ -89,12 +103,17 @@ const ItemMenu = () => {
                 setCatType(i.catType);
                 setDescription(i.description);
                 if (i.imageLink) setImageLink(i.imageLink);
-                if (i.qaStandardLink) setQaStandardLink(i.qaStandardLink)
+                if (i.qaStandardLink) setQaStandardLink(i.qaStandardLink);
+                if (i.userManualLink) setUserManualLink(i.userManualLink);
+                if (i.serviceManualLink) setServiceManualLink(i.serviceManualLink);
+                if (i.hebrewManualLink) setHebrewManualLink(i.hebrewManualLink);
+                if (i.supplier) setSupplier(i.supplier);
+                if (i.lifeSpan) setLifeSpan(i.lifeSpan);
                 if (i.models && i.models.length > 0) setModels(i.models);
                 if (i.accessories && i.accessories.length > 0) setAccessories(i.accessories);
                 if (i.consumables && i.consumables.length > 0) setConsumables(i.consumables);
-                if (i.belongsToKits && i.belongsToKits.length > 0) setBelongsToKits(i.belongsToKits);
-                if (i.similarItems && i.similarItems.length > 0) setSimilarItems(i.similarItems);
+                if (i.spareParts && i.spareParts.length > 0) setSpareParts(i.spareParts);
+                if (i.belongsToDevice && i.belongsToDevice.length > 0) setBelongsToDevice(i.belongsToDevice);
                 if (i.kitItem && i.kitItem.length > 0) setKitItem(i.kitItem);
             }).catch(e => console.log(`Error fetching item details: ${e}`));
         }
@@ -122,7 +141,7 @@ const ItemMenu = () => {
         setDepartment(value);
         dispatch(viewingActions.changesAppliedToItem(true));
     }
-    const handleSetCatType = (catType: "מקט רגיל" | "מקט ערכה") => {
+    const handleSetCatType = (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף") => {
         setCatType(catType);
     }
     const handleSave = () => {
@@ -133,13 +152,12 @@ const ItemMenu = () => {
         itemDetails.accessories = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.accessories);
         itemDetails.consumables = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.consumables);
 
-        if (catType === "מקט ערכה") {
-            itemDetails.models = [];
-            itemDetails.belongsToKits = [];
-            itemDetails.similarItems = [];
+        if (catType === "מכשיר") {
+            itemDetails.belongsToDevice = [];
         }
-        if (catType === "מקט רגיל") {
+        if (catType === "אביזר" || catType === "מתכלה" || catType === "חלקי חילוף") {
             itemDetails.kitItem = [];
+            itemDetails.spareParts = [];
         }
 
         if (!itemDetails.name || !itemDetails.cat || !itemDetails.sector || !itemDetails.department) {
@@ -222,21 +240,82 @@ const ItemMenu = () => {
                 />
             </div>
             <div className={classes.relations}>
-                <ItemRelations
-                    catType={catType as "מקט רגיל" | "מקט ערכה"}
-                    kitItem={kitItem}
+                {catType === "מכשיר" && <DeviceFields
+                    description={description}
+                    imageLink={imageLink}
+                    qaStandardLink={qaStandardLink}
+                    userManualLink={userManualLink}
+                    serviceManualLink={serviceManualLink}
+                    hebrewManualLink={hebrewManualLink}
+                    supplier={supplier}
                     models={models}
                     accessories={accessories}
                     consumables={consumables}
-                    belongsToKits={belongsToKits}
-                    similarItems={similarItems}
-                    setKitItem={setKitItem}
+                    spareParts={spareParts}
+                    handleDescription={handleDescription}
+                    handleInput={handleInput}
+                    setDescription={setDescription}
+                    setImageLink={setImageLink}
+                    setQaStandardLink={setQaStandardLink}
+                    setUserManualLink={setUserManualLink}
+                    setServiceManualLink={setServiceManualLink}
+                    setHebrewManualLink={setHebrewManualLink}
+                    setSupplier={setSupplier}
                     setModels={setModels}
                     setAccessories={setAccessories}
                     setConsumables={setConsumables}
-                    setBelongsToKits={setBelongsToKits}
-                    setSimilarItems={setSimilarItems}
-                />
+                    setSpareParts={setSpareParts}
+                />}
+                {catType === "אביזר" && <AccessoryFields
+                    description={description}
+                    imageLink={imageLink}
+                    userManualLink={userManualLink}
+                    supplier={supplier}
+                    models={models}
+                    belongsToDevice={belongsToDevice}
+                    handleDescription={handleDescription}
+                    handleInput={handleInput}
+                    setDescription={setDescription}
+                    setImageLink={setImageLink}
+                    setUserManualLink={setUserManualLink}
+                    setSupplier={setSupplier}
+                    setModels={setModels}
+                    setBelongsToDevice={setBelongsToDevice}
+                />}
+                {catType === "מתכלה" && <ConsumableFields
+                    description={description}
+                    imageLink={imageLink}
+                    userManualLink={userManualLink}
+                    supplier={supplier}
+                    lifeSpan={lifeSpan}
+                    models={models}
+                    belongsToDevice={belongsToDevice}
+                    handleDescription={handleDescription}
+                    handleInput={handleInput}
+                    setDescription={setDescription}
+                    setImageLink={setImageLink}
+                    setUserManualLink={setUserManualLink}
+                    setSupplier={setSupplier}
+                    setLifeSpan={setLifeSpan}
+                    setModels={setModels}
+                    setBelongsToDevice={setBelongsToDevice}
+                />}
+                {catType === "חלקי חילוף" && <SparePartFields
+                    description={description}
+                    imageLink={imageLink}
+                    userManualLink={userManualLink}
+                    supplier={supplier}
+                    models={models}
+                    belongsToDevice={belongsToDevice}
+                    handleDescription={handleDescription}
+                    handleInput={handleInput}
+                    setDescription={setDescription}
+                    setImageLink={setImageLink}
+                    setUserManualLink={setUserManualLink}
+                    setSupplier={setSupplier}
+                    setModels={setModels}
+                    setBelongsToDevice={setBelongsToDevice}
+                />}
             </div>
             <div className={classes.buttons}>
                 <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "2.5rem" }} className={classes.button} />

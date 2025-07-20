@@ -18,7 +18,7 @@ interface ItemDetailsProps {
     handleDescription: (event: ChangeEvent<HTMLTextAreaElement>) => void;
     handleSetSector: (value: string) => void;
     handleSetDepartment: (value: string) => void;
-    handleSetCatType: (catType: "מקט רגיל" | "מקט ערכה") => void;
+    handleSetCatType: (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף") => void;
     setName: React.Dispatch<React.SetStateAction<string>>;
     setCat: React.Dispatch<React.SetStateAction<string>>;
     setImageLink: React.Dispatch<React.SetStateAction<string>>;
