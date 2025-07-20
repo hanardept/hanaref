@@ -21,7 +21,7 @@ interface SparePartFieldsProps {
 }
 
 const SparePartFields = (props: SparePartFieldsProps) => {
-    const { description, imageLink, userManualLink, supplier, models, belongsToDevice, handleDescription, handleInput, setDescription, setImageLink, setUserManualLink, setSupplier, setModels, setBelongsToDevice } = props;
+    const { description, imageLink, userManualLink, supplier, models, belongsToDevice, handleDescription, handleInput, setImageLink, setUserManualLink, setSupplier, setModels, setBelongsToDevice } = props;
 
     return (
         <>

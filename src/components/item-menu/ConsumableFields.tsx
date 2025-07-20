@@ -23,7 +23,7 @@ interface ConsumableFieldsProps {
 }
 
 const ConsumableFields = (props: ConsumableFieldsProps) => {
-    const { description, imageLink, userManualLink, supplier, lifeSpan, models, belongsToDevice, handleDescription, handleInput, setDescription, setImageLink, setUserManualLink, setSupplier, setLifeSpan, setModels, setBelongsToDevice } = props;
+    const { description, imageLink, userManualLink, supplier, lifeSpan, models, belongsToDevice, handleDescription, handleInput, setImageLink, setUserManualLink, setSupplier, setLifeSpan, setModels, setBelongsToDevice } = props;
 
     return (
         <>

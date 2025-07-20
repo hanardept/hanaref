@@ -9,7 +9,6 @@ import AreYouSure from '../UI/AreYouSure';
 import BigButton from '../UI/BigButton';
 import classes from './ItemMenu.module.css';
 import ItemDetails from './ItemDetails';
-import ItemRelations from './ItemRelations';
 import DeviceFields from './DeviceFields';
 import AccessoryFields from './AccessoryFields';
 import ConsumableFields from './ConsumableFields';

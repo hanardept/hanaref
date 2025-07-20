@@ -31,7 +31,7 @@ interface DeviceFieldsProps {
 }
 
 const DeviceFields = (props: DeviceFieldsProps) => {
-    const { description, imageLink, qaStandardLink, userManualLink, serviceManualLink, hebrewManualLink, supplier, models, accessories, consumables, spareParts, handleDescription, handleInput, setDescription, setImageLink, setQaStandardLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier, setModels, setAccessories, setConsumables, setSpareParts } = props;
+    const { description, imageLink, qaStandardLink, userManualLink, serviceManualLink, hebrewManualLink, supplier, models, accessories, consumables, spareParts, handleDescription, handleInput, setImageLink, setQaStandardLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier, setModels, setAccessories, setConsumables, setSpareParts } = props;
 
     return (
         <>
