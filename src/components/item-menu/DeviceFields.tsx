@@ -39,7 +39,7 @@ const DeviceFields = (props: DeviceFieldsProps) => {
             <LabeledInput label="קישור לתמונה" value={imageLink} onChange={(e) => handleInput(setImageLink, e)} />
             <LabeledInput label="User manual" value={userManualLink} onChange={(e) => handleInput(setUserManualLink, e)} />
             <LabeledInput label="הוראות הפעלה בעברית" value={hebrewManualLink} onChange={(e) => handleInput(setHebrewManualLink, e)} />
-            <LabeledInput label="הוראות הנ\"ר" value={qaStandardLink} onChange={(e) => handleInput(setQaStandardLink, e)} />
+            <LabeledInput label="הוראות הנר" value={qaStandardLink} onChange={(e) => handleInput(setQaStandardLink, e)} />
             <LabeledInput label="תקן בחינה" value={qaStandardLink} onChange={(e) => handleInput(setQaStandardLink, e)} />
             <LabeledInput label="Service manual" value={serviceManualLink} onChange={(e) => handleInput(setServiceManualLink, e)} />
             <LabeledInput label="ספק בארץ" value={supplier} onChange={(e) => handleInput(setSupplier, e)} />
