@@ -29,6 +29,16 @@
     width: 50%;
 }
 
+@media (max-width: 600px) {
+    .itemMenu {
+        grid-template-columns: 1fr;
+        grid-template-areas: "title" "details" "relations" "buttons";
+    }
+    .button {
+        width: 100%;
+    }
+}
+
 .itemMenu * {
     margin-bottom: 0.5rem;
 }
