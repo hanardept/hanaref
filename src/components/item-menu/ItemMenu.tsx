@@ -5,13 +5,11 @@ import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
 import { viewingActions } from '../../store/viewing-slice';
 import { AbbreviatedItem, Item } from '../../types/item_types';
 import { Sector } from '../../types/sector_types';
-import DepartmentSelection from '../item-search/DepartmentSelection';
-import SectorSelection from '../item-search/SectorSelection';
 import AreYouSure from '../UI/AreYouSure';
 import BigButton from '../UI/BigButton';
-import CatTypeSelection from './CatTypeSelection';
-import InfoSectionMenu from './InfoSectionMenu';
 import classes from './ItemMenu.module.css';
+import ItemDetails from './ItemDetails';
+import ItemRelations from './ItemRelations';
 
 function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
     const filteredList = itemList.filter(i => i.cat !== "" || i.name !== "");
@@ -203,23 +201,49 @@ const ItemMenu = () => {
 
     return (
         <div className={classes.itemMenu}>
-            <h1>{params.itemid ? "עריכת פריט" : "הוספת פריט"}</h1>
-            <input type="text" placeholder='שם הפריט' value={name} onChange={(e) => handleInput(setName, e)} />
-            <input type="text" placeholder='מק"ט' value={cat} onChange={(e) => handleInput(setCat, e)} />
-            <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} priorChosenSector={sector} />
-            <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} priorChosenDepartment={department} />
-            <CatTypeSelection selectCatType={handleSetCatType} />
-            <textarea value={description} onChange={handleDescription} placeholder="תיאור" />
-            <input type="text" placeholder='קישור לתמונה' value={imageLink} onChange={(e) => handleInput(setImageLink, e)} />
-            <input type="text" placeholder='קישור לתקן בחינה' value={qaStandardLink} onChange={(e) => handleInput(setQaStandardLink, e)} />
-            {catType === "מקט ערכה" && <InfoSectionMenu title="מכשיר" items={kitItem} setItems={setKitItem} />}
-            {catType === "מקט רגיל" && <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />}
-            <InfoSectionMenu title="אביזרים" items={accessories} setItems={setAccessories} />
-            <InfoSectionMenu title="מתכלים" items={consumables} setItems={setConsumables} />
-            {catType === "מקט רגיל" && <InfoSectionMenu title="שייך לערכות" items={belongsToKits} setItems={setBelongsToKits} />}
-            {catType === "מקט רגיל" && <InfoSectionMenu title="קשור ל..." items={similarItems} setItems={setSimilarItems} />}
-            <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "2.5rem" }} />
-            {params.itemid && <BigButton text="מחק פריט" action={() => setAreYouSureDelete(true)} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} />}
+            <h1 className={classes.title}>{params.itemid ? "עריכת פריט" : "הוספת פריט"}</h1>
+            <div className={classes.details}>
+                <ItemDetails
+                    name={name}
+                    cat={cat}
+                    sector={sector}
+                    department={department}
+                    description={description}
+                    imageLink={imageLink}
+                    qaStandardLink={qaStandardLink}
+                    sectorsToChooseFrom={sectorsToChooseFrom}
+                    handleInput={handleInput}
+                    handleDescription={handleDescription}
+                    handleSetSector={handleSetSector}
+                    handleSetDepartment={handleSetDepartment}
+                    handleSetCatType={handleSetCatType}
+                    setName={setName}
+                    setCat={setCat}
+                    setImageLink={setImageLink}
+                    setQaStandardLink={setQaStandardLink}
+                />
+            </div>
+            <div className={classes.relations}>
+                <ItemRelations
+                    catType={catType}
+                    kitItem={kitItem}
+                    models={models}
+                    accessories={accessories}
+                    consumables={consumables}
+                    belongsToKits={belongsToKits}
+                    similarItems={similarItems}
+                    setKitItem={setKitItem}
+                    setModels={setModels}
+                    setAccessories={setAccessories}
+                    setConsumables={setConsumables}
+                    setBelongsToKits={setBelongsToKits}
+                    setSimilarItems={setSimilarItems}
+                />
+            </div>
+            <div className={classes.buttons}>
+                <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "2.5rem" }} className={classes.button} />
+                {params.itemid && <BigButton text="מחק פריט" action={() => setAreYouSureDelete(true)} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} className={classes.button} />}
+            </div>
             {areYouSureDelete && <AreYouSure text="האם באמת למחוק פריט?" leftText='מחק' leftAction={handleDelete} rightText='לא' rightAction={() => setAreYouSureDelete(false)} />}
         </div>
     )
