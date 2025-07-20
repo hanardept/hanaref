@@ -4,15 +4,12 @@ import InfoSectionMenu from "./InfoSectionMenu";
 import LabeledInput from "./LabeledInput";
 
 interface SparePartFieldsProps {
-    description: string;
     imageLink: string;
     userManualLink: string;
     supplier: string;
     models: AbbreviatedItem[];
     belongsToDevice: AbbreviatedItem[];
-    handleDescription: (event: ChangeEvent<HTMLTextAreaElement>) => void;
     handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => void;
-    setDescription: React.Dispatch<React.SetStateAction<string>>;
     setImageLink: React.Dispatch<React.SetStateAction<string>>;
     setUserManualLink: React.Dispatch<React.SetStateAction<string>>;
     setSupplier: React.Dispatch<React.SetStateAction<string>>;
@@ -21,7 +18,7 @@ interface SparePartFieldsProps {
 }
 
 const SparePartFields = (props: SparePartFieldsProps) => {
-    const { description, imageLink, userManualLink, supplier, models, belongsToDevice, handleDescription, handleInput, setImageLink, setUserManualLink, setSupplier, setModels, setBelongsToDevice } = props;
+    const { imageLink, userManualLink, supplier, models, belongsToDevice, handleInput, setImageLink, setUserManualLink, setSupplier, setModels, setBelongsToDevice } = props;
 
     return (
         <>

@@ -4,7 +4,6 @@ import InfoSectionMenu from "./InfoSectionMenu";
 import LabeledInput from "./LabeledInput";
 
 interface DeviceFieldsProps {
-    description: string;
     imageLink: string;
     qaStandardLink: string;
     userManualLink: string;
@@ -15,9 +14,7 @@ interface DeviceFieldsProps {
     accessories: AbbreviatedItem[];
     consumables: AbbreviatedItem[];
     spareParts: AbbreviatedItem[];
-    handleDescription: (event: ChangeEvent<HTMLTextAreaElement>) => void;
     handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => void;
-    setDescription: React.Dispatch<React.SetStateAction<string>>;
     setImageLink: React.Dispatch<React.SetStateAction<string>>;
     setQaStandardLink: React.Dispatch<React.SetStateAction<string>>;
     setUserManualLink: React.Dispatch<React.SetStateAction<string>>;
@@ -31,7 +28,7 @@ interface DeviceFieldsProps {
 }
 
 const DeviceFields = (props: DeviceFieldsProps) => {
-    const { description, imageLink, qaStandardLink, userManualLink, serviceManualLink, hebrewManualLink, supplier, models, accessories, consumables, spareParts, handleDescription, handleInput, setImageLink, setQaStandardLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier, setModels, setAccessories, setConsumables, setSpareParts } = props;
+    const { imageLink, qaStandardLink, userManualLink, serviceManualLink, hebrewManualLink, supplier, models, accessories, consumables, spareParts, handleInput, setImageLink, setQaStandardLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier, setModels, setAccessories, setConsumables, setSpareParts } = props;
 
     return (
         <>

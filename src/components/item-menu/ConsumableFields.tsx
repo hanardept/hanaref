@@ -4,16 +4,13 @@ import InfoSectionMenu from "./InfoSectionMenu";
 import LabeledInput from "./LabeledInput";
 
 interface ConsumableFieldsProps {
-    description: string;
     imageLink: string;
     userManualLink: string;
     supplier: string;
     lifeSpan: string;
     models: AbbreviatedItem[];
     belongsToDevice: AbbreviatedItem[];
-    handleDescription: (event: ChangeEvent<HTMLTextAreaElement>) => void;
     handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => void;
-    setDescription: React.Dispatch<React.SetStateAction<string>>;
     setImageLink: React.Dispatch<React.SetStateAction<string>>;
     setUserManualLink: React.Dispatch<React.SetStateAction<string>>;
     setSupplier: React.Dispatch<React.SetStateAction<string>>;
@@ -23,7 +20,7 @@ interface ConsumableFieldsProps {
 }
 
 const ConsumableFields = (props: ConsumableFieldsProps) => {
-    const { description, imageLink, userManualLink, supplier, lifeSpan, models, belongsToDevice, handleDescription, handleInput, setImageLink, setUserManualLink, setSupplier, setLifeSpan, setModels, setBelongsToDevice } = props;
+    const { imageLink, userManualLink, supplier, lifeSpan, models, belongsToDevice, handleInput, setImageLink, setUserManualLink, setSupplier, setLifeSpan, setModels, setBelongsToDevice } = props;
 
     return (
         <>
