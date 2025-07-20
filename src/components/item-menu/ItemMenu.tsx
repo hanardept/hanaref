@@ -122,8 +122,6 @@ const ItemMenu = () => {
         setDepartment(value);
         dispatch(viewingActions.changesAppliedToItem(true));
     }
-    const sectorNames = sectorsToChooseFrom.map(s => s.sectorName);
-    const departmentsToChooseFrom = (sector && sectorsToChooseFrom.length > 0) ? sectorsToChooseFrom.filter(s => s.sectorName === sector)[0].departments : [];
     const handleSetCatType = (catType: "מקט רגיל" | "מקט ערכה") => {
         setCatType(catType);
     }
