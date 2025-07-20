@@ -146,11 +146,11 @@ const ItemMenu = () => {
     }
     const handleSave = () => {
         itemDetails.models = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.models);
-        itemDetails.belongsToKits = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.belongsToKits);
-        itemDetails.similarItems = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.similarItems);
         itemDetails.kitItem = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.kitItem);
         itemDetails.accessories = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.accessories);
         itemDetails.consumables = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.consumables);
+        itemDetails.spareParts = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.spareParts);
+        itemDetails.belongsToDevice = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.belongsToDevice);
 
         if (catType === "מכשיר") {
             itemDetails.belongsToDevice = [];
