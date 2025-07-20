@@ -223,12 +223,10 @@ const ItemMenu = () => {
                     cat={cat}
                     sector={sector}
                     department={department}
-                    description={description}
                     imageLink={imageLink}
                     qaStandardLink={qaStandardLink}
                     sectorsToChooseFrom={sectorsToChooseFrom}
                     handleInput={handleInput}
-                    handleDescription={handleDescription}
                     handleSetSector={handleSetSector}
                     handleSetDepartment={handleSetDepartment}
                     handleSetCatType={handleSetCatType}
