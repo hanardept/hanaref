@@ -127,6 +127,10 @@ const ItemMenu = () => {
         setFunc(event.target.value);
         dispatch(viewingActions.changesAppliedToItem(true));
     }
+    const handleDescription = (event: ChangeEvent<HTMLTextAreaElement>) => {
+        setDescription(event.target.value);
+        dispatch(viewingActions.changesAppliedToItem(true));
+    }
     const handleSetSector = (value: string) => {
         setSector(value);
         setDepartment("");
@@ -219,10 +223,12 @@ const ItemMenu = () => {
                     cat={cat}
                     sector={sector}
                     department={department}
+                    description={description}
                     imageLink={imageLink}
                     qaStandardLink={qaStandardLink}
                     sectorsToChooseFrom={sectorsToChooseFrom}
                     handleInput={handleInput}
+                    handleDescription={handleDescription}
                     handleSetSector={handleSetSector}
                     handleSetDepartment={handleSetDepartment}
                     handleSetCatType={handleSetCatType}
