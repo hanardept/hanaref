@@ -31,6 +31,7 @@ const ItemMenu = () => {
     const navigate = useNavigate();
     const [name, setName] = useState("");
     const [cat, setCat] = useState(params.newitemid || "");
+    const [kitCat, setKitCat] = useState("");
     const [sector, setSector] = useState("");
     const [department, setDepartment] = useState("");
     const [catType, setCatType] = useState<"מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף">("מכשיר");
@@ -53,6 +54,7 @@ const ItemMenu = () => {
     const itemDetails = {
         name: name,
         cat: cat.replace(/ /g, ''),
+        kitCat: kitCat.replace(/ /g, ''),
         sector: sector,
         department: department,
         catType: catType,
@@ -97,6 +99,7 @@ const ItemMenu = () => {
             }).then((i: Item) => {
                 setName(i.name);
                 setCat(i.cat);
+                if (i.kitCat) setKitCat(i.kitCat);
                 setSector(i.sector);
                 setDepartment(i.department);
                 setCatType(i.catType);
@@ -221,11 +224,13 @@ const ItemMenu = () => {
                 <ItemDetails
                     name={name}
                     cat={cat}
+                    kitCat={kitCat}
                     sector={sector}
                     department={department}
                     description={description}
                     imageLink={imageLink}
                     qaStandardLink={qaStandardLink}
+                    catType={catType}
                     sectorsToChooseFrom={sectorsToChooseFrom}
                     handleInput={handleInput}
                     handleDescription={handleDescription}
@@ -234,6 +239,7 @@ const ItemMenu = () => {
                     handleSetCatType={handleSetCatType}
                     setName={setName}
                     setCat={setCat}
+                    setKitCat={setKitCat}
                     setImageLink={setImageLink}
                     setQaStandardLink={setQaStandardLink}
                 />
