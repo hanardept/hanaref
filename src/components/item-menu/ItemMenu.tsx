@@ -31,7 +31,7 @@ const ItemMenu = () => {
     const navigate = useNavigate();
     const [name, setName] = useState("");
     const [cat, setCat] = useState(params.newitemid || "");
-    const [kitCat, setKitCat] = useState("");
+    const [kitCat, setKitCat] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [sector, setSector] = useState("");
     const [department, setDepartment] = useState("");
     const [catType, setCatType] = useState<"מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף">("מכשיר");
@@ -48,13 +48,12 @@ const ItemMenu = () => {
     const [consumables, setConsumables] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [spareParts, setSpareParts] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [belongsToDevice, setBelongsToDevice] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-    const [kitItem, setKitItem] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
     const itemDetails = {
         name: name,
         cat: cat.replace(/ /g, ''),
-        kitCat: kitCat.replace(/ /g, ''),
+        kitCat: kitCat,
         sector: sector,
         department: department,
         catType: catType,
@@ -70,8 +69,7 @@ const ItemMenu = () => {
         accessories: accessories,
         consumables: consumables,
         spareParts: spareParts,
-        belongsToDevice: belongsToDevice,
-        kitItem: kitItem
+        belongsToDevice: belongsToDevice
     };
 
     useEffect(() => {
@@ -99,7 +97,6 @@ const ItemMenu = () => {
             }).then((i: Item) => {
                 setName(i.name);
                 setCat(i.cat);
-                if (i.kitCat) setKitCat(i.kitCat);
                 setSector(i.sector);
                 setDepartment(i.department);
                 setCatType(i.catType);
@@ -116,7 +113,7 @@ const ItemMenu = () => {
                 if (i.consumables && i.consumables.length > 0) setConsumables(i.consumables);
                 if (i.spareParts && i.spareParts.length > 0) setSpareParts(i.spareParts);
                 if (i.belongsToDevice && i.belongsToDevice.length > 0) setBelongsToDevice(i.belongsToDevice);
-                if (i.kitItem && i.kitItem.length > 0) setKitItem(i.kitItem);
+                if (i.kitCat && i.kitCat.length > 0) setKitCat(i.kitCat);
             }).catch(e => console.log(`Error fetching item details: ${e}`));
         }
         if (!params.itemid) {
@@ -148,7 +145,7 @@ const ItemMenu = () => {
     }
     const handleSave = () => {
         itemDetails.models = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.models);
-        itemDetails.kitItem = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.kitItem);
+        itemDetails.kitCat = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.kitCat);
         itemDetails.accessories = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.accessories);
         itemDetails.consumables = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.consumables);
         itemDetails.spareParts = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.spareParts);
@@ -158,7 +155,7 @@ const ItemMenu = () => {
             itemDetails.belongsToDevice = [];
         }
         if (catType === "אביזר" || catType === "מתכלה" || catType === "חלקי חילוף") {
-            itemDetails.kitItem = [];
+            itemDetails.kitCat = [];
             itemDetails.spareParts = [];
         }
 
