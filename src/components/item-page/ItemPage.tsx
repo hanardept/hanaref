@@ -125,7 +125,7 @@ const ItemPage = () => {
                 {item.imageLink && <img src={item.imageLink} alt={item.name} />}
                 {(["admin", "hanar"].includes(frontEndPrivilege) && item.qaStandardLink) && <a href={item.qaStandardLink}>לחץ להגעה לתקן בחינה</a>}
                 {item.models && item.models.length > 0 && <InfoSection title="דגמים" elements={item.models} unclickable={true} />}
-                {item.kitItem && item.kitItem.length > 0 && <InfoSection title="מכשיר" elements={item.kitItem} />}
+                {item.kitCat && item.kitCat.length > 0 && <InfoSection title="מכשיר" elements={item.kitCat} />}
                 {item.belongsToDevice && item.belongsToDevice.length > 0 && <InfoSection title="שייך למכשיר" elements={item.belongsToDevice} />}
                 {item.accessories && item.accessories.length > 0 && <InfoSection title="אביזרים" elements={item.accessories} />}
                 {item.consumables && item.consumables.length > 0 && <InfoSection title="מתכלים" elements={item.consumables} />}
