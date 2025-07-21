@@ -1,4 +1,5 @@
 import React, { ChangeEvent } from "react";
+import { AbbreviatedItem } from "../../types/item_types";
 import { Sector } from "../../types/sector_types";
 import DepartmentSelection from "../item-search/DepartmentSelection";
 import SectorSelection from "../item-search/SectorSelection";
@@ -8,7 +9,7 @@ import LabeledInput from "./LabeledInput";
 interface ItemDetailsProps {
     name: string;
     cat: string;
-    kitCat: string;
+    kitCat: AbbreviatedItem[];
     sector: string;
     department: string;
     description: string;
@@ -23,7 +24,7 @@ interface ItemDetailsProps {
     handleSetCatType: (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף") => void;
     setName: React.Dispatch<React.SetStateAction<string>>;
     setCat: React.Dispatch<React.SetStateAction<string>>;
-    setKitCat: React.Dispatch<React.SetStateAction<string>>;
+    setKitCat: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setImageLink: React.Dispatch<React.SetStateAction<string>>;
     setQaStandardLink: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -37,7 +38,7 @@ const ItemDetails = (props: ItemDetailsProps) => {
         <>
             <LabeledInput label="שם הפריט" value={name} onChange={(e) => handleInput(setName, e)} placeholder="שם הפריט" />
             <LabeledInput label='מק"ט' value={cat} onChange={(e) => handleInput(setCat, e)} placeholder='מק"ט' />
-            {catType === "מכשיר" && <LabeledInput label='מק"ט ערכה' value={kitCat} onChange={(e) => handleInput(setKitCat, e)} placeholder='מק"ט ערכה' />}
+            {catType === "מכשיר" && <LabeledInput label='מק"ט ערכה' value={kitCat[0].cat} onChange={(e) => setKitCat([{cat: e.target.value, name: kitCat[0].name}])} placeholder='מק"ט ערכה' />}
             <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} priorChosenSector={sector} />
             <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} priorChosenDepartment={department} />
             <CatTypeSelection selectCatType={handleSetCatType} />
