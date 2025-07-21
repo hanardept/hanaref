@@ -19,6 +19,6 @@ export type Item = {
     consumables?: AbbreviatedItem[],
     spareParts?: AbbreviatedItem[],
     belongsToDevice?: AbbreviatedItem[],
-    kitItem?: AbbreviatedItem[]
+    kitCat?: AbbreviatedItem[]
     archived?: boolean;
 };
