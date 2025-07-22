@@ -249,6 +249,7 @@ const ItemMenu = () => {
                     serviceManualLink={serviceManualLink}
                     hebrewManualLink={hebrewManualLink}
                     supplier={supplier}
+                    kitCat={kitCat}
                     models={models}
                     accessories={accessories}
                     consumables={consumables}
@@ -260,6 +261,7 @@ const ItemMenu = () => {
                     setServiceManualLink={setServiceManualLink}
                     setHebrewManualLink={setHebrewManualLink}
                     setSupplier={setSupplier}
+                    setKitCat={setKitCat}
                     setModels={setModels}
                     setAccessories={setAccessories}
                     setConsumables={setConsumables}
