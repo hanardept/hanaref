@@ -38,7 +38,7 @@ const ItemDetails = (props: ItemDetailsProps) => {
             <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} priorChosenSector={sector} />
             <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} priorChosenDepartment={department} />
             <CatTypeSelection selectCatType={handleSetCatType} />
-            <textarea value={description} onChange={handleDescription} placeholder="תיאור המכשיר (מה הוא עושה וכו')" />
+            <textarea value={description} onChange={handleDescription} placeholder="תיאור" />
         </>
     )
 }
