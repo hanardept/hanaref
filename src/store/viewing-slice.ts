@@ -9,6 +9,10 @@ const initialViewState = {
         currentCat: "",
         changesApplied: false
     },
+    technicianManagement: {
+        currentTechnicianId: "",
+        changesApplied: false
+    },
     searching: {
         searchVal: "",
         sector: "",
@@ -29,6 +33,12 @@ const viewingSlice = createSlice({
         changesAppliedToSector(state, action: PayloadAction<boolean>) {
             state.sectorManagement.changesApplied = action.payload;
         },
+        manageTechnicianId(state, action: PayloadAction<string>) {
+            state.technicianManagement.currentTechnicianId = action.payload;
+        },
+        changesAppliedToTechnician(state, action: PayloadAction<boolean>) {
+            state.technicianManagement.changesApplied = action.payload;
+        },                
         manageItem(state, action: PayloadAction<string>) {
             state.itemManagement.currentCat = action.payload;
         },

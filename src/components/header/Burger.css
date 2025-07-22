@@ -1,0 +1,94 @@
+.bm-burger-button {
+    position: relative;
+    width: 12px;
+    height: 10px;
+    z-index: 1000;
+}
+
+.bm-burger-bars {
+    background: #CCCCCC;
+    border-radius: 2px;
+}
+
+.bm-burger-bars-hover {
+    background: #a90000;
+}
+
+.bm-cross-button {
+    height: 30px;
+    width: 30px;
+    top: 15px;
+    right: 15px;
+}
+
+.bm-cross {
+    background: #777777;
+}
+
+.bm-menu-wrap {
+    position: fixed;
+    height: 90%;
+    top: 0;
+}
+
+.bm-menu {
+    /* background: #F8F8F8; */
+    background: #6f0707;
+    padding: 3em 1.5em 0;
+    font-size: 1.4em;
+    overflow: hidden;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.bm-morph-shape {
+    fill: #F8F8F8;
+}
+
+.bm-item-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.bm-item svg {
+    translate: 0 3px;
+}
+
+.bm-item-list a span {
+    margin-right: 10px;
+}
+
+.bm-item {
+    display: block;
+    color: #AAAAAA;
+    padding: 8px 0;
+    transition: color 0.3s ease, transform 0.2s ease;
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+        color: #FFFFFF;
+        text-decoration: none;
+        transform: translateX(5px);
+    }
+}
+
+#items {
+    margin: 0px;
+}
+
+.bm-item a {
+    color: #333333;
+    text-decoration: none;
+    display: block;
+}
+
+.bm-item a:visited {
+    color: #555555;
+    text-decoration: none;
+}
+
+.bm-overlay {
+    /* transform: translateY(-20px); */
+    background: rgba(0, 0, 0, 0.4);
+}

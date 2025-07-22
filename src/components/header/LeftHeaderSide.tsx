@@ -9,6 +9,7 @@ import { CiExport } from "react-icons/ci";
 const LeftHeaderSide = () => {
     const navigate = useNavigate();
     const currentCat = useAppSelector(state => state.viewing.itemManagement.currentCat);
+    const currentTechnicianId = useAppSelector(state => state.viewing.technicianManagement.currentTechnicianId);
     const dispatch = useAppDispatch();
 
     const addItemAndManageSectors = 
@@ -17,6 +18,13 @@ const LeftHeaderSide = () => {
             <span onClick={() => navigate('/itemmenu')} style={{ lineHeight: 0 }}>+</span>
             <span onClick={() => navigate('/managesectors')} style={{ lineHeight: 0 }}>⋮</span>
         </span>
+    ;
+
+        const addTechnician = 
+            <span className={classes.toolbarSpan}>
+                <span onClick={() => navigate('/itemmenu')} style={{ lineHeight: 0 }}>+</span>
+                <span onClick={() => navigate('/managesectors')} style={{ lineHeight: 0 }}>⋮</span>
+            </span>
     ;
 
     return (
@@ -28,6 +36,8 @@ const LeftHeaderSide = () => {
             <Route path="/itemnotfound/*" element={<></>} />
             <Route path="managesectors" element={<></>} />
             <Route path="sectormenu" element={<></>} />
+            <Route path="technicians" element={<></>} />
+            <Route path="technicians/*" element={<AdminOnly><span onClick={() => navigate(`technicianmenu/${currentTechnicianId}`)}>ערוך</span></AdminOnly>} />
 
         </Routes>
             

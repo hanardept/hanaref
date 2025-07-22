@@ -13,6 +13,8 @@ import ItemMenu from './components/item-menu/ItemMenu';
 import SectorManagement from './components/sector-management/SectorManagement';
 import SectorMenu from './components/sector-management/SectorMenu';
 import NoItemFound from './components/item-page/NoItemFound';
+import Technicians from './components/technicians/Technicians';
+import TechnicianPage from './components/technicians/TechnicianPage';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -20,8 +22,11 @@ function App() {
   const [showWelcome, setShowWelcome] = useState(true);
   const firstRender = useRef(true);
 
+  console.log(`firstRender: ${firstRender.current}, showWelcome: ${showWelcome}`);
+
   useEffect(() => {
     if (firstRender.current) {
+      console.log(`App first render, setting showWelcome to true`);
       setTimeout(() => {
         firstRender.current = false;
         setShowWelcome(false);
@@ -66,6 +71,8 @@ function App() {
           <Route path="/itemnotfound/:itemid" element={<NoItemFound />} />
           <Route path="/managesectors" element={<AdminOnly><SectorManagement /></AdminOnly>} />
           <Route path="/sectormenu" element={<AdminOnly><SectorMenu exit={() => navigate(-1)} /></AdminOnly>} />
+          <Route path="/technicians" element={<AdminOnly><Technicians /></AdminOnly>} />
+          <Route path="/technicians/:technicianid" element={<AdminOnly><TechnicianPage /></AdminOnly>} />
         </Routes>
       </div>
       {showWelcome && <div className={classes.welcome} onClick={() => setShowWelcome(false)}>

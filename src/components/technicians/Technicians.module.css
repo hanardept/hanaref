@@ -5,7 +5,7 @@
     flex-direction: column;
     padding: 0.5rem;
     position: fixed;
-    z-index: 1;
+    z-index: 2;
     top: var(--navbarHeight);
     width: calc(100vw - 1rem);
     background-color: white;
@@ -108,35 +108,8 @@
     justify-self: end;
 }
 
-.archiveToggle {
-    flex: 0 0 auto;
-    margin-left: 0.5rem;
-}
-
-.archiveToggle label {
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.archiveToggle input {
-  margin-left: 8px; /* Space between checkbox and text */
-}
-
 .noResults {
   text-align: center;
   margin-top: 3rem;
   color: #888;
-}
-
-.archivedBadge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background-color: #7f8c8d; /* A muted grey color for the badge */
-  color: white;
-  padding: 2px 8px;
-  font-size: 10px;
-  border-radius: 10px;
-  font-weight: bold;
-  text-transform: uppercase;
 }
