@@ -65,16 +65,14 @@
     transition: color 0.3s ease, transform 0.2s ease;
     font-weight: 500;
     text-decoration: none;
+    margin: 0px;
+    display: flex;
 
     &:hover {
         color: #FFFFFF;
         text-decoration: none;
         transform: translateX(5px);
     }
-}
-
-#items {
-    margin: 0px;
 }
 
 .bm-item a {
@@ -88,7 +86,11 @@
     text-decoration: none;
 }
 
+.bm-item span {
+    margin: 5px;
+}
+
 .bm-overlay {
-    /* transform: translateY(-20px); */
+    transform: translateY(-20px);
     background: rgba(0, 0, 0, 0.4);
 }

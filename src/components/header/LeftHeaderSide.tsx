@@ -20,11 +20,10 @@ const LeftHeaderSide = () => {
         </span>
     ;
 
-        const addTechnician = 
-            <span className={classes.toolbarSpan}>
-                <span onClick={() => navigate('/itemmenu')} style={{ lineHeight: 0 }}>+</span>
-                <span onClick={() => navigate('/managesectors')} style={{ lineHeight: 0 }}>⋮</span>
-            </span>
+    const addTechnician = 
+        <span className={classes.toolbarSpan}>
+            <span onClick={() => navigate('/technicianmenu')} style={{ lineHeight: 0 }}>+</span>
+        </span>
     ;
 
     return (
@@ -36,9 +35,10 @@ const LeftHeaderSide = () => {
             <Route path="/itemnotfound/*" element={<></>} />
             <Route path="managesectors" element={<></>} />
             <Route path="sectormenu" element={<></>} />
-            <Route path="technicians" element={<></>} />
+            <Route path="technicians" element={addTechnician} />
             <Route path="technicians/*" element={<AdminOnly><span onClick={() => navigate(`technicianmenu/${currentTechnicianId}`)}>ערוך</span></AdminOnly>} />
-
+            <Route path="technicianmenu" element={<></>} />
+            <Route path="technicianmenu/*" element={<></>} />
         </Routes>
             
     )

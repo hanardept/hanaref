@@ -15,6 +15,7 @@ import SectorMenu from './components/sector-management/SectorMenu';
 import NoItemFound from './components/item-page/NoItemFound';
 import Technicians from './components/technicians/Technicians';
 import TechnicianPage from './components/technicians/TechnicianPage';
+import TechnicianMenu from './components/technician-menu/TechnicianMenu';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -73,6 +74,8 @@ function App() {
           <Route path="/sectormenu" element={<AdminOnly><SectorMenu exit={() => navigate(-1)} /></AdminOnly>} />
           <Route path="/technicians" element={<AdminOnly><Technicians /></AdminOnly>} />
           <Route path="/technicians/:technicianid" element={<AdminOnly><TechnicianPage /></AdminOnly>} />
+          <Route path="/technicianmenu" element={<AdminOnly><TechnicianMenu /></AdminOnly>} />          
+          <Route path="/technicianmenu/newtechnician/:newtechnicianid" element={<AdminOnly><TechnicianMenu /></AdminOnly>} />
         </Routes>
       </div>
       {showWelcome && <div className={classes.welcome} onClick={() => setShowWelcome(false)}>

@@ -59,9 +59,3 @@
     align-self: self-start;
     font-weight: bold;
 }
-/* Add this to the end of ItemPage.module.css */
-.archivedMarker {
-  color: #e67e22; /* Orange color */
-  font-weight: bold;
-  margin-left: 1rem;
-}

@@ -28,7 +28,6 @@ const Technicians = () => {
         let scrollThrottler = true;
         if (scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
             scrollThrottler = false;
-            // 2. Ensure the infinite scroll also respects the archive status
             
             // fetch(encodeURI(`${backendFirebaseUri}/technicians`), {
             //     headers: { 'auth-token': authToken }
@@ -87,11 +86,9 @@ const Technicians = () => {
 
     return (
             <>
-                <div className={classes.listItemPusher}></div>
                 {!searchComplete && <LoadingSpinner />}
                 {searchComplete && technicians.length === 0 && <p className={classes.noResults}>לא נמצאו טכנאים</p>}
                 <div className={classes.itemsWrapper} onScroll={handleScroll}>
-                    {/* 4. Pass the `isArchived` prop down to the ListItem component */}
                     {technicians.map(i => <ListItem key={i._id} id={i._id} firstName={i.firstName} lastName={i.lastName} goToTechnicianPage={goToTechnicianPage} />)}
                 </div>
             </>

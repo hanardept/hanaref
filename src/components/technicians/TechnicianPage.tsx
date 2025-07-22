@@ -18,9 +18,6 @@ const TechnicianPage = () => {
     const frontEndPrivilege = useAppSelector(state => state.auth.frontEndPrivilege);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    // highlight-start
-    const [isArchiving, setIsArchiving] = useState(false); // State to handle button disabling
-    // highlight-end
 
     useEffect(() => {
         const getTechnician = async () => {

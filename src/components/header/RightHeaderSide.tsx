@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../../hooks/redux-hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { authActions } from "../../store/auth-slice";
 import AreYouSure from "../UI/AreYouSure";
 import GoBack from "./GoBack";
@@ -16,8 +16,10 @@ import { TbCertificate } from "react-icons/tb";
 const RightHeaderSide = ({ loggedIn }: { loggedIn: boolean }) => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    const loggedInAs = useAppSelector(state => state.auth.frontEndPrivilege);
     const [areYouSureLogout, setAreYouSureLogout] = useState(false);
     const [ isBurgerOpen, setIsBurgerOpen ] = useState(false);
+    
 
     const handleLogout = () => {
         dispatch(authActions.clearAuthStateUponLogout());
@@ -31,7 +33,7 @@ const RightHeaderSide = ({ loggedIn }: { loggedIn: boolean }) => {
 
     const signInOut = loggedIn ? <span onClick={() => setAreYouSureLogout(true)}>יציאה</span> : <span onClick={() => navigate('/login')}>כניסה</span>;
 
-    const burger = (
+    const burger = loggedInAs === "admin" && (
         <Menu right isOpen={isBurgerOpen} onOpen={() => setIsBurgerOpen(true)} onClose={() => setIsBurgerOpen(false)}>
             <span id="items" onClick={() => navigateTo('/')} /*href="/"*/>
                 <CiMedicalCase />
@@ -52,7 +54,9 @@ const RightHeaderSide = ({ loggedIn }: { loggedIn: boolean }) => {
         <>
             <Routes>
                     {
-                        ["/login", "/itemmenu", "/itemmenu/*", "/items/*", "/managesectors", "/sectormenu", "/technicians", "/technicians/*"].map(path => 
+                        ["/login", "/itemmenu", "/itemmenu/*", "/items/*", "/managesectors", "/sectormenu",
+                            "/technicianmenu", "/technicianmenu/*", "/technicians/*"
+                        ].map(path => 
                             <Route 
                                 path={path} 
                                 element={
