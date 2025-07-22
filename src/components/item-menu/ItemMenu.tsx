@@ -5,13 +5,14 @@ import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
 import { viewingActions } from '../../store/viewing-slice';
 import { AbbreviatedItem, Item } from '../../types/item_types';
 import { Sector } from '../../types/sector_types';
-import DepartmentSelection from '../item-search/DepartmentSelection';
-import SectorSelection from '../item-search/SectorSelection';
 import AreYouSure from '../UI/AreYouSure';
 import BigButton from '../UI/BigButton';
-import CatTypeSelection from './CatTypeSelection';
-import InfoSectionMenu from './InfoSectionMenu';
 import classes from './ItemMenu.module.css';
+import ItemDetails from './ItemDetails';
+import DeviceFields from './DeviceFields';
+import AccessoryFields from './AccessoryFields';
+import ConsumableFields from './ConsumableFields';
+import SparePartFields from './SparePartFields';
 
 function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
     const filteredList = itemList.filter(i => i.cat !== "" || i.name !== "");
@@ -30,35 +31,45 @@ const ItemMenu = () => {
     const navigate = useNavigate();
     const [name, setName] = useState("");
     const [cat, setCat] = useState(params.newitemid || "");
+    const [kitCat, setKitCat] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [sector, setSector] = useState("");
     const [department, setDepartment] = useState("");
-    const [catType, setCatType] = useState("מקט רגיל");
+    const [catType, setCatType] = useState<"מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף">("מכשיר");
     const [description, setDescription] = useState("");
     const [imageLink, setImageLink] = useState("");
     const [qaStandardLink, setQaStandardLink] = useState("");
+    const [userManualLink, setUserManualLink] = useState("");
+    const [serviceManualLink, setServiceManualLink] = useState("");
+    const [hebrewManualLink, setHebrewManualLink] = useState("");
+    const [supplier, setSupplier] = useState("");
+    const [lifeSpan, setLifeSpan] = useState("");
     const [models, setModels] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [accessories, setAccessories] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [consumables, setConsumables] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-    const [belongsToKits, setBelongsToKits] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-    const [similarItems, setSimilarItems] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-    const [kitItem, setKitItem] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+    const [spareParts, setSpareParts] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+    const [belongsToDevice, setBelongsToDevice] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
     const itemDetails = {
         name: name,
         cat: cat.replace(/ /g, ''),
+        kitCat: kitCat,
         sector: sector,
         department: department,
         catType: catType,
         description: description,
         imageLink: imageLink,
         qaStandardLink: qaStandardLink,
+        userManualLink: userManualLink,
+        serviceManualLink: serviceManualLink,
+        hebrewManualLink: hebrewManualLink,
+        supplier: supplier,
+        lifeSpan: lifeSpan,
         models: models,
         accessories: accessories,
         consumables: consumables,
-        belongsToKits: belongsToKits,
-        similarItems: similarItems,
-        kitItem: kitItem
+        spareParts: spareParts,
+        belongsToDevice: belongsToDevice
     };
 
     useEffect(() => {
@@ -91,13 +102,18 @@ const ItemMenu = () => {
                 setCatType(i.catType);
                 setDescription(i.description);
                 if (i.imageLink) setImageLink(i.imageLink);
-                if (i.qaStandardLink) setQaStandardLink(i.qaStandardLink)
+                if (i.qaStandardLink) setQaStandardLink(i.qaStandardLink);
+                if (i.userManualLink) setUserManualLink(i.userManualLink);
+                if (i.serviceManualLink) setServiceManualLink(i.serviceManualLink);
+                if (i.hebrewManualLink) setHebrewManualLink(i.hebrewManualLink);
+                if (i.supplier) setSupplier(i.supplier);
+                if (i.lifeSpan) setLifeSpan(i.lifeSpan);
                 if (i.models && i.models.length > 0) setModels(i.models);
                 if (i.accessories && i.accessories.length > 0) setAccessories(i.accessories);
                 if (i.consumables && i.consumables.length > 0) setConsumables(i.consumables);
-                if (i.belongsToKits && i.belongsToKits.length > 0) setBelongsToKits(i.belongsToKits);
-                if (i.similarItems && i.similarItems.length > 0) setSimilarItems(i.similarItems);
-                if (i.kitItem && i.kitItem.length > 0) setKitItem(i.kitItem);
+                if (i.spareParts && i.spareParts.length > 0) setSpareParts(i.spareParts);
+                if (i.belongsToDevice && i.belongsToDevice.length > 0) setBelongsToDevice(i.belongsToDevice);
+                if (i.kitCat && i.kitCat.length > 0) setKitCat(i.kitCat);
             }).catch(e => console.log(`Error fetching item details: ${e}`));
         }
         if (!params.itemid) {
@@ -124,31 +140,32 @@ const ItemMenu = () => {
         setDepartment(value);
         dispatch(viewingActions.changesAppliedToItem(true));
     }
-    const sectorNames = sectorsToChooseFrom.map(s => s.sectorName);
-    const departmentsToChooseFrom = (sector && sectorsToChooseFrom.length > 0) ? sectorsToChooseFrom.filter(s => s.sectorName === sector)[0].departments : [];
-    const handleSetCatType = (catType: "מקט רגיל" | "מקט ערכה") => {
+    const handleSetCatType = (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף") => {
         setCatType(catType);
     }
     const handleSave = () => {
         itemDetails.models = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.models);
-        itemDetails.belongsToKits = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.belongsToKits);
-        itemDetails.similarItems = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.similarItems);
-        itemDetails.kitItem = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.kitItem);
+        itemDetails.kitCat = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.kitCat);
         itemDetails.accessories = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.accessories);
         itemDetails.consumables = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.consumables);
+        itemDetails.spareParts = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.spareParts);
+        itemDetails.belongsToDevice = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.belongsToDevice);
 
-        if (catType === "מקט ערכה") {
-            itemDetails.models = [];
-            itemDetails.belongsToKits = [];
-            itemDetails.similarItems = [];
+        if (catType === "מכשיר") {
+            itemDetails.belongsToDevice = [];
         }
-        if (catType === "מקט רגיל") {
-            itemDetails.kitItem = [];
+        if (catType === "אביזר" || catType === "מתכלה" || catType === "חלקי חילוף") {
+            itemDetails.kitCat = [];
+            itemDetails.spareParts = [];
         }
 
-        if (!itemDetails.name || !itemDetails.cat || !itemDetails.sector || !itemDetails.department) {
+        if (!itemDetails.name || !itemDetails.sector || !itemDetails.department) {
             // if the required fields of the Item mongo schema are not filled then don't save
             console.log("Please make sure to enter a name, catalog number, sector and department");
+            return;
+        }
+        if(!itemDetails.cat){
+            alert("מק\"ט הוא שדה חובה");
             return;
         }
 
@@ -203,23 +220,97 @@ const ItemMenu = () => {
 
     return (
         <div className={classes.itemMenu}>
-            <h1>{params.itemid ? "עריכת פריט" : "הוספת פריט"}</h1>
-            <input type="text" placeholder='שם הפריט' value={name} onChange={(e) => handleInput(setName, e)} />
-            <input type="text" placeholder='מק"ט' value={cat} onChange={(e) => handleInput(setCat, e)} />
-            <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} priorChosenSector={sector} />
-            <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} priorChosenDepartment={department} />
-            <CatTypeSelection selectCatType={handleSetCatType} />
-            <textarea value={description} onChange={handleDescription} placeholder="תיאור" />
-            <input type="text" placeholder='קישור לתמונה' value={imageLink} onChange={(e) => handleInput(setImageLink, e)} />
-            <input type="text" placeholder='קישור לתקן בחינה' value={qaStandardLink} onChange={(e) => handleInput(setQaStandardLink, e)} />
-            {catType === "מקט ערכה" && <InfoSectionMenu title="מכשיר" items={kitItem} setItems={setKitItem} />}
-            {catType === "מקט רגיל" && <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />}
-            <InfoSectionMenu title="אביזרים" items={accessories} setItems={setAccessories} />
-            <InfoSectionMenu title="מתכלים" items={consumables} setItems={setConsumables} />
-            {catType === "מקט רגיל" && <InfoSectionMenu title="שייך לערכות" items={belongsToKits} setItems={setBelongsToKits} />}
-            {catType === "מקט רגיל" && <InfoSectionMenu title="קשור ל..." items={similarItems} setItems={setSimilarItems} />}
-            <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "2.5rem" }} />
-            {params.itemid && <BigButton text="מחק פריט" action={() => setAreYouSureDelete(true)} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} />}
+            <h1 className={classes.title}>{params.itemid ? "עריכת פריט" : "הוספת פריט"}</h1>
+            <div className={classes.details}>
+                <ItemDetails
+                    name={name}
+                    cat={cat}
+                    kitCat={kitCat}
+                    sector={sector}
+                    department={department}
+                    description={description}
+                    catType={catType}
+                    sectorsToChooseFrom={sectorsToChooseFrom}
+                    handleInput={handleInput}
+                    handleDescription={handleDescription}
+                    handleSetSector={handleSetSector}
+                    handleSetDepartment={handleSetDepartment}
+                    handleSetCatType={handleSetCatType}
+                    setName={setName}
+                    setCat={setCat}
+                    setKitCat={setKitCat}
+                />
+            </div>
+            <div className={classes.relations}>
+                {catType === "מכשיר" && <DeviceFields
+                    imageLink={imageLink}
+                    qaStandardLink={qaStandardLink}
+                    userManualLink={userManualLink}
+                    serviceManualLink={serviceManualLink}
+                    hebrewManualLink={hebrewManualLink}
+                    supplier={supplier}
+                    models={models}
+                    accessories={accessories}
+                    consumables={consumables}
+                    spareParts={spareParts}
+                    handleInput={handleInput}
+                    setImageLink={setImageLink}
+                    setQaStandardLink={setQaStandardLink}
+                    setUserManualLink={setUserManualLink}
+                    setServiceManualLink={setServiceManualLink}
+                    setHebrewManualLink={setHebrewManualLink}
+                    setSupplier={setSupplier}
+                    setModels={setModels}
+                    setAccessories={setAccessories}
+                    setConsumables={setConsumables}
+                    setSpareParts={setSpareParts}
+                />}
+                {catType === "אביזר" && <AccessoryFields
+                    imageLink={imageLink}
+                    userManualLink={userManualLink}
+                    supplier={supplier}
+                    models={models}
+                    belongsToDevice={belongsToDevice}
+                    handleInput={handleInput}
+                    setImageLink={setImageLink}
+                    setUserManualLink={setUserManualLink}
+                    setSupplier={setSupplier}
+                    setModels={setModels}
+                    setBelongsToDevice={setBelongsToDevice}
+                />}
+                {catType === "מתכלה" && <ConsumableFields
+                    imageLink={imageLink}
+                    userManualLink={userManualLink}
+                    supplier={supplier}
+                    lifeSpan={lifeSpan}
+                    models={models}
+                    belongsToDevice={belongsToDevice}
+                    handleInput={handleInput}
+                    setImageLink={setImageLink}
+                    setUserManualLink={setUserManualLink}
+                    setSupplier={setSupplier}
+                    setLifeSpan={setLifeSpan}
+                    setModels={setModels}
+                    setBelongsToDevice={setBelongsToDevice}
+                />}
+                {catType === "חלקי חילוף" && <SparePartFields
+                    imageLink={imageLink}
+                    userManualLink={userManualLink}
+                    supplier={supplier}
+                    models={models}
+                    belongsToDevice={belongsToDevice}
+                    handleInput={handleInput}
+                    setImageLink={setImageLink}
+                    setUserManualLink={setUserManualLink}
+                    setSupplier={setSupplier}
+                    setModels={setModels}
+                    setBelongsToDevice={setBelongsToDevice}
+                />}
+            </div>
+            <div className={classes.buttons}>
+                <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "2.5rem" }} className={classes.button} />
+                {params.itemid && <BigButton text="מחק פריט" action={() => setAreYouSureDelete(true)} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} className={classes.button} />}
+            </div>
             {areYouSureDelete && <AreYouSure text="האם באמת למחוק פריט?" leftText='מחק' leftAction={handleDelete} rightText='לא' rightAction={() => setAreYouSureDelete(false)} />}
         </div>
     )

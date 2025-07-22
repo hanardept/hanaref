@@ -17,10 +17,17 @@ const InfoSectionMenu = ({ title, items, setItems }: { title: string, items: Abb
             return output;
         });
     }
+    const editItemManufacturer = (index: number, manufacturer: string) => {
+        setItems(prev => {
+            const output = [...prev];
+            output[index].manufacturer = manufacturer;
+            return output;
+        });
+    }
     const addLine = () => {
         setItems(prev => {
             const output = [...prev];
-            output.push({ name: "", cat: "" });
+            output.push({ name: "", cat: "", manufacturer: "" });
             return output;
         })
     };
@@ -34,13 +41,13 @@ const InfoSectionMenu = ({ title, items, setItems }: { title: string, items: Abb
     return (
         <>
             <h3 style={{ textAlign: "right" }}>{title}</h3>
-            <InfoSectionLine isLast={items.length === 1} addLine={addLine} deleteLine={deleteLine} item={items[0]} editItemName={(name: string) => editItemName(0, name)} editItemCat={(name: string) => editItemCat(0, name)} first={true} modelsLine={title==="דגמים"} />
+            <InfoSectionLine isLast={items.length === 1} addLine={addLine} deleteLine={deleteLine} item={items[0]} editItemName={(name: string) => editItemName(0, name)} editItemCat={(cat: string) => editItemCat(0, cat)} editItemManufacturer={(manufacturer: string) => editItemManufacturer(0, manufacturer)} first={true} modelsLine={title==="דגמים"} />
             {items.map((item, index) => {
                 if (index === 0) return <React.Fragment key={title+"f"}></React.Fragment>;
                 if (index === items.length - 1) {
-                    return <InfoSectionLine key={index+title+"a"} isLast={true} addLine={addLine} deleteLine={deleteLine} item={item} editItemName={(name: string) => editItemName(index, name)} editItemCat={(name: string) => editItemCat(index, name)} modelsLine={title==="דגמים"} />
+                    return <InfoSectionLine key={index+title+"a"} isLast={true} addLine={addLine} deleteLine={deleteLine} item={item} editItemName={(name: string) => editItemName(index, name)} editItemCat={(cat: string) => editItemCat(index, cat)} editItemManufacturer={(manufacturer: string) => editItemManufacturer(index, manufacturer)} modelsLine={title==="דגמים"} />
                 } else {
-                    return <InfoSectionLine key={index+title+"b"} isLast={false} addLine={addLine} deleteLine={deleteLine} item={item} editItemName={(name: string) => editItemName(index, name)} editItemCat={(name: string) => editItemCat(index, name)} modelsLine={title==="דגמים"} />
+                    return <InfoSectionLine key={index+title+"b"} isLast={false} addLine={addLine} deleteLine={deleteLine} item={item} editItemName={(name: string) => editItemName(index, name)} editItemCat={(cat: string) => editItemCat(index, cat)} editItemManufacturer={(manufacturer: string) => editItemManufacturer(index, manufacturer)} modelsLine={title==="דגמים"} />
                 }
             })}
         </>
