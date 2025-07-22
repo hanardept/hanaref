@@ -159,9 +159,13 @@ const ItemMenu = () => {
             itemDetails.spareParts = [];
         }
 
-        if (!itemDetails.name || !itemDetails.cat || !itemDetails.sector || !itemDetails.department) {
+        if (!itemDetails.name || !itemDetails.sector || !itemDetails.department) {
             // if the required fields of the Item mongo schema are not filled then don't save
             console.log("Please make sure to enter a name, catalog number, sector and department");
+            return;
+        }
+        if(!itemDetails.cat){
+            alert("מק\"ט הוא שדה חובה");
             return;
         }
 
@@ -221,6 +225,7 @@ const ItemMenu = () => {
                 <ItemDetails
                     name={name}
                     cat={cat}
+                    kitCat={kitCat}
                     sector={sector}
                     department={department}
                     description={description}
@@ -234,6 +239,7 @@ const ItemMenu = () => {
                     handleSetCatType={handleSetCatType}
                     setName={setName}
                     setCat={setCat}
+                    setKitCat={setKitCat}
                     setQaStandardLink={setQaStandardLink}
                 />
             </div>
