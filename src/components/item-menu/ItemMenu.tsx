@@ -229,7 +229,6 @@ const ItemMenu = () => {
                     sector={sector}
                     department={department}
                     description={description}
-                    qaStandardLink={qaStandardLink}
                     catType={catType}
                     sectorsToChooseFrom={sectorsToChooseFrom}
                     handleInput={handleInput}
@@ -240,7 +239,6 @@ const ItemMenu = () => {
                     setName={setName}
                     setCat={setCat}
                     setKitCat={setKitCat}
-                    setQaStandardLink={setQaStandardLink}
                 />
             </div>
             <div className={classes.relations}>
@@ -251,7 +249,6 @@ const ItemMenu = () => {
                     serviceManualLink={serviceManualLink}
                     hebrewManualLink={hebrewManualLink}
                     supplier={supplier}
-                    kitCat={kitCat}
                     models={models}
                     accessories={accessories}
                     consumables={consumables}
@@ -263,7 +260,6 @@ const ItemMenu = () => {
                     setServiceManualLink={setServiceManualLink}
                     setHebrewManualLink={setHebrewManualLink}
                     setSupplier={setSupplier}
-                    setKitCat={setKitCat}
                     setModels={setModels}
                     setAccessories={setAccessories}
                     setConsumables={setConsumables}

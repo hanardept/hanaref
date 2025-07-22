@@ -13,7 +13,6 @@ interface ItemDetailsProps {
     sector: string;
     department: string;
     description: string;
-    qaStandardLink: string;
     catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף";
     sectorsToChooseFrom: Sector[];
     handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => void;
@@ -24,11 +23,10 @@ interface ItemDetailsProps {
     setName: React.Dispatch<React.SetStateAction<string>>;
     setCat: React.Dispatch<React.SetStateAction<string>>;
     setKitCat: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
-    setQaStandardLink: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const ItemDetails = (props: ItemDetailsProps) => {
-    const { name, cat, sector, department, description, qaStandardLink, catType, sectorsToChooseFrom, handleInput, handleDescription, handleSetSector, handleSetDepartment, handleSetCatType, setName, setCat, setQaStandardLink, kitCat, setKitCat } = props;
+    const { name, cat, sector, department, description, catType, sectorsToChooseFrom, handleInput, handleDescription, handleSetSector, handleSetDepartment, handleSetCatType, setName, setCat, kitCat, setKitCat } = props;
     const sectorNames = sectorsToChooseFrom.map(s => s.sectorName);
     const departmentsToChooseFrom = (sector && sectorsToChooseFrom.length > 0) ? sectorsToChooseFrom.filter(s => s.sectorName === sector)[0].departments : [];
 

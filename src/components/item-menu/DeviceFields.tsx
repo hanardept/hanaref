@@ -10,7 +10,6 @@ interface DeviceFieldsProps {
     serviceManualLink: string;
     hebrewManualLink: string;
     supplier: string;
-    kitCat: AbbreviatedItem[];
     models: AbbreviatedItem[];
     accessories: AbbreviatedItem[];
     consumables: AbbreviatedItem[];
@@ -22,7 +21,6 @@ interface DeviceFieldsProps {
     setServiceManualLink: React.Dispatch<React.SetStateAction<string>>;
     setHebrewManualLink: React.Dispatch<React.SetStateAction<string>>;
     setSupplier: React.Dispatch<React.SetStateAction<string>>;
-    setKitCat: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setModels: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setAccessories: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setConsumables: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
@@ -30,7 +28,7 @@ interface DeviceFieldsProps {
 }
 
 const DeviceFields = (props: DeviceFieldsProps) => {
-    const { imageLink, qaStandardLink, userManualLink, serviceManualLink, hebrewManualLink, supplier, models, accessories, consumables, spareParts, handleInput, setImageLink, setQaStandardLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier, setModels, setAccessories, setConsumables, setSpareParts, kitCat, setKitCat } = props;
+    const { imageLink, qaStandardLink, userManualLink, serviceManualLink, hebrewManualLink, supplier, models, accessories, consumables, spareParts, handleInput, setImageLink, setQaStandardLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier, setModels, setAccessories, setConsumables, setSpareParts } = props;
 
     return (
         <>
