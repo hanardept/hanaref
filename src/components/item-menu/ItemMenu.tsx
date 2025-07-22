@@ -221,11 +221,9 @@ const ItemMenu = () => {
                 <ItemDetails
                     name={name}
                     cat={cat}
-                    kitCat={kitCat}
                     sector={sector}
                     department={department}
                     description={description}
-                    imageLink={imageLink}
                     qaStandardLink={qaStandardLink}
                     catType={catType}
                     sectorsToChooseFrom={sectorsToChooseFrom}
@@ -236,8 +234,6 @@ const ItemMenu = () => {
                     handleSetCatType={handleSetCatType}
                     setName={setName}
                     setCat={setCat}
-                    setKitCat={setKitCat}
-                    setImageLink={setImageLink}
                     setQaStandardLink={setQaStandardLink}
                 />
             </div>
