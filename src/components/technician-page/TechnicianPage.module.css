@@ -1,52 +1,39 @@
 @import '../../css-variables/constants.css';
 
-.itemPage {
+.technicianPage {
     text-align: right;
     padding: 0 var(--gutterHorizontal);
     padding-top: 0.5rem;
     display: flex;
     flex-direction: column;
 }
-.itemPage header {
+.technicianPage header {
     display: flex;
     justify-content: space-between;
     padding-inline: 0.5rem;
 }
-.itemPage header h6 {
+.technicianPage header h6 {
     margin-bottom: 0;
 }
-.itemPage h1 {
+.technicianPage h1 {
     font-size: 1.4rem;
     margin-top: 0.5rem;
 }
-.itemPage h2 {
+.technicianPage h2 {
     font-size: 1.3rem;
 }
-.itemPage h2:first-of-type {
+.technicianPage h2:first-of-type {
     margin-top: 1rem;
 }
-.itemPage p, a {
+.technicianPage p, a {
     text-indent: 1rem;
 }
-.itemPage a {
+.technicianPage a {
     margin-block: 0.5rem;
 }
 
-.itemPage * {
+.technicianPage * {
     margin-top: 0;
-}
-.itemPage img {
-    width: 70vw;
-    max-width: 400px;
-    align-self: center;
-}
-
-.itemPage .accessoryImage
-{
-  width: auto;
-  height: 90px;
-  padding-right: 10px;
-  border-radius: 3rem;
 }
 
 .clickable {

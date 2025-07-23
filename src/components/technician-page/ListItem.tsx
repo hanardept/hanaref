@@ -2,30 +2,29 @@ import classes from './Technicians.module.css';
 
 
 interface ListItemProps {
+    _id: string;
     id: string;
     firstName: string;
     lastName: string;
+    association: string
     goToTechnicianPage: (_id: string) => void;
 }
 
 
-const ListItem = (props: ListItemProps) => { // Use the new interface
+const ListItem = (props: ListItemProps) => {
     const handleClick = () => {
-        props.goToTechnicianPage(props.id);
+        props.goToTechnicianPage(props._id);
     }
 
 
     const style: React.CSSProperties = {};
-    // if (props.shouldBeColored) {
-    //     style.backgroundColor = "#ffe1bc";
-    // }
 
     return (
-        // 3. Apply the combined style object.
         <div onClick={handleClick} className={classes.listItem} style={style}>
             <div className={classes.itemTextContent}>
                 <h2>{props.firstName} {props.lastName}</h2>
-                {/* <p>{props.cat}</p> */}
+                <p>{props.id}</p>
+                <h6>{props.association}</h6>
             </div>
         </div>
     )

@@ -13,8 +13,8 @@ import ItemMenu from './components/item-menu/ItemMenu';
 import SectorManagement from './components/sector-management/SectorManagement';
 import SectorMenu from './components/sector-management/SectorMenu';
 import NoItemFound from './components/item-page/NoItemFound';
-import Technicians from './components/technicians/Technicians';
-import TechnicianPage from './components/technicians/TechnicianPage';
+import Technicians from './components/technician-page/Technicians';
+import TechnicianPage from './components/technician-page/TechnicianPage';
 import TechnicianMenu from './components/technician-menu/TechnicianMenu';
 
 function App() {
@@ -75,6 +75,7 @@ function App() {
           <Route path="/technicians" element={<AdminOnly><Technicians /></AdminOnly>} />
           <Route path="/technicians/:technicianid" element={<AdminOnly><TechnicianPage /></AdminOnly>} />
           <Route path="/technicianmenu" element={<AdminOnly><TechnicianMenu /></AdminOnly>} />          
+          <Route path="/technicianmenu/:technicianid" element={<AdminOnly><TechnicianMenu /></AdminOnly>} />
           <Route path="/technicianmenu/newtechnician/:newtechnicianid" element={<AdminOnly><TechnicianMenu /></AdminOnly>} />
         </Routes>
       </div>

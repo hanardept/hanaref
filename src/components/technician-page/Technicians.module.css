@@ -47,20 +47,19 @@
     white-space: nowrap;
     text-align: right;
 }
-.listItem p {
-    margin: 0;
-    margin-bottom: 0.5rem;
+
+.listItem h6 {
+    margin: 0.5rem 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+    white-space: nowrap;
     text-align: right;
 }
 
-.itemImage {
-    /* Image sizing */
-    height: 90%; /* Make image height fit the parent .listItem's height */
-    width: auto; /* Maintain aspect ratio */
-    object-fit: contain; /* Ensures the whole image is visible without cropping */
-    max-width: 80px; /* Optional: Set a max width to prevent extremely wide images. Adjust as needed based on your 80px height. */
-    flex-shrink: 0; /* Prevent the image from shrinking if space is tight */
-    margin: 1.2rem
+.listItem p {
+    margin: 0;
+    text-align: right;
 }
 
 .itemTextContent {

@@ -13,6 +13,7 @@ const Technicians = () => {
     const navigate = useNavigate();
     const searchComplete = useAppSelector(state => state.technicians.searchComplete);
     const technicians = useAppSelector(state => state.technicians.technicians);
+    const { searchVal } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
     const dispatch = useAppDispatch();
     const [initialized, setInitialized] = useState(false);
@@ -29,23 +30,15 @@ const Technicians = () => {
         if (scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
             scrollThrottler = false;
             
-            // fetch(encodeURI(`${backendFirebaseUri}/technicians`), {
-            //     headers: { 'auth-token': authToken }
-            // })
-            // new Promise<{ json: Promise<Array<{ firstName: string, lastName: string, _id: string }>>((resolve) => {
-            //     resolve({ json: () => new Promise((resolve => resolve([{ firstName: "John", lastName: "Doe", _id: "1" }, { firstName: "Jane", lastName: "Smith", _id: "2" }]))) })
-            // })
-            new Promise<Array<{firstName: string; lastName: string; _id: string }>>((resolve) => {
-                resolve([{ firstName: "משה", lastName: "לוי", _id: "1" }, { firstName: "חיים", lastName: "כהן", _id: "2" }])
+            fetch(encodeURI(`${backendFirebaseUri}/technicians`), {
+                headers: { 'auth-token': authToken }
             })
+            .then(res => res.json())
             .then((jsonedRes) => {
                 if (jsonedRes.length > 0) {
-                    //dispatch(viewingActions.changeSearchCriteria({ page: page + 1 }));
                     dispatch(techniciansActions.addTechnicians(jsonedRes));
                     dispatch(techniciansActions.declareSearchComplete(true));
-                } /*else {
-                    dispatch(viewingActions.changeBlockSearcScroll(true));
-                }*/
+                }
                dispatch(techniciansActions.declareSearchComplete(true));
             });
         } else {
@@ -55,23 +48,13 @@ const Technicians = () => {
 
     useEffect(() => {
 
-        // This function will be called to start a new search
         const triggerNewSearch = () => {
-            // fetch(encodeURI(`${backendFirebaseUri}/items?search=${searchVal}&sector=${sector}&department=${department}&page=0&status=${archiveStatus}`), {
-            //     headers: { 'auth-token': authToken }
-            // })
-            // .then(res => res.json())
-            console.log(`searching technicians...`);
-
-            new Promise<Array<{firstName: string; lastName: string; _id: string }>>((resolve) => {
-                resolve([{ firstName: "משה", lastName: "לוי", _id: "1" }, { firstName: "חיים", lastName: "כהן", _id: "2" }])
+            fetch(encodeURI(`${backendFirebaseUri}/technicians?search=${searchVal}`), {
+                headers: { 'auth-token': authToken }
             })
+            .then(res => res.json())
             .then(jsonedRes => {
-                // Replace the current list with the new results
                 dispatch(techniciansActions.setTechnicians(jsonedRes)); 
-                // Reset pagination and scroll lock for the new search
-                // dispatch(viewingActions.changeSearchCriteria({ page: 2 }));
-                // dispatch(viewingActions.changeBlockSearcScroll(false));
                 dispatch(techniciansActions.declareSearchComplete(true));
             })
             .catch(err => {
@@ -89,7 +72,7 @@ const Technicians = () => {
                 {!searchComplete && <LoadingSpinner />}
                 {searchComplete && technicians.length === 0 && <p className={classes.noResults}>לא נמצאו טכנאים</p>}
                 <div className={classes.itemsWrapper} onScroll={handleScroll}>
-                    {technicians.map(i => <ListItem key={i._id} id={i._id} firstName={i.firstName} lastName={i.lastName} goToTechnicianPage={goToTechnicianPage} />)}
+                    {technicians.map(t => <ListItem key={t._id} _id={t._id} id={t.id} firstName={t.firstName} lastName={t.lastName} association={t.association} goToTechnicianPage={goToTechnicianPage} />)}
                 </div>
             </>
         )

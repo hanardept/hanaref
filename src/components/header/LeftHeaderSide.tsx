@@ -29,14 +29,14 @@ const LeftHeaderSide = () => {
     return (
         <Routes>
             <Route path="/" element={addItemAndManageSectors} />
-            <Route path="items/*" element={<AdminOnly><span onClick={() => navigate(`itemmenu/${currentCat}`)}>ערוך</span></AdminOnly>} />
+            <Route path="items/*" element={<AdminOnly><span className={classes.toolbarSpan} onClick={() => navigate(`itemmenu/${currentCat}`)}>ערוך</span></AdminOnly>} />
             <Route path="itemmenu" element={<></>} />
             <Route path="itemmenu/*" element={<></>} />
             <Route path="/itemnotfound/*" element={<></>} />
             <Route path="managesectors" element={<></>} />
             <Route path="sectormenu" element={<></>} />
             <Route path="technicians" element={addTechnician} />
-            <Route path="technicians/*" element={<AdminOnly><span onClick={() => navigate(`technicianmenu/${currentTechnicianId}`)}>ערוך</span></AdminOnly>} />
+            <Route path="technicians/*" element={<AdminOnly><span className={classes.toolbarSpan} onClick={() => navigate(`technicianmenu/${currentTechnicianId}`)}>ערוך</span></AdminOnly>} />
             <Route path="technicianmenu" element={<></>} />
             <Route path="technicianmenu/*" element={<></>} />
         </Routes>
