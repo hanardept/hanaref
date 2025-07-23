@@ -16,7 +16,7 @@ const Technicians = () => {
     const { searchVal } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
     const dispatch = useAppDispatch();
-    const [initialized, setInitialized] = useState(false);
+    //const [initialized, setInitialized] = useState(false);
 
     const goToTechnicianPage = (id: string) => {
         console.log(`Navigating to technician page with ID: ${id}`);
@@ -65,7 +65,7 @@ const Technicians = () => {
 
         triggerNewSearch();
 
-    }, [dispatch, authToken, initialized]);
+    }, [dispatch, authToken, /*initialized*/]);
 
     return (
             <>
