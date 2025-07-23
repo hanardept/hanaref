@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import LoadingSpinner from '../UI/LoadingSpinner';
 import ListItem from './ListItem';
 import classes from './Technicians.module.css';
-import { UIEvent, useEffect, useState } from "react";
+import { UIEvent, useEffect } from "react";
 import { backendFirebaseUri } from "../../backend-variables/address";
 import { techniciansActions } from "../../store/technicians-slice";
 import { useNavigate } from "react-router-dom";
