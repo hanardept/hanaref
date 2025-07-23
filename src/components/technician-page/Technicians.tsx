@@ -65,7 +65,7 @@ const Technicians = () => {
 
         triggerNewSearch();
 
-    }, [dispatch, authToken, /*initialized*/]);
+    }, [dispatch, authToken, searchVal /*initialized*/]);
 
     return (
             <>
