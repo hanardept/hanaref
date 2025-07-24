@@ -55,7 +55,8 @@ const RightHeaderSide = ({ loggedIn }: { loggedIn: boolean }) => {
             <Routes>
                     {
                         ["/login", "/itemmenu", "/itemmenu/*", "/items/*", "/managesectors", "/sectormenu",
-                            "/technicianmenu", "/technicianmenu/*", "/technicians/*"
+                            "/technicianmenu", "/technicianmenu/*", "/technicians/*",
+                            "/certificationmenu", "/certificationmenu/*", "/certifications/*"
                         ].map(path => 
                             <Route 
                                 path={path} 

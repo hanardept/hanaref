@@ -9,5 +9,6 @@ export type Certification = {
     firstCertificationDate?: Date;
     lastCertificationDate?: Date;
     lastCertificationExpirationDate?: Date;
+    plannedCertificationDate?: Date;
     _id: string
 };

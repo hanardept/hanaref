@@ -70,7 +70,7 @@ const Certifications = () => {
     return (
             <>
                 {!searchComplete && <LoadingSpinner />}
-                {searchComplete && certifications.length === 0 && <p className={classes.noResults}>לא נמצאו טכנאים</p>}
+                {searchComplete && certifications.length === 0 && <p className={classes.noResults}>לא נמצאו הסמכות</p>}
                 <div className={classes.itemsWrapper} onScroll={handleScroll}>
                     {certifications.map(c => <ListItem key={c._id} _id={c._id} certification={c} goToCertificationPage={goToCertificationPage} />)}
                 </div>

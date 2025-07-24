@@ -18,6 +18,7 @@ import TechnicianPage from './components/technician-page/TechnicianPage';
 import TechnicianMenu from './components/technician-menu/TechnicianMenu';
 import CertificationPage from './components/certification-page/CertificationPage';
 import Certifications from './components/certification-page/Certifications';
+import CertificationMenu from './components/certification-menu/CertificationMenu';
 
 function App() {
   const dispatch = useAppDispatch();
