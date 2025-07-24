@@ -13,6 +13,10 @@ const initialViewState = {
         currentTechnicianId: "",
         changesApplied: false
     },
+    certificationManagement: {
+        currentCertificationId: "",
+        changesApplied: false
+    },    
     searching: {
         searchVal: "",
         sector: "",
@@ -38,7 +42,13 @@ const viewingSlice = createSlice({
         },
         changesAppliedToTechnician(state, action: PayloadAction<boolean>) {
             state.technicianManagement.changesApplied = action.payload;
-        },                
+        },
+        manageCertificationId(state, action: PayloadAction<string>) {
+            state.certificationManagement.currentCertificationId = action.payload;
+        },
+        changesAppliedToCertification(state, action: PayloadAction<boolean>) {
+            state.certificationManagement.changesApplied = action.payload;
+        },                     
         manageItem(state, action: PayloadAction<string>) {
             state.itemManagement.currentCat = action.payload;
         },

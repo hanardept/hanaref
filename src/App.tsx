@@ -16,6 +16,8 @@ import NoItemFound from './components/item-page/NoItemFound';
 import Technicians from './components/technician-page/Technicians';
 import TechnicianPage from './components/technician-page/TechnicianPage';
 import TechnicianMenu from './components/technician-menu/TechnicianMenu';
+import CertificationPage from './components/certification-page/CertificationPage';
+import Certifications from './components/certification-page/Certifications';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -77,6 +79,12 @@ function App() {
           <Route path="/technicianmenu" element={<AdminOnly><TechnicianMenu /></AdminOnly>} />          
           <Route path="/technicianmenu/:technicianid" element={<AdminOnly><TechnicianMenu /></AdminOnly>} />
           <Route path="/technicianmenu/newtechnician/:newtechnicianid" element={<AdminOnly><TechnicianMenu /></AdminOnly>} />
+
+          <Route path="/certifications" element={<AdminOnly><Certifications /></AdminOnly>} />
+          <Route path="/certifications/:certificationsid" element={<AdminOnly><CertificationPage /></AdminOnly>} />
+          <Route path="/certificationmenu" element={<AdminOnly><CertificationMenu /></AdminOnly>} />          
+          <Route path="/certificationmenu/:certificationid" element={<AdminOnly><CertificationMenu /></AdminOnly>} />
+          <Route path="/certificationmenu/newcertification/:newcertificationid" element={<AdminOnly><CertificationMenu /></AdminOnly>} />          
         </Routes>
       </div>
       {showWelcome && <div className={classes.welcome} onClick={() => setShowWelcome(false)}>
