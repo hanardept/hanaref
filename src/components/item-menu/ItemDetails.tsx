@@ -37,7 +37,7 @@ const ItemDetails = (props: ItemDetailsProps) => {
             {catType === "מכשיר" && <LabeledInput label='מק"ט ערכה' value={kitCat[0].cat} onChange={(e) => setKitCat([{cat: e.target.value, name: kitCat[0].name}])} placeholder='מק"ט ערכה' />}
             <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} priorChosenSector={sector} />
             <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} priorChosenDepartment={department} />
-            <CatTypeSelection selectCatType={handleSetCatType} />
+            <CatTypeSelection selectCatType={handleSetCatType} currentCatType={catType} />
             <textarea value={description} onChange={handleDescription} placeholder="תיאור" />
         </>
     )
