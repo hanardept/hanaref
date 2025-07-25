@@ -142,6 +142,7 @@ const ItemMenu = () => {
     }
     const handleSetCatType = (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף") => {
         setCatType(catType);
+        dispatch(viewingActions.changesAppliedToItem(true));
     }
     const handleSave = () => {
         itemDetails.models = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.models);
