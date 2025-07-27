@@ -157,7 +157,6 @@ const ItemMenu = () => {
         }
         if (catType === "אביזר" || catType === "מתכלה" || catType === "חלקי חילוף") {
             itemDetails.kitCat = [];
-            itemDetails.spareParts = [];
         }
 
         if (!itemDetails.name || !itemDetails.sector || !itemDetails.department) {
