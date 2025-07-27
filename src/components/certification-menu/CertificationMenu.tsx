@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState as useStateOriginal } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { backendFirebaseUri } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
@@ -8,6 +8,27 @@ import BigButton from '../UI/BigButton';
 import classes from './CertificationMenu.module.css';
 import { Certification } from '../../types/certification_types';
 import DebouncingInput from './DebouncingInput';
+import ListItem from '../item-search/ListItem';
+import { MdEdit } from "react-icons/md";
+
+
+interface ItemSummary {
+    cat: string;
+    name: string;
+    imageLink?: string;
+}
+
+const useState = (value: any) => {
+    let [state, setState] = useStateOriginal(value);
+    const setStateNew = (newValue: any) => {
+        var stackTrace = Error().stack;
+        console.log(`set state with new value ${newValue} stack trace: ${stackTrace}`); 
+        setState(newValue);
+    }
+    // var stackTrace = Error().stack;
+    // console.log(`use state stack trace: ${stackTrace}`); 
+    return [state, setStateNew];
+}
 
 const CertificationMenu = () => {
     const params = useParams();
@@ -18,23 +39,26 @@ const CertificationMenu = () => {
     const [itemId, setItemId] = useState("");
     const [itemCat, setItemCat] = useState("");
     const [itemName, setItemName] = useState("");
+    const [itemImageLink, setItemImageLink] = useState("");
     const [technicianId, setTechnicianId] = useState("");
     const [technicianFirstName, setTechnicianFirstName] = useState("");
     const [technicianLastName, setTechnicianLastName] = useState("");
     const [certificationDocumentLink, setCertificationDocumentLink] = useState("");
-    const [firstCertificationDate, setFirstCertificationDate] = useState<Date | null>(null);
-    const [lastCertificationDate, setLastCertificationDate] = useState<Date | null>(null);
-    const [lastCertificationExpirationDate, setLastCertificationExpirationDate] = useState<Date | null>(null);
-    const [plannedCertificationDate, setPlannedCertificationDate] = useState<Date | null>(null);
+    const [firstCertificationDate, setFirstCertificationDate] = useState(null as unknown as Date);
+    const [lastCertificationDate, setLastCertificationDate] = useState(null as unknown as Date);
+    const [lastCertificationExpirationDate, setLastCertificationExpirationDate] = useState(null as unknown as Date);
+    const [plannedCertificationDate, setPlannedCertificationDate] = useState(null as unknown as Date);
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
-    const [itemSuggestions, setItemSuggestions] = useState([]);
+    const [itemSuggestions, setItemSuggestions] = useState([] as ItemSummary[]);
+    const [showItemInput, setShowItemInput] = useState(false);
 
     const certificationDetails = {
         id: id,
         itemId,
         itemCat,
         itemName,
+        itemImageLink,
         technicianId,
         technicianFirstName,
         technicianLastName,
@@ -62,6 +86,7 @@ const CertificationMenu = () => {
                 setItemId(c.itemId);
                 setItemCat(c.itemCat);
                 setItemName(c.itemName);
+                setItemImageLink(c.itemImageLink ?? "");
                 setTechnicianId(c.technicianId);
                 setTechnicianFirstName(c.technicianFirstName);
                 setTechnicianLastName(c.technicianLastName);
@@ -130,24 +155,60 @@ const CertificationMenu = () => {
                 'auth-token': authToken
             }
         })
-            .then((res) => {
-                console.log("Successfully deleted certification!");
-                dispatch(viewingActions.changesAppliedToCertification(false));
-                setAreYouSureDelete(false);
-                navigate("/certifications");
-            }).catch((err) => console.log(`Error deleting certification: ${err}`));
+        .then((res) => {
+            console.log("Successfully deleted certification!");
+            dispatch(viewingActions.changesAppliedToCertification(false));
+            setAreYouSureDelete(false);
+            navigate("/certifications");
+        }).catch((err) => console.log(`Error deleting certification: ${err}`));
     }
+
+    console.log(`item cat: ${itemCat}, item name: ${itemName}, show item input: ${showItemInput}`);
+    const showListItem = !showItemInput && itemCat && itemName;
+
+    console.log(`item cat: ${itemCat}`)
 
     return (
         <div className={classes.certificationMenu}>
             <h1>{params.certificationid ? "עריכת הסמכה" : "הוספת הסמכה"}</h1>
+            {showListItem ? (
+                <span style={{ display: "flex", flexDirection: "row", justifyItems: 'flex-end', alignItems: "center", gap: "1rem" }}>
+                    <ListItem
+                        className={classes.listItem}
+                        cat={itemCat}
+                        name={itemName}
+                        imageLink={itemImageLink}
+                        goToItemPage={() => setShowItemInput(true)}
+                        shouldBeColored={false}
+                    />
+                    <MdEdit
+                        onClick={() => setShowItemInput(true)}
+                    />
+                </span>
+            ) : (
             <DebouncingInput
+                id="react-autosuggest_cat"
+                className={classes.itemCat}
                 inputValue={itemCat}
-                onValueChanged={val => setItemCat(val)}
-                placeholder='מק"ט מכשיר'
-                suggestions={itemSuggestions.map((s: any) => s.cat)}
+                onValueChanged={(val: any) => {
+                    console.log(`item cat changed to: ${val}`);
+                    setItemCat(val);
+                    //const found = itemSuggestions.find(s => s.cat === val);
+                    // setItemName(found?.name ?? "")
+                    // if (found) setShowItemInput(false);
+                }}
+                onSuggestionSelected={(s: any) => {
+                    console.log(`item cat selected: ${s.cat}`);
+                    setItemCat(s.cat);
+                    setItemName(s.name);
+                    setItemImageLink(s.imageLink);
+                    setShowItemInput(false)
+                }}
+                getSuggestionValue={s => s.cat}
+                placeholder='חפש מכשיר (שם, מק"ט)'
+                suggestions={itemSuggestions}
                 onFetchSuggestions={(value: string) => {
-                    fetch(encodeURI(`${backendFirebaseUri}/items/suggestions?cat=${value}`), {
+                    fetch(encodeURI(`${backendFirebaseUri}/items?search=${value}`), {
                         method: 'GET',
                         headers: {
                             'auth-token': authToken
@@ -157,8 +218,46 @@ const CertificationMenu = () => {
                     .then(jsonRes => setItemSuggestions(jsonRes))
                     .catch((err) => console.log(`Error getting item suggestions: ${err}`));
                 }}
-                onClearSuggestions={() => setItemSuggestions([])}
-            />
+                renderSuggestion={s => <span>{s.cat} {s.name}</span>}
+                onClearSuggestions={() => { console.log(`clearing suggestions`); setItemSuggestions([]); }}
+                onBlur={() => {
+                    console.log(`itemName: ${itemCat}, itemSuggestions: ${JSON.stringify(itemSuggestions, null, 4 )}`);
+                    if (!itemSuggestions.find((s: any) => s.cat === itemCat)) {
+                        console.log(`couldn't find`)
+                        setItemCat("");
+                        setItemName("");
+                    }
+                }}
+            />)}
+             {/* <DebouncingInput
+            //     id="react-autosuggest_name"
+            //     class={classes.itemName}
+            //     inputValue={itemName}
+            //     onValueChanged={val => { setItemName(val); setItemCat(itemSuggestions.find(s => s.name === val)?.cat ?? "")}}
+            //     getSuggestionValue={s => s.name}
+            //     placeholder='שם מכשיר'
+            //     suggestions={itemSuggestions}
+            //     onFetchSuggestions={(value: string) => {
+            //         fetch(encodeURI(`${backendFirebaseUri}/items/suggestions?name=${value}`), {
+            //             method: 'GET',
+            //             headers: {
+            //                 'auth-token': authToken
+            //             }
+            //         })
+            //         .then((res) => res.json())
+            //         .then(jsonRes => setItemSuggestions(jsonRes))
+            //         .catch((err) => console.log(`Error getting item suggestions: ${err}`));
+            //     }}
+            //     renderSuggestion={s => <span>{s.cat} {s.name}</span>}
+            //     onClearSuggestions={() => { console.log(`clearing suggestions`); setItemSuggestions([]); }}
+            //     onBlur={() => {
+            //         console.log(`itemName: ${itemName}, itemSuggestions: ${JSON.stringify(itemSuggestions, null, 4 )}`);
+            //         if (!itemSuggestions.find((s: any) => s.name === itemName)) {
+            //             setItemCat("");
+            //             setItemName("");
+            //         }
+            //     }}
+            // />             */}
             {/* // <input type="text" placeholder='ת.ז.' value={id} onChange={(e) => handleInput(setId, e)} />
             // <input type="text" placeholder='שם פרטי' value={firstName} onChange={(e) => handleInput(setFirstName, e)} />
             // <input type="text" placeholder='שם משפחה' value={lastName} onChange={(e) => handleInput(setLastName, e)} />

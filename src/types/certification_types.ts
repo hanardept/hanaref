@@ -2,6 +2,7 @@ export type Certification = {
     itemId: string;
     itemCat: string;
     itemName: string;
+    itemImageLink?: string;
     technicianId: string;
     technicianFirstName: string;
     technicianLastName: string;

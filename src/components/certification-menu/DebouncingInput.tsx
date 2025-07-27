@@ -1,22 +1,30 @@
 import { useEffect, useRef, useState } from "react";
 import classes from './DebouncingInput.module.css';
 import Autosuggest from 'react-autosuggest';
+import './AutoSuggest.css';
 
 const DEBOUNCE_LAG = 800;
 
-const DebouncingInput = ({ inputValue, onValueErased, onValueChanged, suggestions, placeholder, onFetchSuggestions, onClearSuggestions }: {
+const DebouncingInput = ({ inputValue, onValueErased, onValueChanged, onSuggestionSelected, suggestions, placeholder, getSuggestionValue, renderSuggestion, onFetchSuggestions, onClearSuggestions, onBlur, ...props }: {
     inputValue: string,
-    suggestions?: string[],
+    suggestions?: any[],
     placeholder: string,
+    getSuggestionValue: (suggestion: any) => string,
+    renderSuggestion: (suggestion: any) => JSX.Element,
     onFetchSuggestions?: (value: string) => any,
     onClearSuggestions?: () => any,
     onValueErased?: () => any,
-    onValueChanged?: (newValue: string) => any
+    onValueChanged?: (newValue: string) => any,
+    onSuggestionSelected?: (value: any) => any,
+    onBlur?: () => any,
+    [x: string]: any
 }) => {
     // const dispatch = useAppDispatch();
     // const searchVal = useAppSelector(state => state.viewing.searching.searchVal);
 
     const [localValue, setLocalValue] = useState("");
+
+    console.log(`debouncing input value: ${inputValue}`);
 
     const eraseValue = () => {
         onValueErased?.();
@@ -30,7 +38,7 @@ const DebouncingInput = ({ inputValue, onValueErased, onValueChanged, suggestion
     let debouncer = useRef(setTimeout(() => {}, DEBOUNCE_LAG));
 
     return (
-        <div className={classes.searchBarWrapper}>
+        <div className={classes.container} {...props}>
            <Autosuggest
                 suggestions={suggestions ?? []}
                 onSuggestionsFetchRequested={({ value }) => {
@@ -47,14 +55,21 @@ const DebouncingInput = ({ inputValue, onValueErased, onValueChanged, suggestion
                     }, DEBOUNCE_LAG)}
                     
                 }
+                onSuggestionSelected={(_, { suggestion }) => { console.log(`hii`); onSuggestionSelected?.(suggestion); }}
                 onSuggestionsClearRequested={onClearSuggestions}
-                getSuggestionValue={s => s}
-                renderSuggestion={(s => <p>{s} משה</p>)}
+                getSuggestionValue={getSuggestionValue}
+                renderSuggestion={s => renderSuggestion?.(s) ?? <span>{s}</span>}
                 inputProps={
                     {
                         value: inputValue,
-                        onChange: (_, { newValue }) => onValueChanged?.(newValue),
-                        onBlur: () => { if (!suggestions?.includes(inputValue)) { onClearSuggestions?.() }},
+                        onChange: (_, { newValue }) => { console.log(`new value: ${newValue}`); onValueChanged?.(newValue); },
+                        onBlur: onBlur,
+                        // onBlur: () => { 
+                        //     if (!suggestions?.includes(inputValue)) {
+                        //         console.log(`invalid suggestion. clearing!`);
+                        //         onClearSuggestions?.()
+                        //     }
+                        // },
                         type: "search",
                         placeholder,
                     }
