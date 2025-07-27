@@ -9,7 +9,8 @@ export type Certification = {
     certificationDocumentLink?: string;
     firstCertificationDate?: Date;
     lastCertificationDate?: Date;
-    lastCertificationExpirationDate?: Date;
+    lastCertificationDurationMonths?: number;
+    //lastCertificationExpirationDate?: Date;
     plannedCertificationDate?: Date;
     _id: string
 };

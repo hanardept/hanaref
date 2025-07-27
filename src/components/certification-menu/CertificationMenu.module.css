@@ -63,7 +63,7 @@
     font-weight: bold;
 }
 
-.listItem {
+.itemListItem {
     border-top: 1px solid #e4e4e4;
     display: flex;
     padding-right: 1rem;
@@ -81,7 +81,7 @@
     border: 1px solid #ccc;
 }
 
-.listItem h2 {
+.itemListItem h2 {
     font-size: 1.1rem;
     margin: 0.5rem 0;
     text-overflow: ellipsis;
@@ -90,10 +90,55 @@
     white-space: nowrap;
     text-align: right;
 }
-.listItem p {
+.itemListItem p {
     margin: 0;
     margin-bottom: 0.5rem;
     text-align: right;
+}
+
+.technicianListItem {
+    border-top: 1px solid #e4e4e4;
+    display: flex;
+    padding-right: 1rem;
+    position: relative; /* This is needed for the badge positioning */
+
+    flex-direction: row; /* Arrange children in a row (default, but explicit for clarity) */
+    align-items: center; /* Vertically align items (text and image) in the center */
+    justify-content: flex-start;
+    padding-left: 1rem; /* Add padding to the left side */
+    gap: 15px; /* Space between the text content and the image */
+    height: 80px; /* Define a fixed height for the list item, adjust as needed */
+    box-sizing: border-box; /* Include padding and border in the total height */
+
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.technicianListItem h2 {
+    font-size: 1.1rem;
+    margin: 0.5rem 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: fit-content;
+    white-space: nowrap;
+    text-align: right;
+}
+.technicianListItem p {
+    margin: 0;
+    margin-bottom: 0.5rem;
+    text-align: right;
+}
+
+.datepicker {
+    text-align: right;
+    align-self: flex-end;
+}
+
+.datepicker, 
+.customDatePickerWidth > div.react-datepicker-wrapper, 
+.customDatePickerWidth > div > div.react-datepicker__input-container
+.customDatePickerWidth > div > div.react-datepicker__input-container input {
+   width: 100%;
 }
 
 

@@ -72,7 +72,7 @@ const Technicians = () => {
                 {!searchComplete && <LoadingSpinner />}
                 {searchComplete && technicians.length === 0 && <p className={classes.noResults}>לא נמצאו טכנאים</p>}
                 <div className={classes.itemsWrapper} onScroll={handleScroll}>
-                    {technicians.map(t => <ListItem key={t._id} _id={t._id} id={t.id} firstName={t.firstName} lastName={t.lastName} association={t.association} goToTechnicianPage={goToTechnicianPage} />)}
+                    {technicians.map(t => <ListItem className={classes.listItem} key={t._id} _id={t._id} id={t.id} firstName={t.firstName} lastName={t.lastName} association={t.association} goToTechnicianPage={goToTechnicianPage} />)}
                 </div>
             </>
         )
