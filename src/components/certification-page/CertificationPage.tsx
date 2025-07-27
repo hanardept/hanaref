@@ -5,7 +5,8 @@ import classes from './CertificationPage.module.css';
 import { viewingActions } from "../../store/viewing-slice";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { backendFirebaseUri } from "../../backend-variables/address";
-import { Certification } from "../../types/certification_types";
+import { Certification, fromJson } from "../../types/certification_types";
+import moment from "moment";
 
 
 const CertificationPage = () => {
@@ -31,12 +32,12 @@ const CertificationPage = () => {
             return await fetchedCertifications.json();
         };
 
-        getCertification().then(i => {
+        getCertification().then(c => {
             if (frontEndPrivilege !== 'admin') {
                 navigate(`/itemnotfound/${params.certificationid}`);
                 return;
             }
-            setCertification(i);
+            setCertification(fromJson(c));
             setLoading(false);
             if (frontEndPrivilege === "admin") {
                 dispatch(viewingActions.manageCertificationId(params.certificationid as string));
@@ -53,13 +54,27 @@ const CertificationPage = () => {
     }, [params.certificationid, authToken, navigate, dispatch, frontEndPrivilege]);
 
 
+    console.log(`date type: ${typeof certification?.firstCertificationDate}`);
+
+    const isoDate = (date: Date | undefined): string => {
+        if (!date) return "";
+        return date.toLocaleDateString("he-IL").replace(/\./g, "-");
+    }
+
+    const lastCertificationExpirationDate = certification?.lastCertificationDate ? moment(certification.lastCertificationDate).add(certification.lastCertificationDurationMonths ?? 0, 'months').toDate() : undefined;
 
     return (
         <>
             {loading && <LoadingSpinner />}
-            {!loading && certification && <div className={classes.certificationsPage}>
-                <h1>{certification.itemName}</h1>
-                <h1>{certification.technicianFirstName} {certification.technicianLastName}</h1>
+            {!loading && certification && <div className={classes.certificationPage}>
+                <h1>{certification.item.name}</h1>
+                <h1>{certification.technician.firstName} {certification.technician.lastName}</h1>
+                <p>{`תאריך הסמכה ראשונה: ${isoDate(certification.firstCertificationDate)}`}</p>
+                <p>{`תאריך הסמכה אחרונה: ${isoDate(certification.lastCertificationDate)}`}</p>
+                <p>{`אורך הסמכה אחרונה בחודשים: ${certification.lastCertificationDurationMonths ?? 0}`}</p>
+                <p>{`תאריך תפוגת הסמכה אחרונה: ${isoDate(lastCertificationExpirationDate)}`}</p>
+                <p>{`תאריך הסמכה צפויה: ${isoDate(certification.plannedCertificationDate)}`}</p>
+                {certification.certificationDocumentLink && <a href={certification.certificationDocumentLink}>לחץ להגעה לתעודת הסמכה</a>}
             </div>}
         </>
     );

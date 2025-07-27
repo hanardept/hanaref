@@ -17,6 +17,10 @@
     font-size: 1.3rem;
     padding: 5px;
 }
+.certificationMenu input[type="number"] {
+    width: 25ch;
+    margin-right: 15px;
+}
 .certificationMenu select {
     font-size: 1.1rem;
     padding: 5px;
@@ -27,6 +31,11 @@
 }
 .certificationMenu h3 {
     margin-top: 2rem;
+}
+
+.certificationMenu span {
+    width: fit-content;
+    padding: 15px;
 }
 
 /* InfoSectionMenu */

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState as useStateOriginal } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { backendFirebaseUri } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
@@ -13,31 +13,32 @@ import { default as TechnicianListItem } from '../technician-page/ListItem';
 import { MdEdit } from "react-icons/md";
 import DatePicker from "react-datepicker";
 import "./react-datepicker.css";
+import moment from 'moment';
 
 
 interface ItemSummary {
+    _id: string;
     cat: string;
     name: string;
     imageLink?: string;
 }
 
 interface TechnicianSummary {
+    _id: string;
     id: string;
     firstName: string;
     lastName: string;
 }
 
-const useState = (value: any) => {
-    let [state, setState] = useStateOriginal(value);
-    const setStateNew = (newValue: any) => {
-        var stackTrace = Error().stack;
-        console.log(`set state with new value ${newValue} stack trace: ${stackTrace}`); 
-        setState(newValue);
-    }
-    // var stackTrace = Error().stack;
-    // console.log(`use state stack trace: ${stackTrace}`); 
-    return [state, setStateNew];
-}
+// const useState = (value: any) => {
+//     let [state, setState] = useStateOriginal(value);
+//     const setStateNew = (newValue: any) => {
+//         var stackTrace = Error().stack;
+//         console.log(`set state with new value ${newValue} stack trace: ${stackTrace}`); 
+//         setState(newValue);
+//     }
+//     return [state, setStateNew];
+// }
 
 const CertificationMenu = () => {
     const params = useParams();
@@ -45,19 +46,21 @@ const CertificationMenu = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [id, setId] = useState("");
-    const [itemId, setItemId] = useState("");
-    const [itemCat, setItemCat] = useState("");
-    const [itemName, setItemName] = useState("");
-    const [itemImageLink, setItemImageLink] = useState("");
-    const [technicianId, setTechnicianId] = useState("");
-    const [technicianFirstName, setTechnicianFirstName] = useState("");
-    const [technicianLastName, setTechnicianLastName] = useState("");
+    const [itemSearchText, setItemSearchText] = useState("")
+    const [item, setItem] = useState(null as ItemSummary | null);
+    // const [itemCat, setItemCat] = useState("");
+    // const [itemName, setItemName] = useState("");
+    // const [itemImageLink, setItemImageLink] = useState("");
+    const [technicianSearchText, setTechnicianSearchText] = useState("");
+    const [technician, setTechnician] = useState(null as TechnicianSummary | null);
+    // const [technicianFirstName, setTechnicianFirstName] = useState("");
+    // const [technicianLastName, setTechnicianLastName] = useState("");
     const [certificationDocumentLink, setCertificationDocumentLink] = useState("");
-    const [firstCertificationDate, setFirstCertificationDate] = useState(null as unknown as Date);
-    const [lastCertificationDate, setLastCertificationDate] = useState(null as unknown as Date);
-    const [lastCertificationDurationMonths, setLastCertificationDurationMonths] = useState(null);
+    const [firstCertificationDate, setFirstCertificationDate] = useState(null as Date | null);
+    const [lastCertificationDate, setLastCertificationDate] = useState(null as Date | null);
+    const [lastCertificationDurationMonths, setLastCertificationDurationMonths] = useState(null as number | null);
     //const [lastCertificationExpirationDate, setLastCertificationExpirationDate] = useState(null as unknown as Date);
-    const [plannedCertificationDate, setPlannedCertificationDate] = useState(null as unknown as Date);
+    const [plannedCertificationDate, setPlannedCertificationDate] = useState(null as Date | null);
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
     const [itemSuggestions, setItemSuggestions] = useState([] as ItemSummary[]);
@@ -68,13 +71,14 @@ const CertificationMenu = () => {
 
     const certificationDetails = {
         id: id,
-        itemId,
-        itemCat,
-        itemName,
-        itemImageLink,
-        technicianId,
-        technicianFirstName,
-        technicianLastName,
+        // itemCat,
+        // itemName,
+        // itemImageLink,
+        // technicianId,
+        // technicianFirstName,
+        // technicianLastName,
+        item,
+        technician,
         certificationDocumentLink,
         firstCertificationDate,
         lastCertificationDate,
@@ -97,13 +101,15 @@ const CertificationMenu = () => {
             };
             getCertification().then((c: Certification) => {
                 setId(c._id);
-                setItemId(c.itemId);
-                setItemCat(c.itemCat);
-                setItemName(c.itemName);
-                setItemImageLink(c.itemImageLink ?? "");
-                setTechnicianId(c.technicianId);
-                setTechnicianFirstName(c.technicianFirstName);
-                setTechnicianLastName(c.technicianLastName);
+                setItemSearchText(c.item._id);
+                setItem(c.item);
+                // setItemCat(c.itemCat);
+                // setItemName(c.itemName);
+                // setItemImageLink(c.itemImageLink ?? "");
+                setTechnicianSearchText(c.technician._id);
+                setTechnician(c.technician);
+                // setTechnicianFirstName(c.technicianFirstName);
+                // setTechnicianLastName(c.technicianLastName);
                 setCertificationDocumentLink(c.certificationDocumentLink ?? "");
                 setFirstCertificationDate(c.firstCertificationDate ?? null);
                 setLastCertificationDate(c.lastCertificationDate ?? null);
@@ -122,7 +128,7 @@ const CertificationMenu = () => {
     
     const handleSave = () => {
 
-        if (!certificationDetails.itemCat || !certificationDetails.technicianId ||
+        if (!certificationDetails.item || !certificationDetails.technician ||
             (!certificationDetails.lastCertificationDate && !certificationDetails.plannedCertificationDate)) {
             // if the required fields of the Certification mongo schema are not filled then don't save
             console.log("Please make sure to enter an item name, technician and either last or planned certification date");
@@ -180,15 +186,19 @@ const CertificationMenu = () => {
         }).catch((err) => console.log(`Error deleting certification: ${err}`));
     }
 
-    console.log(`item cat: ${itemCat}, item name: ${itemName}, show item input: ${showItemInput}`);
-    const showItemListItem = !showItemInput && itemCat && itemName;
-    const showTechnicianListItem = !showTechnicianInput && technicianId && technicianFirstName;
+    const showItemListItem = !showItemInput && item;
+    const showTechnicianListItem = !showTechnicianInput && technician;
 
-    console.log(`item cat: ${itemCat}`)
-
-      const isPastDate = (date: Date) => {
+    const isPastDate = (date: Date) => {
         return date < new Date();
-      }
+    }
+
+    const isoDate = (date: Date | undefined): string => {
+        if (!date) return "";
+        return date.toLocaleDateString("he-IL").replace(/\./g, "-");
+    }    
+
+    const lastCertificationExpirationDate = lastCertificationDate ? moment(lastCertificationDate).add(lastCertificationDurationMonths ?? 0, 'months').toDate() : undefined; 
 
     return (
         <div className={classes.certificationMenu}>
@@ -197,9 +207,9 @@ const CertificationMenu = () => {
                 <span style={{ display: "flex", flexDirection: "row", justifyItems: 'flex-end', alignItems: "center", gap: "1rem" }}>
                     <ItemListItem
                         className={classes.itemListItem}
-                        cat={itemCat}
-                        name={itemName}
-                        imageLink={itemImageLink}
+                        cat={item.cat}
+                        name={item.name}
+                        imageLink={item.imageLink}
                         goToItemPage={() => setShowItemInput(true)}
                         shouldBeColored={false}
                     />
@@ -211,20 +221,14 @@ const CertificationMenu = () => {
             <DebouncingInput
                 id="react-autosuggest_cat"
                 className={classes.itemCat}
-                inputValue={itemCat}
+                inputValue={itemSearchText}
                 onValueChanged={(val: any) => {
                     console.log(`item cat changed to: ${val}`);
-                    setItemCat(val);
-                    //const found = itemSuggestions.find(s => s.cat === val);
-                    // setItemName(found?.name ?? "")
-                    // if (found) setShowItemInput(false);
+                    setItemSearchText(val);
                 }}
                 onSuggestionSelected={(s: any) => {
                     console.log(`item cat selected: ${s.cat}`);
-                    setItemId(s._id);
-                    setItemCat(s.cat);
-                    setItemName(s.name);
-                    setItemImageLink(s.imageLink);
+                    setItem(s);
                     setShowItemInput(false)
                 }}
                 getSuggestionValue={s => s.cat}
@@ -244,11 +248,10 @@ const CertificationMenu = () => {
                 renderSuggestion={s => <span>{s.cat} {s.name}</span>}
                 onClearSuggestions={() => { console.log(`clearing suggestions`); setItemSuggestions([]); }}
                 onBlur={() => {
-                    console.log(`itemName: ${itemCat}, itemSuggestions: ${JSON.stringify(itemSuggestions, null, 4 )}`);
-                    if (!itemSuggestions.find((s: any) => s.cat === itemCat)) {
+                    // console.log(`itemName: ${itemCat}, itemSuggestions: ${JSON.stringify(itemSuggestions, null, 4 )}`);
+                    if (!itemSuggestions.find((s: any) => s.cat === itemSearchText || s.name === itemSearchText)) {
                         console.log(`couldn't find`)
-                        setItemCat("");
-                        setItemName("");
+                        setItemSearchText("");
                     }
                 }}
             />)}
@@ -256,10 +259,10 @@ const CertificationMenu = () => {
                 <span style={{ display: "flex", flexDirection: "row", justifyItems: 'flex-end', alignItems: "center", gap: "1rem" }}>
                     <TechnicianListItem
                         className={classes.technicianListItem}
-                        id={technicianId}
-                        firstName={technicianFirstName}
-                        lastName={technicianLastName}
-                        goToTechnicianPage={() => setShowTechnicianInput(true)}
+                        id={technician.id}
+                        firstName={technician.firstName}
+                        lastName={technician.lastName}
+                        //goToTechnicianPage={() => setShowTechnicianInput(true)}
                     />
                     <MdEdit
                         onClick={() => setShowTechnicianInput(true)}
@@ -269,17 +272,15 @@ const CertificationMenu = () => {
             <DebouncingInput
                 id="react-autosuggest_technician"
                 className={classes.itemCat}
-                inputValue={technicianId}
+                inputValue={technicianSearchText}
                 onValueChanged={(val: any) => {
-                    setTechnicianId(val);
+                    setTechnicianSearchText(val);
                     //const found = itemSuggestions.find(s => s.cat === val);
                     // setItemName(found?.name ?? "")
                     // if (found) setShowItemInput(false);
                 }}
                 onSuggestionSelected={(t: any) => {
-                    setTechnicianId(t.id)
-                    setTechnicianFirstName(t.firstName);
-                    setTechnicianLastName(t.lastName);
+                    setTechnician(t)
                     setShowTechnicianInput(false)
                 }}
                 getSuggestionValue={s => s.id}
@@ -296,35 +297,27 @@ const CertificationMenu = () => {
                     .then(jsonRes => setTechnicianSuggestions(jsonRes))
                     .catch((err) => console.log(`Error getting technician suggestions: ${err}`));
                 }}
-                renderSuggestion={t => <span>{t.id} {t.firstName} {t.LastName}</span>}
+                renderSuggestion={t => <span>{t.id} {t.firstName} {t.lastName}</span>}
                 onClearSuggestions={() => setTechnicianSuggestions([])}
                 onBlur={() => {
-                    if (!technicianSuggestions.find((t: any) => t.id === technicianId)) {
-                        setTechnicianId("");
-                        setTechnicianFirstName("");
-                        setTechnicianLastName("");
+                    if (!technicianSuggestions.find((t: any) => t.id === technicianSearchText || t.firstName === technicianSearchText || t.lastName === technicianSearchText)) {
+                        setTechnicianSearchText("");
                     }
                 }}
             />)}
-            <span style={{ width: 'fit-content' }}>
+            <span>
                 <DatePicker className={classes.datepicker} selected={firstCertificationDate} filterDate={isPastDate} dateFormat="dd/MM/yyyy" placeholderText='תאריך הסמכה ראשונה' onChange={setFirstCertificationDate} />
             </span>
-            <span style={{ width: 'fit-content' }}>
+            <span>
                 <DatePicker className={classes.datepicker} selected={lastCertificationDate} filterDate={isPastDate} dateFormat="dd/MM/yyyy" placeholderText='תאריך הסמכה אחרונה' onChange={setLastCertificationDate} />
             </span>  
-            <input type="number" style={{ width: "25ch" }} placeholder="אורך הסמכה אחרונה בחודשים" value={lastCertificationDurationMonths ?? 0} disabled={!lastCertificationDate} onChange={(e) => 
+            <input type="number" placeholder="אורך הסמכה אחרונה בחודשים" value={lastCertificationDurationMonths ?? 0} disabled={!lastCertificationDate} onChange={(e) => 
                 handleInput(val => Number.parseInt(val) && setLastCertificationDurationMonths(+val), e)} />
-            {/* <span style={{ width: 'fit-content' }}>
-                <DatePicker className={classes.datepicker} selected={lastCertificationExpirationDate} dateFormat="dd/MM/yyyy" placeholderText='תאריך תפוגת הסמכה אחרונה' onChange={(date) => setLastCertificationExpirationDate(date)} />
-            </span> */}
-            <span style={{ width: 'fit-content' }}>
-                <DatePicker className={classes.datepicker} selected={plannedCertificationDate} filterDate={date => !isPastDate(date)} dateFormat="dd/MM/yyyy" placeholderText='תאריך הסמכה צפויה ' onChange={setPlannedCertificationDate} />
+            <span>{`תאריך תפוגת הסמכה אחרונה: ${isoDate(lastCertificationExpirationDate)}`}</span>
+            <span>
+                <DatePicker className={classes.datepicker} selected={plannedCertificationDate} filterDate={date => !isPastDate(date)} dateFormat="dd/MM/yyyy" placeholderText='תאריך הסמכה צפויה' onChange={setPlannedCertificationDate} />
             </span>   
             <input type="text" placeholder='קישור לתעודת הסמכה' value={certificationDocumentLink} disabled={!lastCertificationDate} onChange={(e) => handleInput(setCertificationDocumentLink, e)} />       
-            {/* // <input type="text" placeholder='ת.ז.' value={id} onChange={(e) => handleInput(setId, e)} />
-            // <input type="text" placeholder='שם פרטי' value={firstName} onChange={(e) => handleInput(setFirstName, e)} />
-            // <input type="text" placeholder='שם משפחה' value={lastName} onChange={(e) => handleInput(setLastName, e)} />
-            // <AssociationSelection priorChosenAssociation={association} selectAssociation={association => setAssociation(association)} /> */}
             <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "2.5rem" }} />
             {params.technicianid && <BigButton text="מחק הסמכה" action={() => setAreYouSureDelete(true)} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} />}
             {areYouSureDelete && <AreYouSure text="האם באמת למחוק הסמכה?" leftText='מחק' leftAction={handleDelete} rightText='לא' rightAction={() => setAreYouSureDelete(false)} />}

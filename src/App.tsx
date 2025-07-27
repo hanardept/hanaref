@@ -82,7 +82,7 @@ function App() {
           <Route path="/technicianmenu/newtechnician/:newtechnicianid" element={<AdminOnly><TechnicianMenu /></AdminOnly>} />
 
           <Route path="/certifications" element={<AdminOnly><Certifications /></AdminOnly>} />
-          <Route path="/certifications/:certificationsid" element={<AdminOnly><CertificationPage /></AdminOnly>} />
+          <Route path="/certifications/:certificationid" element={<AdminOnly><CertificationPage /></AdminOnly>} />
           <Route path="/certificationmenu" element={<AdminOnly><CertificationMenu /></AdminOnly>} />          
           <Route path="/certificationmenu/:certificationid" element={<AdminOnly><CertificationMenu /></AdminOnly>} />
           <Route path="/certificationmenu/newcertification/:newcertificationid" element={<AdminOnly><CertificationMenu /></AdminOnly>} />          

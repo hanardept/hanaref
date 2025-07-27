@@ -27,6 +27,7 @@
 }
 .certificationPage p, a {
     text-indent: 1rem;
+    text-align: right;
 }
 .certificationPage a {
     margin-block: 0.5rem;

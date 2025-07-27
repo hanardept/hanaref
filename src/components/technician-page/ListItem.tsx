@@ -7,19 +7,20 @@ interface ListItemProps {
     firstName: string;
     lastName: string;
     association?: string
-    goToTechnicianPage: (_id: string) => void;
+    goToTechnicianPage?: (_id: string) => void;
     className?: string;
 }
 
 
 const ListItem = (props: ListItemProps) => {
     const handleClick = () => {
-        props.goToTechnicianPage(props._id ?? props.id);
+        props.goToTechnicianPage?.(props._id ?? props.id);
     }
 
 
     const style: React.CSSProperties = {};
 
+    console.log(`ListItem: ${props.firstName} ${props.lastName} (${props.id})`);
     return (
         <div onClick={handleClick} className={props.className} style={style}>
             <div className={classes.itemTextContent}>
