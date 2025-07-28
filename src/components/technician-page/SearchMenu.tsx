@@ -22,7 +22,7 @@ const SearchMenu = ({ hideArchive = false }: { hideArchive?: boolean }) => {
                                 checked={showArchived}
                                 onChange={(e) => handleShowArchived(e.target.checked)}
                             />
-                            הצג פריטים בארכיון
+                            הצג טכנאים בארכיון
                         </label>
                     </div>
                 )}
