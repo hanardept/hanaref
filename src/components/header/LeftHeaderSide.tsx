@@ -1,7 +1,8 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import AdminOnly from "../authorization/AdminOnly";
-import { exportDataToCsv } from "../item-search/DownloadItemWorksheet";
+import { exportItemsToCsv } from "../item-search/DownloadItemWorksheet";
+import { exportCertificationsToCsv } from "../certification-page/DownloadCertificationWorksheet";
 import classes from './Header.module.css';
 import { CiExport } from "react-icons/ci";
 
@@ -15,7 +16,7 @@ const LeftHeaderSide = () => {
 
     const addItemAndManageSectors = 
         <span className={classes.toolbarSpan}>
-            <span onClick={() => dispatch(exportDataToCsv())} style={{ lineHeight: 0 }}><CiExport/></span>
+            <span onClick={() => dispatch(exportItemsToCsv())} style={{ lineHeight: 0 }}><CiExport/></span>
             <span onClick={() => navigate('/itemmenu')} style={{ lineHeight: 0 }}>+</span>
             <span onClick={() => navigate('/managesectors')} style={{ lineHeight: 0 }}>⋮</span>
         </span>
@@ -29,6 +30,7 @@ const LeftHeaderSide = () => {
 
     const addCertification = 
         <span className={classes.toolbarSpan}>
+            <span onClick={() => dispatch(exportCertificationsToCsv())} style={{ lineHeight: 0 }}><CiExport/></span>
             <span onClick={() => navigate('/certificationmenu')} style={{ lineHeight: 0 }}>+</span>
         </span>
     ;

@@ -2,19 +2,19 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
  import { saveAs } from 'file-saver';
 import { backendFirebaseUri } from "../../backend-variables/address";
 
-export const exportItemsToCsv = createAsyncThunk(
+export const exportCertificationsToCsv = createAsyncThunk(
   'data/exportDataToXlsx',
   async (arg, { getState, rejectWithValue }) => {
     try {
       const state = getState() as { auth: { jwt: string } };
       const authToken = state.auth.jwt;
 
-      fetch(encodeURI(`${backendFirebaseUri}/items/download-worksheet`), {
+      fetch(encodeURI(`${backendFirebaseUri}/certifications/download-worksheet`), {
           headers: { 'auth-token': authToken }
       })
       .then(res => res.blob())
       .then(blob => {
-          saveAs(blob, 'items.xlsx');
+          saveAs(blob, 'certifications.xlsx');
       })
       .catch(err => {
           console.error("Error during new search:", err);
