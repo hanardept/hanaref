@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
 import { viewingActions } from '../../store/viewing-slice';
 import AreYouSure from '../UI/AreYouSure';
 import BigButton from '../UI/BigButton';
+import "./react-datepicker.css";
 import classes from './CertificationMenu.module.css';
 import { Certification } from '../../types/certification_types';
 import DebouncingInput from './DebouncingInput';
@@ -12,7 +13,6 @@ import { default as ItemListItem } from '../item-search/ListItem';
 import { default as TechnicianListItem } from '../technician-page/ListItem';
 import { MdEdit } from "react-icons/md";
 import DatePicker from "react-datepicker";
-import "./react-datepicker.css";
 import moment from 'moment';
 
 
