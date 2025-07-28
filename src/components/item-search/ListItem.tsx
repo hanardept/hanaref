@@ -12,6 +12,7 @@ interface ListItemProps {
     goToItemPage: (cat: string) => void;
     isArchived?: boolean; // It's optional so existing uses don't break.
     className?: string;
+    imageClassName?: string;
 }
 // highlight-end
 
@@ -42,7 +43,7 @@ const ListItem = (props: ListItemProps) => { // Use the new interface
                 <h2>{props.name}</h2>
                 <p>{props.cat}</p>
             </div>
-            {props.imageLink?.length !== undefined && props.imageLink?.length > 0 && <img src={props.imageLink} alt={props.cat} className={classes.itemImage} />}
+            {props.imageLink?.length !== undefined && props.imageLink?.length > 0 && <img src={props.imageLink} alt={props.cat} className={props.imageClassName} />}
             {/* 4. Add a visual marker for archived items using a span. */}
             {props.isArchived && <span className={classes.archivedBadge}>בארכיון</span>}
         </div>

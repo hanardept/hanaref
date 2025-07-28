@@ -204,9 +204,10 @@ const CertificationMenu = () => {
         <div className={classes.certificationMenu}>
             <h1>{params.certificationid ? "עריכת הסמכה" : "הוספת הסמכה"}</h1>
             {showItemListItem ? (
-                <span style={{ display: "flex", flexDirection: "row", justifyItems: 'flex-end', alignItems: "center", gap: "1rem" }}>
+                <span className={classes.editableItemListItem}>
                     <ItemListItem
                         className={classes.itemListItem}
+                        imageClassName={classes.itemListItemImage}
                         cat={item.cat}
                         name={item.name}
                         imageLink={item.imageLink}
@@ -255,7 +256,7 @@ const CertificationMenu = () => {
                     }
                 }}
             />)}
-            {showTechnicianListItem ? (
+            {/* {showTechnicianListItem ? (
                 <span style={{ display: "flex", flexDirection: "row", justifyItems: 'flex-end', alignItems: "center", gap: "1rem" }}>
                     <TechnicianListItem
                         className={classes.technicianListItem}
@@ -304,14 +305,14 @@ const CertificationMenu = () => {
                         setTechnicianSearchText("");
                     }
                 }}
-            />)}
+            />)} */}
             <span>
                 <DatePicker className={classes.datepicker} selected={firstCertificationDate} filterDate={isPastDate} dateFormat="dd/MM/yyyy" placeholderText='תאריך הסמכה ראשונה' onChange={setFirstCertificationDate} />
             </span>
             <span>
                 <DatePicker className={classes.datepicker} selected={lastCertificationDate} filterDate={isPastDate} dateFormat="dd/MM/yyyy" placeholderText='תאריך הסמכה אחרונה' onChange={setLastCertificationDate} />
             </span>  
-            <input type="number" placeholder="אורך הסמכה אחרונה בחודשים" value={lastCertificationDurationMonths ?? 0} disabled={!lastCertificationDate} onChange={(e) => 
+            <input type="number" placeholder="אורך הסמכה אחרונה בחודשים" value={lastCertificationDurationMonths ?? ''} disabled={!lastCertificationDate} onChange={(e) => 
                 handleInput(val => Number.parseInt(val) && setLastCertificationDurationMonths(+val), e)} />
             <span>{`תאריך תפוגת הסמכה אחרונה: ${isoDate(lastCertificationExpirationDate)}`}</span>
             <span>

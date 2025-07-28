@@ -9,6 +9,8 @@
 .certificationMenu > * {
     margin-bottom: 1rem;
     margin-right: 1rem;
+    margin-left: 1rem;
+    text-align: right;
 }
 .certificationMenu h1 {
     margin-top: 0.5rem;
@@ -38,26 +40,47 @@
     margin-top: 2rem;
 }
 
-.certificationMenu>span {
+/* .certificationMenu>span {
     width: fit-content;
+} */
+
+.editableItemListItem {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
 }
 
 .itemListItem {
     border-top: 1px solid #e4e4e4;
     display: flex;
-    padding-right: 1rem;
-    position: relative; /* This is needed for the badge positioning */
-
-    flex-direction: row; /* Arrange children in a row (default, but explicit for clarity) */
+    /* padding-right: 1rem; */
+    /* position: relative; */
+    padding-left: 0;
+    flex-direction: row;
+    flex-grow: 1;
     align-items: center; /* Vertically align items (text and image) in the center */
     justify-content: flex-start;
-    padding-left: 1rem; /* Add padding to the left side */
-    gap: 15px; /* Space between the text content and the image */
+    gap: 5px; /* Space between the text content and the image */
     height: 80px; /* Define a fixed height for the list item, adjust as needed */
-    box-sizing: border-box; /* Include padding and border in the total height */
+    /* box-sizing: border-box; */
+    overflow-x: scroll;
+    min-width: 0;
 
     border-radius: 8px;
     border: 1px solid #ccc;
+}
+
+.itemListItemImage {
+    /* Image sizing */
+    height: 90%; /* Make image height fit the parent .listItem's height */
+    width: auto; /* Maintain aspect ratio */
+    object-fit: contain; /* Ensures the whole image is visible without cropping */
+    max-width: 80px; /* Optional: Set a max width to prevent extremely wide images. Adjust as needed based on your 80px height. */
+    flex-shrink: 0; /* Prevent the image from shrinking if space is tight */
+    /*margin-right: 1.2rem*/
 }
 
 .itemListItem h2 {
