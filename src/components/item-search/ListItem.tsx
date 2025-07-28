@@ -12,6 +12,7 @@ interface ListItemProps {
     goToItemPage: (cat: string) => void;
     isArchived?: boolean; // It's optional so existing uses don't break.
     className?: string;
+    textContentClassName?: string;
     imageClassName?: string;
 }
 // highlight-end
@@ -39,7 +40,7 @@ const ListItem = (props: ListItemProps) => { // Use the new interface
     return (
         // 3. Apply the combined style object.
         <div onClick={handleClick} className={props.className} style={style}>
-            <div className={classes.itemTextContent}>
+            <div className={props.textContentClassName}>
                 <h2>{props.name}</h2>
                 <p>{props.cat}</p>
             </div>

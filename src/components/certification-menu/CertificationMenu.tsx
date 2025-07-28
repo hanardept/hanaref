@@ -207,6 +207,7 @@ const CertificationMenu = () => {
                 <span className={classes.editableItemListItem}>
                     <ItemListItem
                         className={classes.itemListItem}
+                        textContentClassName={classes.itemTextContent}
                         imageClassName={classes.itemListItemImage}
                         cat={item.cat}
                         name={item.name}
