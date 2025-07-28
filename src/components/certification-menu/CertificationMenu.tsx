@@ -282,16 +282,39 @@ const CertificationMenu = () => {
                 }}
             />)}
             <span>
-                <DatePicker className={classes.datepicker} selected={firstCertificationDate} filterDate={isPastDate} dateFormat="dd/MM/yyyy" placeholderText='תאריך הסמכה ראשונה' onChange={setFirstCertificationDate} />
+                <DatePicker
+                    className={classes.datepicker}
+                    selected={firstCertificationDate}
+                    filterDate={isPastDate} dateFormat="dd/MM/yyyy"
+                    placeholderText='תאריך הסמכה ראשונה'
+                    onChange={setFirstCertificationDate}
+                    popperPlacement="bottom"
+                />
             </span>
             <span>
-                <DatePicker className={classes.datepicker} selected={lastCertificationDate} filterDate={isPastDate} dateFormat="dd/MM/yyyy" placeholderText='תאריך הסמכה אחרונה' onChange={setLastCertificationDate} />
+                <DatePicker
+                    className={classes.datepicker}
+                    selected={lastCertificationDate}
+                    filterDate={isPastDate}
+                    dateFormat="dd/MM/yyyy"
+                    placeholderText='תאריך הסמכה אחרונה'
+                    onChange={setLastCertificationDate}
+                    popperPlacement="bottom"
+                />
             </span>  
             <input type="number" placeholder="אורך הסמכה אחרונה בחודשים" value={lastCertificationDurationMonths ?? ''} disabled={!lastCertificationDate} onChange={(e) => 
                 handleInput(val => Number.parseInt(val) && setLastCertificationDurationMonths(+val), e)} />
             <span>{`תאריך תפוגת הסמכה אחרונה: ${isoDate(lastCertificationExpirationDate)}`}</span>
             <span>
-                <DatePicker className={classes.datepicker} selected={plannedCertificationDate} filterDate={date => !isPastDate(date)} dateFormat="dd/MM/yyyy" placeholderText='תאריך הסמכה צפויה' onChange={setPlannedCertificationDate} />
+                <DatePicker
+                    className={classes.datepicker}
+                    selected={plannedCertificationDate}
+                    filterDate={date => !isPastDate(date)}
+                    dateFormat="dd/MM/yyyy"
+                    placeholderText='תאריך הסמכה צפויה'
+                    onChange={setPlannedCertificationDate}
+                    popperPlacement="bottom"
+                />
             </span>   
             <input type="text" placeholder='קישור לתעודת הסמכה' value={certificationDocumentLink} disabled={!lastCertificationDate} onChange={(e) => handleInput(setCertificationDocumentLink, e)} />       
             <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "2.5rem" }} />
