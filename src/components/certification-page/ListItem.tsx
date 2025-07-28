@@ -1,6 +1,4 @@
 import { Certification } from '../../types/certification_types';
-import classes from './Certifications.module.css';
-
 
 interface ListItemProps {
     _id: string;
