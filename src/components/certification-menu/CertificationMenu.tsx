@@ -30,16 +30,6 @@ interface TechnicianSummary {
     lastName: string;
 }
 
-// const useState = (value: any) => {
-//     let [state, setState] = useStateOriginal(value);
-//     const setStateNew = (newValue: any) => {
-//         var stackTrace = Error().stack;
-//         console.log(`set state with new value ${newValue} stack trace: ${stackTrace}`); 
-//         setState(newValue);
-//     }
-//     return [state, setStateNew];
-// }
-
 const CertificationMenu = () => {
     const params = useParams();
     const authToken = useAppSelector(state => state.auth.jwt);
@@ -71,19 +61,12 @@ const CertificationMenu = () => {
 
     const certificationDetails = {
         id: id,
-        // itemCat,
-        // itemName,
-        // itemImageLink,
-        // technicianId,
-        // technicianFirstName,
-        // technicianLastName,
         item,
         technician,
         certificationDocumentLink,
         firstCertificationDate,
         lastCertificationDate,
         lastCertificationDurationMonths,
-        //lastCertificationExpirationDate,
         plannedCertificationDate,
     };
 
@@ -101,20 +84,14 @@ const CertificationMenu = () => {
             };
             getCertification().then((c: Certification) => {
                 setId(c._id);
-                setItemSearchText(c.item._id);
+                setItemSearchText(c.item.cat);
                 setItem(c.item);
-                // setItemCat(c.itemCat);
-                // setItemName(c.itemName);
-                // setItemImageLink(c.itemImageLink ?? "");
-                setTechnicianSearchText(c.technician._id);
+                setTechnicianSearchText(c.technician.id);
                 setTechnician(c.technician);
-                // setTechnicianFirstName(c.technicianFirstName);
-                // setTechnicianLastName(c.technicianLastName);
                 setCertificationDocumentLink(c.certificationDocumentLink ?? "");
                 setFirstCertificationDate(c.firstCertificationDate ?? null);
                 setLastCertificationDate(c.lastCertificationDate ?? null);
                 setLastCertificationDurationMonths(c.lastCertificationDurationMonths ?? null);
-                //setLastCertificationExpirationDate(c.lastCertificationExpirationDate ?? null);
                 setPlannedCertificationDate(c.plannedCertificationDate ?? null);
             }).catch(e => console.log(`Error fetching certification details: ${e}`));
         }
@@ -212,7 +189,6 @@ const CertificationMenu = () => {
                         cat={item.cat}
                         name={item.name}
                         imageLink={item.imageLink}
-                        goToItemPage={() => setShowItemInput(true)}
                         shouldBeColored={false}
                     />
                     <MdEdit
@@ -257,14 +233,15 @@ const CertificationMenu = () => {
                     }
                 }}
             />)}
-            {/* {showTechnicianListItem ? (
+            {showTechnicianListItem ? (
                 <span style={{ display: "flex", flexDirection: "row", justifyItems: 'flex-end', alignItems: "center", gap: "1rem" }}>
                     <TechnicianListItem
                         className={classes.technicianListItem}
+                        textContentClassName={classes.technicianTextContent}
                         id={technician.id}
                         firstName={technician.firstName}
                         lastName={technician.lastName}
-                        //goToTechnicianPage={() => setShowTechnicianInput(true)}
+                        shouldBeColored={false}
                     />
                     <MdEdit
                         onClick={() => setShowTechnicianInput(true)}
@@ -277,9 +254,6 @@ const CertificationMenu = () => {
                 inputValue={technicianSearchText}
                 onValueChanged={(val: any) => {
                     setTechnicianSearchText(val);
-                    //const found = itemSuggestions.find(s => s.cat === val);
-                    // setItemName(found?.name ?? "")
-                    // if (found) setShowItemInput(false);
                 }}
                 onSuggestionSelected={(t: any) => {
                     setTechnician(t)
@@ -306,7 +280,7 @@ const CertificationMenu = () => {
                         setTechnicianSearchText("");
                     }
                 }}
-            />)} */}
+            />)}
             <span>
                 <DatePicker className={classes.datepicker} selected={firstCertificationDate} filterDate={isPastDate} dateFormat="dd/MM/yyyy" placeholderText='תאריך הסמכה ראשונה' onChange={setFirstCertificationDate} />
             </span>

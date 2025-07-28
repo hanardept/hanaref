@@ -2,24 +2,22 @@
 
 import classes from './HomePage.module.css'; // Uses the same CSS file as HomePage
 
-// highlight-start
 // 1. Add 'isArchived' to the props interface.
 interface ListItemProps {
     name: string;
     cat: string;
     imageLink?: string;
     shouldBeColored: boolean;
-    goToItemPage: (cat: string) => void;
+    goToItemPage?: (cat: string) => void;
     isArchived?: boolean; // It's optional so existing uses don't break.
     className?: string;
     textContentClassName?: string;
     imageClassName?: string;
 }
-// highlight-end
 
 const ListItem = (props: ListItemProps) => { // Use the new interface
     const handleClick = () => {
-        props.goToItemPage(props.cat);
+        props.goToItemPage?.(props.cat);
     }
 
     // highlight-start

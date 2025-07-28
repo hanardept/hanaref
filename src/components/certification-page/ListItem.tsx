@@ -4,8 +4,10 @@ import classes from './Certifications.module.css';
 
 interface ListItemProps {
     _id: string;
-    certification: Certification
+    certification: Certification;
     goToCertificationPage: (_id: string) => void;
+    className?: string;
+    textContentClassName?: string;
 }
 
 
@@ -18,8 +20,8 @@ const ListItem = (props: ListItemProps) => {
     const style: React.CSSProperties = {};
 
     return (
-        <div onClick={handleClick} className={classes.listItem} style={style}>
-            <div className={classes.itemTextContent}>
+        <div onClick={handleClick} className={props.className} style={style}>
+            <div className={props.textContentClassName}>
                 <h2>{props.certification.item.name}</h2>
                 <h2>{props.certification.technician.firstName} {props.certification.technician.lastName}</h2>
             </div>

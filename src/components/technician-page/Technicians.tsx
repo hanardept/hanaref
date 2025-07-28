@@ -6,6 +6,7 @@ import { UIEvent, useEffect } from "react";
 import { backendFirebaseUri } from "../../backend-variables/address";
 import { techniciansActions } from "../../store/technicians-slice";
 import { useNavigate } from "react-router-dom";
+import SearchMenu from "./SearchMenu";
 
 
 const Technicians = () => {
@@ -13,7 +14,7 @@ const Technicians = () => {
     const navigate = useNavigate();
     const searchComplete = useAppSelector(state => state.technicians.searchComplete);
     const technicians = useAppSelector(state => state.technicians.technicians);
-    const { searchVal } = useAppSelector(state => state.viewing.searching);
+    const { searchVal, showArchived } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
     const dispatch = useAppDispatch();
     //const [initialized, setInitialized] = useState(false);
@@ -29,8 +30,10 @@ const Technicians = () => {
         let scrollThrottler = true;
         if (scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
             scrollThrottler = false;
+
+            const archiveStatus = showArchived ? 'all' : 'active';
             
-            fetch(encodeURI(`${backendFirebaseUri}/technicians`), {
+            fetch(encodeURI(`${backendFirebaseUri}/technicians?status=${archiveStatus}`), {
                 headers: { 'auth-token': authToken }
             })
             .then(res => res.json())
@@ -49,7 +52,8 @@ const Technicians = () => {
     useEffect(() => {
 
         const triggerNewSearch = () => {
-            fetch(encodeURI(`${backendFirebaseUri}/technicians?search=${searchVal}`), {
+            const archiveStatus = showArchived ? 'all' : 'active';
+            fetch(encodeURI(`${backendFirebaseUri}/technicians?search=${searchVal}&status=${archiveStatus}`), {
                 headers: { 'auth-token': authToken }
             })
             .then(res => res.json())
@@ -65,14 +69,16 @@ const Technicians = () => {
 
         triggerNewSearch();
 
-    }, [dispatch, authToken, searchVal /*initialized*/]);
+    }, [dispatch, authToken, searchVal, showArchived /*initialized*/]);
 
     return (
             <>
+                <SearchMenu/>
+                <div className={classes.listItemPusher}></div>
                 {!searchComplete && <LoadingSpinner />}
                 {searchComplete && technicians.length === 0 && <p className={classes.noResults}>לא נמצאו טכנאים</p>}
                 <div className={classes.itemsWrapper} onScroll={handleScroll}>
-                    {technicians.map(t => <ListItem className={classes.listItem} key={t._id} _id={t._id} id={t.id} firstName={t.firstName} lastName={t.lastName} association={t.association} goToTechnicianPage={goToTechnicianPage} />)}
+                    {technicians.map(t => <ListItem className={classes.listItem} textContentClassName={classes.itemTextContent} key={t._id} _id={t._id} id={t.id} shouldBeColored={false} firstName={t.firstName} lastName={t.lastName} association={t.association} isArchived={t.archived} goToTechnicianPage={goToTechnicianPage} />)}
                 </div>
             </>
         )

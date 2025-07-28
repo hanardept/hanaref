@@ -3,5 +3,6 @@ export type Technician = {
     firstName: string,
     lastName: string,
     association: string,
+    archived?: boolean,
     _id: string
 };

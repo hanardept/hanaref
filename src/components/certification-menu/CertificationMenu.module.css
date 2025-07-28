@@ -76,13 +76,11 @@
 }
 
 .itemListItemImage {
-    /* Image sizing */
     height: 90%; /* Make image height fit the parent .listItem's height */
     width: auto; /* Maintain aspect ratio */
     object-fit: contain; /* Ensures the whole image is visible without cropping */
     max-width: 80px; /* Optional: Set a max width to prevent extremely wide images. Adjust as needed based on your 80px height. */
     flex-shrink: 0; /* Prevent the image from shrinking if space is tight */
-    /*margin-right: 1.2rem*/
 }
 
 .itemTextContent {
@@ -112,19 +110,30 @@
 .technicianListItem {
     border-top: 1px solid #e4e4e4;
     display: flex;
-    padding-right: 1rem;
-    position: relative; /* This is needed for the badge positioning */
+    /* padding-right: 1rem; */
+    /* position: relative; */
 
     flex-direction: row; /* Arrange children in a row (default, but explicit for clarity) */
     align-items: center; /* Vertically align items (text and image) in the center */
     justify-content: flex-start;
-    padding-left: 1rem; /* Add padding to the left side */
-    gap: 15px; /* Space between the text content and the image */
+    padding-left: 0; /* Add padding to the left side */
+    gap: 5px; /* Space between the text content and the image */
     height: 80px; /* Define a fixed height for the list item, adjust as needed */
     box-sizing: border-box; /* Include padding and border in the total height */
+    overflow-x: hidden;
+    min-width: 0;
 
     border-radius: 8px;
     border: 1px solid #ccc;
+    padding: 0 1rem;
+}
+
+.technicianListItemImage {
+    height: 90%; /* Make image height fit the parent .listItem's height */
+    width: auto; /* Maintain aspect ratio */
+    object-fit: contain; /* Ensures the whole image is visible without cropping */
+    max-width: 80px; /* Optional: Set a max width to prevent extremely wide images. Adjust as needed based on your 80px height. */
+    flex-shrink: 0; /* Prevent the image from shrinking if space is tight */
 }
 
 .technicianListItem h2 {
