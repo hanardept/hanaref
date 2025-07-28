@@ -38,18 +38,12 @@ const CertificationMenu = () => {
     const [id, setId] = useState("");
     const [itemSearchText, setItemSearchText] = useState("")
     const [item, setItem] = useState(null as ItemSummary | null);
-    // const [itemCat, setItemCat] = useState("");
-    // const [itemName, setItemName] = useState("");
-    // const [itemImageLink, setItemImageLink] = useState("");
     const [technicianSearchText, setTechnicianSearchText] = useState("");
     const [technician, setTechnician] = useState(null as TechnicianSummary | null);
-    // const [technicianFirstName, setTechnicianFirstName] = useState("");
-    // const [technicianLastName, setTechnicianLastName] = useState("");
     const [certificationDocumentLink, setCertificationDocumentLink] = useState("");
     const [firstCertificationDate, setFirstCertificationDate] = useState(null as Date | null);
     const [lastCertificationDate, setLastCertificationDate] = useState(null as Date | null);
     const [lastCertificationDurationMonths, setLastCertificationDurationMonths] = useState(null as number | null);
-    //const [lastCertificationExpirationDate, setLastCertificationExpirationDate] = useState(null as unknown as Date);
     const [plannedCertificationDate, setPlannedCertificationDate] = useState(null as Date | null);
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
@@ -95,7 +89,7 @@ const CertificationMenu = () => {
                 setPlannedCertificationDate(c.plannedCertificationDate ?? null);
             }).catch(e => console.log(`Error fetching certification details: ${e}`));
         }
-       
+        
     }, [params.certificationid, authToken]);
 
     const handleInput = (setFunc: (val: string) => any, event: ChangeEvent<HTMLInputElement>) => {
@@ -173,116 +167,126 @@ const CertificationMenu = () => {
     const isoDate = (date: Date | undefined): string => {
         if (!date) return "";
         return date.toLocaleDateString("he-IL").replace(/\./g, "-");
-    }    
+    }     
 
     const lastCertificationExpirationDate = lastCertificationDate ? moment(lastCertificationDate).add(lastCertificationDurationMonths ?? 0, 'months').toDate() : undefined; 
 
     return (
         <div className={classes.certificationMenu}>
             <h1>{params.certificationid ? "עריכת הסמכה" : "הוספת הסמכה"}</h1>
-            {showItemListItem ? (
-                <span className={classes.editableItemListItem}>
-                    <ItemListItem
-                        className={classes.itemListItem}
-                        textContentClassName={classes.itemTextContent}
-                        imageClassName={classes.itemListItemImage}
-                        cat={item.cat}
-                        name={item.name}
-                        imageLink={item.imageLink}
-                        shouldBeColored={false}
+            <div className={classes.inputGroup}> {/* Added a div to group label and input */}
+                <label htmlFor="itemSearch">מכשיר</label>            
+                {showItemListItem ? (
+                    <span className={classes.editableItemListItem}>
+                        <ItemListItem
+                            className={classes.itemListItem}
+                            textContentClassName={classes.itemTextContent}
+                            imageClassName={classes.itemListItemImage}
+                            cat={item.cat}
+                            name={item.name}
+                            imageLink={item.imageLink}
+                            shouldBeColored={false}
+                            goToItemPage={() => setShowItemInput(true)}
+                        />
+                        <MdEdit
+                            onClick={() => setShowItemInput(true)}
+                        />
+                    </span>
+                ) : (
+                    <DebouncingInput
+                        id="itemSearch" // Changed ID for uniqueness and clarity
+                        className={classes.itemCat}
+                        inputValue={itemSearchText}
+                        onValueChanged={(val: any) => {
+                            console.log(`item cat changed to: ${val}`);
+                            setItemSearchText(val);
+                        }}
+                        onSuggestionSelected={(s: any) => {
+                            console.log(`item cat selected: ${s.cat}`);
+                            setItem(s);
+                            setShowItemInput(false)
+                        }}
+                        getSuggestionValue={s => s.cat}
+                        placeholder='חפש מכשיר (שם, מק"ט)'
+                        suggestions={itemSuggestions}
+                        onFetchSuggestions={(value: string) => {
+                            fetch(encodeURI(`${backendFirebaseUri}/items?search=${value}`), {
+                                method: 'GET',
+                                headers: {
+                                    'auth-token': authToken
+                                }
+                            })
+                            .then((res) => res.json())
+                            .then(jsonRes => setItemSuggestions(jsonRes))
+                            .catch((err) => console.log(`Error getting item suggestions: ${err}`));
+                        }}
+                        renderSuggestion={s => <span>{s.cat} {s.name}</span>}
+                        onClearSuggestions={() => { console.log(`clearing suggestions`); setItemSuggestions([]); }}
+                        onBlur={() => {
+                            if (!itemSuggestions.find((s: any) => s.cat === itemSearchText || s.name === itemSearchText)) {
+                                console.log(`couldn't find`)
+                                setItemSearchText("");
+                            }
+                        }}
                     />
-                    <MdEdit
-                        onClick={() => setShowItemInput(true)}
+                )}
+            </div>
+            <div className={classes.inputGroup}>
+                <label htmlFor="technicianSearch">טכנאי</label>
+                {showTechnicianListItem ? (
+                    <span style={{ display: "flex", flexDirection: "row", justifyItems: 'flex-end', alignItems: "center", gap: "1rem" }}>
+                        <TechnicianListItem
+                            className={classes.technicianListItem}
+                            textContentClassName={classes.technicianTextContent}
+                            id={technician.id}
+                            firstName={technician.firstName}
+                            lastName={technician.lastName}
+                            shouldBeColored={false}
+                        />
+                        <MdEdit
+                            onClick={() => setShowTechnicianInput(true)}
+                        />
+                    </span>
+                ) : (
+                    <DebouncingInput
+                        id="technicianSearch" // Changed ID for uniqueness and clarity
+                        className={classes.itemCat}
+                        inputValue={technicianSearchText}
+                        onValueChanged={(val: any) => {
+                            setTechnicianSearchText(val);
+                        }}
+                        onSuggestionSelected={(t: any) => {
+                            setTechnician(t)
+                            setShowTechnicianInput(false)
+                        }}
+                        getSuggestionValue={s => s.id}
+                        placeholder='חפש טכנאי (שם, ת.ז.)'
+                        suggestions={technicianSuggestions}
+                        onFetchSuggestions={(value: string) => {
+                            fetch(encodeURI(`${backendFirebaseUri}/technicians?search=${value}`), {
+                                method: 'GET',
+                                headers: {
+                                    'auth-token': authToken
+                                }
+                            })
+                            .then((res) => res.json())
+                            .then(jsonRes => setTechnicianSuggestions(jsonRes))
+                            .catch((err) => console.log(`Error getting technician suggestions: ${err}`));
+                        }}
+                        renderSuggestion={t => <span>{t.id} {t.firstName} {t.lastName}</span>}
+                        onClearSuggestions={() => setTechnicianSuggestions([])}
+                        onBlur={() => {
+                            if (!technicianSuggestions.find((t: any) => t.id === technicianSearchText || t.firstName === technicianSearchText || t.lastName === technicianSearchText)) {
+                                setTechnicianSearchText("");
+                            }
+                        }}
                     />
-                </span>
-            ) : (
-            <DebouncingInput
-                id="react-autosuggest_cat"
-                className={classes.itemCat}
-                inputValue={itemSearchText}
-                onValueChanged={(val: any) => {
-                    console.log(`item cat changed to: ${val}`);
-                    setItemSearchText(val);
-                }}
-                onSuggestionSelected={(s: any) => {
-                    console.log(`item cat selected: ${s.cat}`);
-                    setItem(s);
-                    setShowItemInput(false)
-                }}
-                getSuggestionValue={s => s.cat}
-                placeholder='חפש מכשיר (שם, מק"ט)'
-                suggestions={itemSuggestions}
-                onFetchSuggestions={(value: string) => {
-                    fetch(encodeURI(`${backendFirebaseUri}/items?search=${value}`), {
-                        method: 'GET',
-                        headers: {
-                            'auth-token': authToken
-                        }
-                    })
-                    .then((res) => res.json())
-                    .then(jsonRes => setItemSuggestions(jsonRes))
-                    .catch((err) => console.log(`Error getting item suggestions: ${err}`));
-                }}
-                renderSuggestion={s => <span>{s.cat} {s.name}</span>}
-                onClearSuggestions={() => { console.log(`clearing suggestions`); setItemSuggestions([]); }}
-                onBlur={() => {
-                    // console.log(`itemName: ${itemCat}, itemSuggestions: ${JSON.stringify(itemSuggestions, null, 4 )}`);
-                    if (!itemSuggestions.find((s: any) => s.cat === itemSearchText || s.name === itemSearchText)) {
-                        console.log(`couldn't find`)
-                        setItemSearchText("");
-                    }
-                }}
-            />)}
-            {showTechnicianListItem ? (
-                <span style={{ display: "flex", flexDirection: "row", justifyItems: 'flex-end', alignItems: "center", gap: "1rem" }}>
-                    <TechnicianListItem
-                        className={classes.technicianListItem}
-                        textContentClassName={classes.technicianTextContent}
-                        id={technician.id}
-                        firstName={technician.firstName}
-                        lastName={technician.lastName}
-                        shouldBeColored={false}
-                    />
-                    <MdEdit
-                        onClick={() => setShowTechnicianInput(true)}
-                    />
-                </span>
-            ) : (
-            <DebouncingInput
-                id="react-autosuggest_technician"
-                className={classes.itemCat}
-                inputValue={technicianSearchText}
-                onValueChanged={(val: any) => {
-                    setTechnicianSearchText(val);
-                }}
-                onSuggestionSelected={(t: any) => {
-                    setTechnician(t)
-                    setShowTechnicianInput(false)
-                }}
-                getSuggestionValue={s => s.id}
-                placeholder='חפש טכנאי (שם, ת.ז.)'
-                suggestions={technicianSuggestions}
-                onFetchSuggestions={(value: string) => {
-                    fetch(encodeURI(`${backendFirebaseUri}/technicians?search=${value}`), {
-                        method: 'GET',
-                        headers: {
-                            'auth-token': authToken
-                        }
-                    })
-                    .then((res) => res.json())
-                    .then(jsonRes => setTechnicianSuggestions(jsonRes))
-                    .catch((err) => console.log(`Error getting technician suggestions: ${err}`));
-                }}
-                renderSuggestion={t => <span>{t.id} {t.firstName} {t.lastName}</span>}
-                onClearSuggestions={() => setTechnicianSuggestions([])}
-                onBlur={() => {
-                    if (!technicianSuggestions.find((t: any) => t.id === technicianSearchText || t.firstName === technicianSearchText || t.lastName === technicianSearchText)) {
-                        setTechnicianSearchText("");
-                    }
-                }}
-            />)}
-            <span>
+            )}
+            </div>
+            <div className={classes.inputGroup}> {/* Grouping label and DatePicker */}
+                <label htmlFor="firstCertificationDate">תאריך הסמכה ראשונה</label>
                 <DatePicker
+                    id="firstCertificationDate" // Added ID
                     className={classes.datepicker}
                     selected={firstCertificationDate}
                     filterDate={isPastDate} dateFormat="dd/MM/yyyy"
@@ -290,9 +294,11 @@ const CertificationMenu = () => {
                     onChange={setFirstCertificationDate}
                     popperPlacement="bottom"
                 />
-            </span>
-            <span>
+            </div>
+            <div className={classes.inputGroup}> {/* Grouping label and DatePicker */}
+                <label htmlFor="lastCertificationDate">תאריך הסמכה אחרונה</label>
                 <DatePicker
+                    id="lastCertificationDate" // Added ID
                     className={classes.datepicker}
                     selected={lastCertificationDate}
                     filterDate={isPastDate}
@@ -301,12 +307,24 @@ const CertificationMenu = () => {
                     onChange={setLastCertificationDate}
                     popperPlacement="bottom"
                 />
-            </span>  
-            <input type="number" placeholder="אורך הסמכה אחרונה בחודשים" value={lastCertificationDurationMonths ?? ''} disabled={!lastCertificationDate} onChange={(e) => 
-                handleInput(val => Number.parseInt(val) && setLastCertificationDurationMonths(+val), e)} />
+            </div>  
+            <div className={classes.inputGroup}> {/* Grouping label and input */}
+                <label htmlFor="lastCertificationDurationMonths">אורך הסמכה אחרונה בחודשים</label>
+                <input
+                    id="lastCertificationDurationMonths" // Added ID
+                    type="number"
+                    placeholder="אורך הסמכה אחרונה בחודשים"
+                    value={lastCertificationDurationMonths ?? ''}
+                    disabled={!lastCertificationDate}
+                    onChange={(e) => 
+                        handleInput(val => Number.parseInt(val) && setLastCertificationDurationMonths(+val), e)}
+                />
+            </div>
             <span>{`תאריך תפוגת הסמכה אחרונה: ${isoDate(lastCertificationExpirationDate)}`}</span>
-            <span>
+            <div className={classes.inputGroup}> {/* Grouping label and DatePicker */}
+                <label htmlFor="plannedCertificationDate">תאריך הסמכה צפויה</label>
                 <DatePicker
+                    id="plannedCertificationDate" // Added ID
                     className={classes.datepicker}
                     selected={plannedCertificationDate}
                     filterDate={date => !isPastDate(date)}
@@ -315,8 +333,18 @@ const CertificationMenu = () => {
                     onChange={setPlannedCertificationDate}
                     popperPlacement="bottom"
                 />
-            </span>   
-            <input type="text" placeholder='קישור לתעודת הסמכה' value={certificationDocumentLink} disabled={!lastCertificationDate} onChange={(e) => handleInput(setCertificationDocumentLink, e)} />       
+            </div>  
+            <div className={classes.inputGroup}> {/* Grouping label and input */}
+                <label htmlFor="certificationDocumentLink">קישור לתעודת הסמכה</label>
+                <input
+                    id="certificationDocumentLink" // Added ID
+                    type="text"
+                    placeholder='קישור לתעודת הסמכה'
+                    value={certificationDocumentLink}
+                    disabled={!lastCertificationDate}
+                    onChange={(e) => handleInput(setCertificationDocumentLink, e)}
+                />      
+            </div>
             <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "2.5rem" }} />
             {params.technicianid && <BigButton text="מחק הסמכה" action={() => setAreYouSureDelete(true)} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} />}
             {areYouSureDelete && <AreYouSure text="האם באמת למחוק הסמכה?" leftText='מחק' leftAction={handleDelete} rightText='לא' rightAction={() => setAreYouSureDelete(false)} />}
