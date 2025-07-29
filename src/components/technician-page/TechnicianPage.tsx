@@ -7,6 +7,8 @@ import LoadingSpinner from "../UI/LoadingSpinner";
 import { backendFirebaseUri } from "../../backend-variables/address";
 import { Technician } from "../../types/technician_types";
 import BigButton from "../UI/BigButton";
+import { Certification } from "../../types/certification_types";
+import { default as ItemListItem } from "../item-search/ListItem";
 
 const toggleTechnicianArchiveStatus = async (technicianId: string, authToken: string) => {
     // The backend route is POST /api/technicians/:id/toggle-archive
@@ -30,6 +32,7 @@ const TechnicianPage = () => {
     const params = useParams();
     const authToken = useAppSelector(state => state.auth.jwt);
     const [technician, setTechnician] = useState<Technician | null>(null);
+    const [certifications, setCertifications] = useState<Certification[]>([]);
     const [loading, setLoading] = useState(true);
     const frontEndPrivilege = useAppSelector(state => state.auth.frontEndPrivilege);
     const dispatch = useAppDispatch();
@@ -65,7 +68,30 @@ const TechnicianPage = () => {
             navigate(`/itemnotfound/${params.technicianid}`);
         });
 
+        const getCertifications = async () => {
+            const fetchedCertifications = await fetch(`${backendFirebaseUri}/certifications?technician=${params.technicianid}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'auth-token': authToken
+                }
+            });
+
+            return await fetchedCertifications.json();
+        };   
+        
+        getCertifications().then(c => {
+            if (frontEndPrivilege !== 'admin') {
+                navigate(`/itemnotfound/${params.technicianid}`);
+                return;
+            }
+            setCertifications(c);
+        }).catch(e => {
+            console.log("Error fetching technician certifications:", e);
+        });        
+
         return () => {
+            setCertifications([]);
             setTechnician(null);
         }
 
@@ -103,6 +129,20 @@ const TechnicianPage = () => {
                 <h1>{technician.firstName} {technician.lastName}</h1>
                 <p>{`ת.ז.: ${technician.id}`}</p>
                 <p>{`שיוך: ${technician.association}`}</p>
+                <h2>מכשירים מוסמכים</h2>
+                <div className={classes.itemsWrapper}/* onScroll={handleScroll}*/>
+                    {certifications.map(c => 
+                        <ItemListItem
+                            className={classes.listItem}
+                            textContentClassName={classes.itemTextContent}
+                            imageClassName={classes.itemListItemImage}
+                            cat={c.item.cat}
+                            name={c.item.name}
+                            imageLink={c.item.imageLink}
+                            shouldBeColored={false}
+                        />
+                    )}
+                </div>     
                 <BigButton
                     text={isArchiving ? 'מעבד...' : ((technician.archived ?? false) ? 'שחזר מארכיון' : 'שלח לארכיון')}
                     action={handleArchiveToggle}
