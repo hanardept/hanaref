@@ -171,13 +171,15 @@ const CertificationMenu = () => {
 
     const lastCertificationExpirationDate = lastCertificationDate ? moment(lastCertificationDate).add(lastCertificationDurationMonths ?? 0, 'months').toDate() : undefined; 
 
+    const regularCat = "מקט רגיל";
+
     return (
         <div className={classes.certificationMenu}>
             <h1>{params.certificationid ? "עריכת הסמכה" : "הוספת הסמכה"}</h1>
             <div className={classes.inputGroup}> {/* Added a div to group label and input */}
-                <label htmlFor="itemSearch">מכשיר</label>            
+                <label htmlFor="itemSearch">מכשיר</label>                
                 {showItemListItem ? (
-                    <span className={classes.editableItemListItem}>
+                    <span className={classes.listItemContainer}> {/* Applied listItemContainer class */}
                         <ItemListItem
                             className={classes.itemListItem}
                             textContentClassName={classes.itemTextContent}
@@ -197,12 +199,8 @@ const CertificationMenu = () => {
                         id="itemSearch" // Changed ID for uniqueness and clarity
                         className={classes.itemCat}
                         inputValue={itemSearchText}
-                        onValueChanged={(val: any) => {
-                            console.log(`item cat changed to: ${val}`);
-                            setItemSearchText(val);
-                        }}
+                        onValueChanged={(val: any) => setItemSearchText(val)}
                         onSuggestionSelected={(s: any) => {
-                            console.log(`item cat selected: ${s.cat}`);
                             setItem(s);
                             setShowItemInput(false)
                         }}
@@ -210,7 +208,7 @@ const CertificationMenu = () => {
                         placeholder='חפש מכשיר (שם, מק"ט)'
                         suggestions={itemSuggestions}
                         onFetchSuggestions={(value: string) => {
-                            fetch(encodeURI(`${backendFirebaseUri}/items?search=${value}`), {
+                            fetch(encodeURI(`${backendFirebaseUri}/items?search=${value}&catType=${regularCat}`), {
                                 method: 'GET',
                                 headers: {
                                     'auth-token': authToken
@@ -234,7 +232,7 @@ const CertificationMenu = () => {
             <div className={classes.inputGroup}>
                 <label htmlFor="technicianSearch">טכנאי</label>
                 {showTechnicianListItem ? (
-                    <span style={{ display: "flex", flexDirection: "row", justifyItems: 'flex-end', alignItems: "center", gap: "1rem" }}>
+                    <span className={classes.listItemContainer}>
                         <TechnicianListItem
                             className={classes.technicianListItem}
                             textContentClassName={classes.technicianTextContent}
@@ -263,7 +261,7 @@ const CertificationMenu = () => {
                         placeholder='חפש טכנאי (שם, ת.ז.)'
                         suggestions={technicianSuggestions}
                         onFetchSuggestions={(value: string) => {
-                            fetch(encodeURI(`${backendFirebaseUri}/technicians?search=${value}`), {
+                            fetch(encodeURI(`${backendFirebaseUri}/technicians?search=${value}&catType=${regularCat}`), {
                                 method: 'GET',
                                 headers: {
                                     'auth-token': authToken
@@ -281,9 +279,9 @@ const CertificationMenu = () => {
                             }
                         }}
                     />
-            )}
+                )}
             </div>
-            <div className={classes.inputGroup}> {/* Grouping label and DatePicker */}
+            <div className={classes.inputGroup}>
                 <label htmlFor="firstCertificationDate">תאריך הסמכה ראשונה</label>
                 <DatePicker
                     id="firstCertificationDate" // Added ID
@@ -295,7 +293,7 @@ const CertificationMenu = () => {
                     popperPlacement="bottom"
                 />
             </div>
-            <div className={classes.inputGroup}> {/* Grouping label and DatePicker */}
+            <div className={classes.inputGroup}> 
                 <label htmlFor="lastCertificationDate">תאריך הסמכה אחרונה</label>
                 <DatePicker
                     id="lastCertificationDate" // Added ID
@@ -308,20 +306,21 @@ const CertificationMenu = () => {
                     popperPlacement="bottom"
                 />
             </div>  
-            <div className={classes.inputGroup}> {/* Grouping label and input */}
+            <div className={classes.inputGroup}> 
                 <label htmlFor="lastCertificationDurationMonths">אורך הסמכה אחרונה בחודשים</label>
                 <input
                     id="lastCertificationDurationMonths" // Added ID
                     type="number"
                     placeholder="אורך הסמכה אחרונה בחודשים"
+                    min={0}
                     value={lastCertificationDurationMonths ?? ''}
                     disabled={!lastCertificationDate}
                     onChange={(e) => 
-                        handleInput(val => Number.parseInt(val) && setLastCertificationDurationMonths(+val), e)}
+                        handleInput(val => setLastCertificationDurationMonths(Number.parseInt(val) ? +val : null), e)}
                 />
             </div>
             <span>{`תאריך תפוגת הסמכה אחרונה: ${isoDate(lastCertificationExpirationDate)}`}</span>
-            <div className={classes.inputGroup}> {/* Grouping label and DatePicker */}
+            <div className={classes.inputGroup}>
                 <label htmlFor="plannedCertificationDate">תאריך הסמכה צפויה</label>
                 <DatePicker
                     id="plannedCertificationDate" // Added ID
@@ -334,7 +333,7 @@ const CertificationMenu = () => {
                     popperPlacement="bottom"
                 />
             </div>  
-            <div className={classes.inputGroup}> {/* Grouping label and input */}
+            <div className={classes.inputGroup}> 
                 <label htmlFor="certificationDocumentLink">קישור לתעודת הסמכה</label>
                 <input
                     id="certificationDocumentLink" // Added ID
