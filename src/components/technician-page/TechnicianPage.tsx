@@ -135,7 +135,7 @@ const TechnicianPage = () => {
                         <ItemListItem
                             className={classes.listItem}
                             textContentClassName={classes.itemTextContent}
-                            imageClassName={classes.itemListItemImage}
+                            imageClassName={classes.itemImage}
                             cat={c.item.cat}
                             name={c.item.name}
                             imageLink={c.item.imageLink}
