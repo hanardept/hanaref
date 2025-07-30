@@ -287,9 +287,16 @@ const CertificationMenu = () => {
                     id="firstCertificationDate" // Added ID
                     className={classes.datepicker}
                     selected={firstCertificationDate}
-                    filterDate={isPastDate} dateFormat="dd/MM/yyyy"
+                    // filterDate={isPastDate}
+                    dateFormat="dd/MM/yyyy"
                     placeholderText='תאריך הסמכה ראשונה'
-                    onChange={setFirstCertificationDate}
+                    maxDate={new Date(Math.min(...[lastCertificationDate ?? new Date(), new Date()].filter(Boolean).map(d => d.getTime())))}
+                    onChange={val => {
+                        setFirstCertificationDate(val);
+                        if (!lastCertificationDate) {
+                            setLastCertificationDate(val);
+                        }
+                    }}
                     popperPlacement="bottom"
                 />
             </div>
@@ -299,10 +306,17 @@ const CertificationMenu = () => {
                     id="lastCertificationDate" // Added ID
                     className={classes.datepicker}
                     selected={lastCertificationDate}
-                    filterDate={isPastDate}
+                    //filterDate={isPastDate}
                     dateFormat="dd/MM/yyyy"
+                    maxDate={new Date()}
+                    minDate={firstCertificationDate ?? undefined}
                     placeholderText='תאריך הסמכה אחרונה'
-                    onChange={setLastCertificationDate}
+                    onChange={val => {
+                        setLastCertificationDate(val);
+                        if (!firstCertificationDate) {
+                            setFirstCertificationDate(val);
+                        }
+                    }}
                     popperPlacement="bottom"
                 />
             </div>  
