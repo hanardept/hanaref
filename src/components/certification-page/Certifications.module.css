@@ -26,21 +26,32 @@
 .listItem {
     border-top: 1px solid #e4e4e4;
     display: flex;
-    padding-right: 1rem;
+    padding-right: 0.5rem;
     position: relative; /* This is needed for the badge positioning */
 
     flex-direction: row; /* Arrange children in a row (default, but explicit for clarity) */
     align-items: center; /* Vertically align items (text and image) in the center */
     justify-content: flex-start;
-    padding-left: 1rem; /* Add padding to the left side */
-    gap: 15px; /* Space between the text content and the image */
+    /* padding-left: 1rem; */
+    gap: 5px; /* Space between the text content and the image */
     height: 80px; /* Define a fixed height for the list item, adjust as needed */
     box-sizing: border-box; /* Include padding and border in the total height */
 }
 
 .listItem h2 {
-    font-size: 1.1rem;
-    margin: 0.5rem 0;
+    font-size: 0.9rem;
+    margin: 0.2rem 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.listItem p {
+    font-size: 0.6rem;
+    margin-top: 0.1rem;
+    margin-bottom: 0.4rem;
     text-overflow: ellipsis;
     overflow: hidden;
     width: 100%;
@@ -67,11 +78,12 @@
     flex-direction: column; /* Stack name and cat number */
     justify-content: flex-end; /* Center them vertically within their own container */
     width: 100%;
+    flex-grow: 1;
     /* No margin-right here because gap on .listItem handles spacing */
 }
 
 .itemTextContent[data-custom-element] {
-    width: 33%;
+    width: 80%;
 }
 
 .itemsWrapper {
@@ -140,6 +152,6 @@
 }
 
 .certificationStatusIcon {
-     size: 2rem;
-     font-size: 30px;
+    justify-self: flex-end;
+    font-size: 25px;
 }
