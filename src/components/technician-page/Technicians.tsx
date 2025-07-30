@@ -72,16 +72,16 @@ const Technicians = () => {
     }, [dispatch, authToken, searchVal, showArchived /*initialized*/]);
 
     return (
-            <>
-                <SearchMenu/>
-                <div className={classes.listItemPusher}></div>
-                {!searchComplete && <LoadingSpinner />}
-                {searchComplete && technicians.length === 0 && <p className={classes.noResults}>לא נמצאו טכנאים</p>}
-                <div className={classes.itemsWrapper} onScroll={handleScroll}>
-                    {technicians.map(t => <ListItem className={classes.listItem} textContentClassName={classes.itemTextContent} key={t._id} _id={t._id} id={t.id} shouldBeColored={false} firstName={t.firstName} lastName={t.lastName} association={t.association} isArchived={t.archived} goToTechnicianPage={goToTechnicianPage} />)}
-                </div>
-            </>
-        )
+        <>
+            <SearchMenu/>
+            <div className={classes.listItemPusher}></div>
+            {!searchComplete && <LoadingSpinner />}
+            {searchComplete && technicians.length === 0 && <p className={classes.noResults}>לא נמצאו טכנאים</p>}
+            <div className={classes.itemsWrapper} onScroll={handleScroll}>
+                {technicians.map(t => <ListItem className={classes.listItem} textContentClassName={classes.itemTextContent} key={t._id} _id={t._id} id={t.id} shouldBeColored={false} firstName={t.firstName} lastName={t.lastName} association={t.association} isArchived={t.archived} goToTechnicianPage={goToTechnicianPage} />)}
+            </div>
+        </>
+    )
 }
 
 export default Technicians;

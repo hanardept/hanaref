@@ -172,6 +172,7 @@ const TechnicianPage = () => {
                                 imageLink={c.item.imageLink}
                                 shouldBeColored={false}
                                 customElement={certificationStatus.icon}
+                                goToItemPage={() => navigate(`/certifications/${c._id}`)}
                             />
                             <h6>{`תאריך הסמכה הבא: ${isoDate(c.plannedCertificationDate)}`}</h6>
                         </span>
