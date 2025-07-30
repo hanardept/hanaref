@@ -9,6 +9,7 @@ import { Technician } from "../../types/technician_types";
 import BigButton from "../UI/BigButton";
 import { Certification } from "../../types/certification_types";
 import { default as ItemListItem } from "../item-search/ListItem";
+import { isoDate } from "../../utils";
 
 const toggleTechnicianArchiveStatus = async (technicianId: string, authToken: string) => {
     // The backend route is POST /api/technicians/:id/toggle-archive
@@ -132,15 +133,18 @@ const TechnicianPage = () => {
                 <h2>מכשירים מוסמכים</h2>
                 <div className={classes.itemsWrapper}/* onScroll={handleScroll}*/>
                     {certifications.map(c => 
-                        <ItemListItem
-                            className={classes.listItem}
-                            textContentClassName={classes.itemTextContent}
-                            imageClassName={classes.itemImage}
-                            cat={c.item.cat}
-                            name={c.item.name}
-                            imageLink={c.item.imageLink}
-                            shouldBeColored={false}
-                        />
+                        <span className={classes.certificationItemContainer}>
+                            <ItemListItem
+                                className={classes.listItem}
+                                textContentClassName={classes.itemTextContent}
+                                imageClassName={classes.itemImage}
+                                cat={c.item.cat}
+                                name={c.item.name}
+                                imageLink={c.item.imageLink}
+                                shouldBeColored={false}
+                            />
+                            <h6>{`תאריך הסמכה הבא: ${isoDate(c.plannedCertificationDate)}`}</h6>
+                        </span>
                     )}
                 </div>     
                 <BigButton

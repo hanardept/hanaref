@@ -7,6 +7,7 @@ import LoadingSpinner from "../UI/LoadingSpinner";
 import { backendFirebaseUri } from "../../backend-variables/address";
 import { Certification, fromJson } from "../../types/certification_types";
 import moment from "moment";
+import { isoDate } from "../../utils";
 
 
 const CertificationPage = () => {
@@ -52,14 +53,6 @@ const CertificationPage = () => {
         }
 
     }, [params.certificationid, authToken, navigate, dispatch, frontEndPrivilege]);
-
-
-    console.log(`date type: ${typeof certification?.firstCertificationDate}`);
-
-    const isoDate = (date: Date | undefined): string => {
-        if (!date) return "";
-        return date.toLocaleDateString("he-IL").replace(/\./g, "-");
-    }
     
     const lastCertificationExpirationDate = certification?.lastCertificationDate ? moment(certification.lastCertificationDate).add(certification.item?.certificationPeriodMonths ?? 0, 'months').toDate() : undefined;
 

@@ -66,7 +66,6 @@
     display: flex; /* Make this a flex container too, for column layout of name/cat */
     flex-direction: column; /* Stack name and cat number */
     justify-content: flex-end; /* Center them vertically within their own container */
-    width: 50%;
     /* No margin-right here because gap on .listItem handles spacing */
 }
 
