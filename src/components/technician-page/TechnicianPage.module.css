@@ -50,7 +50,15 @@
 .certificationItemContainer {
     display: flex;
     flex-direction: column;
-    width: 100%
+    width: 100%;
+}
+
+.certificationItemContainer[data-status="warning"] {
+    background-color: orange;
+}
+
+.certificationItemContainer[data-status="error"] {
+    background-color: red;
 }
 
 .certificationItemContainer h6 {

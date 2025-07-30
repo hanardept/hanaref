@@ -10,6 +10,7 @@ import BigButton from "../UI/BigButton";
 import { Certification } from "../../types/certification_types";
 import { default as ItemListItem } from "../item-search/ListItem";
 import { isoDate } from "../../utils";
+import { CiWarning } from "react-icons/ci";
 
 const toggleTechnicianArchiveStatus = async (technicianId: string, authToken: string) => {
     // The backend route is POST /api/technicians/:id/toggle-archive
@@ -132,8 +133,9 @@ const TechnicianPage = () => {
                 <p>{`שיוך: ${technician.association}`}</p>
                 <h2>מכשירים מוסמכים</h2>
                 <div className={classes.itemsWrapper}/* onScroll={handleScroll}*/>
-                    {certifications.map(c => 
-                        <span className={classes.certificationItemContainer}>
+                    {certifications.map(c => {
+                        const certificationExpirationDate = c.lastCertificationDate
+                        return <span className={classes.certificationItemContainer} data-status={c.}>
                             <ItemListItem
                                 className={classes.listItem}
                                 textContentClassName={classes.itemTextContent}
@@ -142,9 +144,11 @@ const TechnicianPage = () => {
                                 name={c.item.name}
                                 imageLink={c.item.imageLink}
                                 shouldBeColored={false}
+                                customElement={<CiWarning/>}
                             />
                             <h6>{`תאריך הסמכה הבא: ${isoDate(c.plannedCertificationDate)}`}</h6>
                         </span>
+                    }
                     )}
                 </div>     
                 <BigButton
