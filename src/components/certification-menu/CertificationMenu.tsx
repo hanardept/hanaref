@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { backendFirebaseUri } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
@@ -63,7 +63,7 @@ const CertificationMenu = () => {
         plannedCertificationDate,
     };
 
-    const fetchItem = async (itemCat: string) => {
+     const fetchItem = useCallback(async (itemCat: string) => {
         const res = await fetch(`${backendFirebaseUri}/items/${itemCat}`, {
             headers: {
                 'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ const CertificationMenu = () => {
         });
         const itemDetails = await res.json();
         setItem(itemDetails);
-    }
+    }, [ authToken ]);
 
     useEffect(() => {        
         if (params.certificationid) {
@@ -103,7 +103,7 @@ const CertificationMenu = () => {
                 .catch(e => console.log(`Error fetching certification details: ${e}`));
         }
         
-    }, [params.certificationid, authToken]);
+    }, [params.certificationid, fetchItem, authToken]);
 
     const handleInput = (setFunc: (val: string) => any, event: ChangeEvent<HTMLInputElement>) => {
         setFunc(event.target.value);

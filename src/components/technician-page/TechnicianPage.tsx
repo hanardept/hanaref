@@ -139,7 +139,7 @@ const TechnicianPage = () => {
             };
         }
         const today = moment().startOf('day');
-        const lastCertificationExpirationDate = moment(certification.lastCertificationDate);
+        const lastCertificationExpirationDate = moment(certification.lastCertificationDate).add(certification.item?.certificationPeriodMonths ?? 0, 'months');
 
         if (today.isAfter(lastCertificationExpirationDate)) {
             return { status: "expired", icon: <FaExclamation className={classes.certificationStatusIcon}/> };
