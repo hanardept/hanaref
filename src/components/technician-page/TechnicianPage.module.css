@@ -53,11 +53,15 @@
     width: 100%;
 }
 
-.certificationItemContainer[data-status="warning"] {
+.certificationItemContainer[data-status="unknown"] {
+    background-color: purple;
+}
+
+.certificationItemContainer[data-status="expiring"] {
     background-color: orange;
 }
 
-.certificationItemContainer[data-status="error"] {
+.certificationItemContainer[data-status="expired"] {
     background-color: red;
 }
 
@@ -114,9 +118,18 @@
     /* No margin-right here because gap on .listItem handles spacing */
 }
 
+.itemTextContent[data-custom-element] {
+    width: 33%;
+}
+
 .itemsWrapper {
     overflow: scroll;
     display: flex;
     flex-direction: column;
     height: calc(100vh - var(--navbarHeight) - var(--searchInputHeight) - 2*var(--searchSelectHeight) - 6*var(--searchPadding) - 2*0.5rem);
+}
+
+.certificationStatusIcon {
+     size: 2rem;
+     font-size: 30px;
 }

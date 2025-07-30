@@ -71,6 +71,17 @@
     /* No margin-right here because gap on .listItem handles spacing */
 }
 
+.customElementContainer[data-custom-element] {
+    display: flex;
+    width: fit-content;
+}
+
+.customElementContainer[data-custom-element] {
+    display: flex;
+    width: 33%;
+    justify-content: center;
+}
+
 .itemsWrapper {
     overflow: scroll;
     display: flex;

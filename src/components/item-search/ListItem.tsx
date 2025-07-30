@@ -33,11 +33,13 @@ const ListItem = (props: ListItemProps) => {
 
     return (
         <div onClick={handleClick} className={props.className} style={style}>
-            <div className={props.textContentClassName}>
+            <div className={props.textContentClassName} data-custom-element={props.customElement}>
                 <h2>{props.name}</h2>
                 <p>{props.cat}</p>
             </div>
-            {props.customElement}
+            <div className={classes.customElementContainer} data-custom-element={props.customElement}>
+                {props.customElement}
+            </div>
             {props.imageLink?.length !== undefined && props.imageLink?.length > 0 && <img src={props.imageLink} alt={props.cat} className={props.imageClassName} />}
             {/* 4. Add a visual marker for archived items using a span. */}
             {props.isArchived && <span className={classes.archivedBadge}>בארכיון</span>}

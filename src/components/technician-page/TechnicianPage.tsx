@@ -11,6 +11,11 @@ import { Certification } from "../../types/certification_types";
 import { default as ItemListItem } from "../item-search/ListItem";
 import { isoDate } from "../../utils";
 import { CiWarning } from "react-icons/ci";
+import { FaExclamation } from "react-icons/fa6";
+import { RxQuestionMark } from "react-icons/rx";
+import { IoCalendarNumberOutline } from "react-icons/io5";
+
+import moment from "moment";
 
 const toggleTechnicianArchiveStatus = async (technicianId: string, authToken: string) => {
     // The backend route is POST /api/technicians/:id/toggle-archive
@@ -122,7 +127,29 @@ const TechnicianPage = () => {
         }
     };
 
+    const getCertificationStatus = (certification: Certification): { status: string, icon?: JSX.Element } => {
+        if (!certification.lastCertificationDate) {
+            return { 
+                status: "unknown",
+                icon: 
+                    <span>
+                        <RxQuestionMark className={classes.certificationStatusIcon}/>
+                        <IoCalendarNumberOutline className={classes.certificationStatusIcon}/>
+                    </span> 
+            };
+        }
+        const today = moment().startOf('day');
+        const lastCertificationExpirationDate = moment(certification.lastCertificationDate);
 
+        if (today.isAfter(lastCertificationExpirationDate)) {
+            return { status: "expired", icon: <FaExclamation className={classes.certificationStatusIcon}/> };
+        }
+        if (lastCertificationExpirationDate.diff(today, 'months') < 3){
+            return { status: "expiring", icon: <CiWarning className={classes.certificationStatusIcon}/> };
+        } else {
+            return { status: "valid" };
+        }
+    }
 
     return (
         <>
@@ -134,8 +161,8 @@ const TechnicianPage = () => {
                 <h2>מכשירים מוסמכים</h2>
                 <div className={classes.itemsWrapper}/* onScroll={handleScroll}*/>
                     {certifications.map(c => {
-                        const certificationExpirationDate = c.lastCertificationDate
-                        return <span className={classes.certificationItemContainer} data-status={c.}>
+                        const certificationStatus = getCertificationStatus(c);
+                        return <span className={classes.certificationItemContainer} data-status={certificationStatus.status}>
                             <ItemListItem
                                 className={classes.listItem}
                                 textContentClassName={classes.itemTextContent}
@@ -144,7 +171,7 @@ const TechnicianPage = () => {
                                 name={c.item.name}
                                 imageLink={c.item.imageLink}
                                 shouldBeColored={false}
-                                customElement={<CiWarning/>}
+                                customElement={certificationStatus.icon}
                             />
                             <h6>{`תאריך הסמכה הבא: ${isoDate(c.plannedCertificationDate)}`}</h6>
                         </span>

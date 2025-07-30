@@ -6,6 +6,12 @@ import { UIEvent, useEffect } from "react";
 import { backendFirebaseUri } from "../../backend-variables/address";
 import { certificationsActions } from "../../store/certifications-slice";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
+import { IoCalendarNumberOutline } from "react-icons/io5";
+import { RxQuestionMark } from "react-icons/rx";
+import { FaExclamation } from "react-icons/fa6";
+import { CiWarning } from "react-icons/ci";
+import { Certification } from "../../types/certification_types";
 
 
 const Certifications = () => {
@@ -46,6 +52,30 @@ const Certifications = () => {
         }
     }
 
+        const getCertificationStatus = (certification: Certification): { status: string, icon?: JSX.Element } => {
+        if (!certification.lastCertificationDate) {
+            return { 
+                status: "unknown",
+                icon: 
+                    <span>
+                        <RxQuestionMark className={classes.certificationStatusIcon}/>
+                        <IoCalendarNumberOutline className={classes.certificationStatusIcon}/>
+                    </span> 
+            };
+        }
+        const today = moment().startOf('day');
+        const lastCertificationExpirationDate = moment(certification.lastCertificationDate);
+
+        if (today.isAfter(lastCertificationExpirationDate)) {
+            return { status: "expired", icon: <FaExclamation className={classes.certificationStatusIcon}/> };
+        }
+        if (lastCertificationExpirationDate.diff(today, 'months') < 3){
+            return { status: "expiring", icon: <CiWarning className={classes.certificationStatusIcon}/> };
+        } else {
+            return { status: "valid" };
+        }
+    }
+
     useEffect(() => {
 
         const triggerNewSearch = () => {
@@ -72,15 +102,22 @@ const Certifications = () => {
                 {!searchComplete && <LoadingSpinner />}
                 {searchComplete && certifications.length === 0 && <p className={classes.noResults}>לא נמצאו הסמכות</p>}
                 <div className={classes.itemsWrapper} onScroll={handleScroll}>
-                    {certifications.map(c => 
-                        <ListItem
-                            className={classes.listItem}
-                            textContentClassName={classes.itemTextContent}
-                            key={c._id}
-                            _id={c._id}
-                            certification={c}
-                            goToCertificationPage={goToCertificationPage}
-                        />)}
+                    {certifications.map(c => {
+                        const certificationStatus = getCertificationStatus(c);
+                        return (
+                            <span className={classes.certificationItemContainer} data-status={certificationStatus.status}>
+                                <ListItem
+                                    className={classes.listItem}
+                                    textContentClassName={classes.itemTextContent}
+                                    key={c._id}
+                                    _id={c._id}
+                                    certification={c}
+                                    goToCertificationPage={goToCertificationPage}
+                                    customElement={certificationStatus.icon}
+                                />
+                            </span>
+                        )
+                    })}
                 </div>
             </>
         )
