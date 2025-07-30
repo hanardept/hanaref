@@ -208,7 +208,7 @@ const CertificationMenu = () => {
                         placeholder='חפש מכשיר (שם, מק"ט)'
                         suggestions={itemSuggestions}
                         onFetchSuggestions={(value: string) => {
-                            fetch(encodeURI(`${backendFirebaseUri}/items?search=${value}&catType=${regularCat}`), {
+                            fetch(encodeURI(`${backendFirebaseUri}/items?search=${value}`), {
                                 method: 'GET',
                                 headers: {
                                     'auth-token': authToken
