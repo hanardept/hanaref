@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { backendFirebaseUri } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
@@ -33,6 +33,7 @@ const ItemMenu = () => {
     const [sector, setSector] = useState("");
     const [department, setDepartment] = useState("");
     const [catType, setCatType] = useState("מקט רגיל");
+    const [certificationPeriodMonths, setCertificationPeriodMonths] = useState<number | null>(null);
     const [description, setDescription] = useState("");
     const [imageLink, setImageLink] = useState("");
     const [qaStandardLink, setQaStandardLink] = useState("");
@@ -50,6 +51,7 @@ const ItemMenu = () => {
         sector: sector,
         department: department,
         catType: catType,
+        certificationPeriodMonths,
         description: description,
         imageLink: imageLink,
         qaStandardLink: qaStandardLink,
@@ -89,6 +91,7 @@ const ItemMenu = () => {
                 setSector(i.sector);
                 setDepartment(i.department);
                 setCatType(i.catType);
+                setCertificationPeriodMonths(i.certificationPeriodMonths ?? null);
                 setDescription(i.description);
                 if (i.imageLink) setImageLink(i.imageLink);
                 if (i.qaStandardLink) setQaStandardLink(i.qaStandardLink)
@@ -107,7 +110,7 @@ const ItemMenu = () => {
         }
     }, [params.itemid, authToken]);
 
-    const handleInput = (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => {
+    const handleInput = (setFunc: (val: string) => any, event: ChangeEvent<HTMLInputElement>) => {
         setFunc(event.target.value);
         dispatch(viewingActions.changesAppliedToItem(true));
     }
@@ -151,6 +154,8 @@ const ItemMenu = () => {
             console.log("Please make sure to enter a name, catalog number, sector and department");
             return;
         }
+
+        console.log("Saving item details:", itemDetails);
 
         if (!params.itemid) { // creating a new item
             fetch(`${backendFirebaseUri}/items`, {
@@ -209,6 +214,13 @@ const ItemMenu = () => {
             <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} priorChosenSector={sector} />
             <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} priorChosenDepartment={department} />
             <CatTypeSelection selectCatType={handleSetCatType} />
+            <input 
+                type="number"
+                placeholder='תוקף הסמכה בחודשים'
+                min={0}
+                value={certificationPeriodMonths ?? ''}
+                onChange={(e) => handleInput(val => setCertificationPeriodMonths(Number.parseInt(val) ? +val : null), e)}
+            />
             <textarea value={description} onChange={handleDescription} placeholder="תיאור" />
             <input type="text" placeholder='קישור לתמונה' value={imageLink} onChange={(e) => handleInput(setImageLink, e)} />
             <input type="text" placeholder='קישור לתקן בחינה' value={qaStandardLink} onChange={(e) => handleInput(setQaStandardLink, e)} />

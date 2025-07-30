@@ -3,6 +3,7 @@ export type Certification = {
         _id: string;
         cat: string;
         name: string;
+        certificationPeriodMonths?: number;
         imageLink?: string;
     };
     technician: {

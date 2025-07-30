@@ -20,6 +20,7 @@ interface ItemSummary {
     _id: string;
     cat: string;
     name: string;
+    certificationPeriodMonths?: number;
     imageLink?: string;
 }
 
@@ -43,7 +44,6 @@ const CertificationMenu = () => {
     const [certificationDocumentLink, setCertificationDocumentLink] = useState("");
     const [firstCertificationDate, setFirstCertificationDate] = useState(null as Date | null);
     const [lastCertificationDate, setLastCertificationDate] = useState(null as Date | null);
-    const [lastCertificationDurationMonths, setLastCertificationDurationMonths] = useState(null as number | null);
     const [plannedCertificationDate, setPlannedCertificationDate] = useState(null as Date | null);
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
@@ -60,9 +60,19 @@ const CertificationMenu = () => {
         certificationDocumentLink,
         firstCertificationDate,
         lastCertificationDate,
-        lastCertificationDurationMonths,
         plannedCertificationDate,
     };
+
+    const fetchItem = async (itemCat: string) => {
+        const res = await fetch(`${backendFirebaseUri}/items/${itemCat}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'auth-token': authToken
+            }
+        });
+        const itemDetails = await res.json();
+        setItem(itemDetails);
+    }
 
     useEffect(() => {        
         if (params.certificationid) {
@@ -76,18 +86,21 @@ const CertificationMenu = () => {
                 });
                 return await fetchedCertification.json();
             };
-            getCertification().then((c: Certification) => {
-                setId(c._id);
-                setItemSearchText(c.item.cat);
-                setItem(c.item);
-                setTechnicianSearchText(c.technician.id);
-                setTechnician(c.technician);
-                setCertificationDocumentLink(c.certificationDocumentLink ?? "");
-                setFirstCertificationDate(c.firstCertificationDate ?? null);
-                setLastCertificationDate(c.lastCertificationDate ?? null);
-                setLastCertificationDurationMonths(c.lastCertificationDurationMonths ?? null);
-                setPlannedCertificationDate(c.plannedCertificationDate ?? null);
-            }).catch(e => console.log(`Error fetching certification details: ${e}`));
+            getCertification()
+                .then((c: Certification) => {
+                    setId(c._id);
+                    setItemSearchText(c.item.cat);
+                    setItem(c.item);
+                    setTechnicianSearchText(c.technician.id);
+                    setTechnician(c.technician);
+                    setCertificationDocumentLink(c.certificationDocumentLink ?? "");
+                    setFirstCertificationDate(c.firstCertificationDate ?? null);
+                    setLastCertificationDate(c.lastCertificationDate ?? null);
+                    setPlannedCertificationDate(c.plannedCertificationDate ?? null);
+                    return c.item?.cat;
+                })
+                .then(fetchItem)
+                .catch(e => console.log(`Error fetching certification details: ${e}`));
         }
         
     }, [params.certificationid, authToken]);
@@ -96,6 +109,8 @@ const CertificationMenu = () => {
         setFunc(event.target.value);
         dispatch(viewingActions.changesAppliedToCertification(true));
     }
+
+    console.log(`last certification type: ${typeof lastCertificationDate}`);
     
     const handleSave = () => {
 
@@ -169,17 +184,18 @@ const CertificationMenu = () => {
         return date.toLocaleDateString("he-IL").replace(/\./g, "-");
     }     
 
-    const lastCertificationExpirationDate = lastCertificationDate ? moment(lastCertificationDate).add(lastCertificationDurationMonths ?? 0, 'months').toDate() : undefined; 
+    const certificationPeriodMonths = item?.certificationPeriodMonths ?? 0;
+    const lastCertificationExpirationDate = lastCertificationDate ? moment(lastCertificationDate).add(certificationPeriodMonths ?? 0, 'months').toDate() : undefined; 
 
     const regularCat = "מקט רגיל";
 
     return (
         <div className={classes.certificationMenu}>
             <h1>{params.certificationid ? "עריכת הסמכה" : "הוספת הסמכה"}</h1>
-            <div className={classes.inputGroup}> {/* Added a div to group label and input */}
+            <div className={classes.inputGroup}>
                 <label htmlFor="itemSearch">מכשיר</label>                
                 {showItemListItem ? (
-                    <span className={classes.listItemContainer}> {/* Applied listItemContainer class */}
+                    <span className={classes.listItemContainer}>
                         <ItemListItem
                             className={classes.itemListItem}
                             textContentClassName={classes.itemTextContent}
@@ -196,12 +212,13 @@ const CertificationMenu = () => {
                     </span>
                 ) : (
                     <DebouncingInput
-                        id="itemSearch" // Changed ID for uniqueness and clarity
+                        id="itemSearch"
                         className={classes.itemCat}
                         inputValue={itemSearchText}
                         onValueChanged={(val: any) => setItemSearchText(val)}
                         onSuggestionSelected={(s: any) => {
                             setItem(s);
+                            fetchItem(s.cat);
                             setShowItemInput(false)
                         }}
                         getSuggestionValue={s => s.cat}
@@ -247,7 +264,7 @@ const CertificationMenu = () => {
                     </span>
                 ) : (
                     <DebouncingInput
-                        id="technicianSearch" // Changed ID for uniqueness and clarity
+                        id="technicianSearch"
                         className={classes.itemCat}
                         inputValue={technicianSearchText}
                         onValueChanged={(val: any) => {
@@ -284,13 +301,12 @@ const CertificationMenu = () => {
             <div className={classes.inputGroup}>
                 <label htmlFor="firstCertificationDate">תאריך הסמכה ראשונה</label>
                 <DatePicker
-                    id="firstCertificationDate" // Added ID
+                    id="firstCertificationDate"
                     className={classes.datepicker}
                     selected={firstCertificationDate}
-                    // filterDate={isPastDate}
                     dateFormat="dd/MM/yyyy"
                     placeholderText='תאריך הסמכה ראשונה'
-                    maxDate={new Date(Math.min(...[lastCertificationDate ?? new Date(), new Date()].filter(Boolean).map(d => d.getTime())))}
+                    maxDate={new Date(Math.min(...[new Date(lastCertificationDate ?? new Date()), new Date()].filter(Boolean).map(d => d.getTime())))}
                     onChange={val => {
                         setFirstCertificationDate(val);
                         if (!lastCertificationDate) {
@@ -303,7 +319,7 @@ const CertificationMenu = () => {
             <div className={classes.inputGroup}> 
                 <label htmlFor="lastCertificationDate">תאריך הסמכה אחרונה</label>
                 <DatePicker
-                    id="lastCertificationDate" // Added ID
+                    id="lastCertificationDate"
                     className={classes.datepicker}
                     selected={lastCertificationDate}
                     //filterDate={isPastDate}
@@ -320,24 +336,12 @@ const CertificationMenu = () => {
                     popperPlacement="bottom"
                 />
             </div>  
-            <div className={classes.inputGroup}> 
-                <label htmlFor="lastCertificationDurationMonths">אורך הסמכה אחרונה בחודשים</label>
-                <input
-                    id="lastCertificationDurationMonths" // Added ID
-                    type="number"
-                    placeholder="אורך הסמכה אחרונה בחודשים"
-                    min={0}
-                    value={lastCertificationDurationMonths ?? ''}
-                    disabled={!lastCertificationDate}
-                    onChange={(e) => 
-                        handleInput(val => setLastCertificationDurationMonths(Number.parseInt(val) ? +val : null), e)}
-                />
-            </div>
+            <span>{`תוקף הסמכה אחרונה בחודשים: ${item?.certificationPeriodMonths ?? ''}`}</span>
             <span>{`תאריך תפוגת הסמכה אחרונה: ${isoDate(lastCertificationExpirationDate)}`}</span>
             <div className={classes.inputGroup}>
                 <label htmlFor="plannedCertificationDate">תאריך הסמכה צפויה</label>
                 <DatePicker
-                    id="plannedCertificationDate" // Added ID
+                    id="plannedCertificationDate"
                     className={classes.datepicker}
                     selected={plannedCertificationDate}
                     filterDate={date => !isPastDate(date)}
@@ -350,7 +354,7 @@ const CertificationMenu = () => {
             <div className={classes.inputGroup}> 
                 <label htmlFor="certificationDocumentLink">קישור לתעודת הסמכה</label>
                 <input
-                    id="certificationDocumentLink" // Added ID
+                    id="certificationDocumentLink"
                     type="text"
                     placeholder='קישור לתעודת הסמכה'
                     value={certificationDocumentLink}

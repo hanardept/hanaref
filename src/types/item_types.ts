@@ -6,6 +6,7 @@ export type Item = {
     sector: string,
     department: string,
     catType: "מקט רגיל" | "מקט ערכה",
+    certificationPeriodMonths?: number,
     description: string,
     imageLink?: string,
     qaStandardLink?: string,

@@ -60,8 +60,8 @@ const CertificationPage = () => {
         if (!date) return "";
         return date.toLocaleDateString("he-IL").replace(/\./g, "-");
     }
-
-    const lastCertificationExpirationDate = certification?.lastCertificationDate ? moment(certification.lastCertificationDate).add(certification.lastCertificationDurationMonths ?? 0, 'months').toDate() : undefined;
+    
+    const lastCertificationExpirationDate = certification?.lastCertificationDate ? moment(certification.lastCertificationDate).add(certification.item?.certificationPeriodMonths ?? 0, 'months').toDate() : undefined;
 
     return (
         <>
@@ -71,7 +71,7 @@ const CertificationPage = () => {
                 <h1>{certification.technician.firstName} {certification.technician.lastName}</h1>
                 <p>{`תאריך הסמכה ראשונה: ${isoDate(certification.firstCertificationDate)}`}</p>
                 <p>{`תאריך הסמכה אחרונה: ${isoDate(certification.lastCertificationDate)}`}</p>
-                <p>{`אורך הסמכה אחרונה בחודשים: ${certification.lastCertificationDurationMonths ?? 0}`}</p>
+                <p>{`תוקף הסמכה אחרונה בחודשים: ${certification.item?.certificationPeriodMonths ?? ''}`}</p>
                 <p>{`תאריך תפוגת הסמכה אחרונה: ${isoDate(lastCertificationExpirationDate)}`}</p>
                 <p>{`תאריך הסמכה צפויה: ${isoDate(certification.plannedCertificationDate)}`}</p>
                 {certification.certificationDocumentLink && <a href={certification.certificationDocumentLink}>לחץ להגעה לתעודת הסמכה</a>}
