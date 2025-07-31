@@ -13,6 +13,12 @@ import ItemMenu from './components/item-menu/ItemMenu';
 import SectorManagement from './components/sector-management/SectorManagement';
 import SectorMenu from './components/sector-management/SectorMenu';
 import NoItemFound from './components/item-page/NoItemFound';
+import Technicians from './components/technician-page/Technicians';
+import TechnicianPage from './components/technician-page/TechnicianPage';
+import TechnicianMenu from './components/technician-menu/TechnicianMenu';
+import CertificationPage from './components/certification-page/CertificationPage';
+import Certifications from './components/certification-page/Certifications';
+import CertificationMenu from './components/certification-menu/CertificationMenu';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -20,8 +26,11 @@ function App() {
   const [showWelcome, setShowWelcome] = useState(true);
   const firstRender = useRef(true);
 
+  console.log(`firstRender: ${firstRender.current}, showWelcome: ${showWelcome}`);
+
   useEffect(() => {
     if (firstRender.current) {
+      console.log(`App first render, setting showWelcome to true`);
       setTimeout(() => {
         firstRender.current = false;
         setShowWelcome(false);
@@ -66,6 +75,17 @@ function App() {
           <Route path="/itemnotfound/:itemid" element={<NoItemFound />} />
           <Route path="/managesectors" element={<AdminOnly><SectorManagement /></AdminOnly>} />
           <Route path="/sectormenu" element={<AdminOnly><SectorMenu exit={() => navigate(-1)} /></AdminOnly>} />
+          <Route path="/technicians" element={<AdminOnly><Technicians /></AdminOnly>} />
+          <Route path="/technicians/:technicianid" element={<AdminOnly><TechnicianPage /></AdminOnly>} />
+          <Route path="/technicianmenu" element={<AdminOnly><TechnicianMenu /></AdminOnly>} />          
+          <Route path="/technicianmenu/:technicianid" element={<AdminOnly><TechnicianMenu /></AdminOnly>} />
+          <Route path="/technicianmenu/newtechnician/:newtechnicianid" element={<AdminOnly><TechnicianMenu /></AdminOnly>} />
+
+          <Route path="/certifications" element={<AdminOnly><Certifications /></AdminOnly>} />
+          <Route path="/certifications/:certificationid" element={<AdminOnly><CertificationPage /></AdminOnly>} />
+          <Route path="/certificationmenu" element={<AdminOnly><CertificationMenu /></AdminOnly>} />          
+          <Route path="/certificationmenu/:certificationid" element={<AdminOnly><CertificationMenu /></AdminOnly>} />
+          <Route path="/certificationmenu/newcertification/:newcertificationid" element={<AdminOnly><CertificationMenu /></AdminOnly>} />          
         </Routes>
       </div>
       {showWelcome && <div className={classes.welcome} onClick={() => setShowWelcome(false)}>

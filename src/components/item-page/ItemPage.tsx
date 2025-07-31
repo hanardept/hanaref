@@ -9,12 +9,9 @@ import classes from './ItemPage.module.css';
 import { viewingActions } from "../../store/viewing-slice";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { backendFirebaseUri } from "../../backend-variables/address";
-// highlight-start
 import BigButton from "../UI/BigButton"; // Importing your existing button component
-// highlight-end
 
 
-// highlight-start
 // A new helper function to call our backend archive endpoint
 const toggleItemArchiveStatus = async (itemCat: string, authToken: string) => {
     // The backend route is POST /api/items/:cat/toggle-archive
@@ -32,7 +29,6 @@ const toggleItemArchiveStatus = async (itemCat: string, authToken: string) => {
     }
     return response.json();
 };
-// highlight-end
 
 
 const ItemPage = () => {
@@ -43,9 +39,7 @@ const ItemPage = () => {
     const frontEndPrivilege = useAppSelector(state => state.auth.frontEndPrivilege);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    // highlight-start
     const [isArchiving, setIsArchiving] = useState(false); // State to handle button disabling
-    // highlight-end
 
     useEffect(() => {
         const getItem = async () => {
@@ -81,8 +75,6 @@ const ItemPage = () => {
         // We removed `frontEndPrivilege`, `dispatch`, and `navigate` because they are stable and don't need to trigger re-fetches.
     }, [params.itemid, authToken, navigate, dispatch, frontEndPrivilege]);
 
-
-    // highlight-start
     // Handler for the new archive/restore button
     const handleArchiveToggle = async () => {
         if (!item) return;
@@ -106,7 +98,6 @@ const ItemPage = () => {
             setIsArchiving(false);
         }
     };
-    // highlight-end
 
 
     return (
@@ -121,6 +112,7 @@ const ItemPage = () => {
                 </header>
                 <h1>{item.name}</h1>
                 <p>{`מק"ט: ${item.cat}`}</p>
+                <p>{`תוקף הסמכה בחודשים: ${item.certificationPeriodMonths ?? ''}`}</p>
                 {item.description && <p>{item.description}</p>}
                 {item.imageLink && <img src={item.imageLink} alt={item.name} />}
                 {(["admin", "hanar"].includes(frontEndPrivilege) && item.qaStandardLink) && <a href={item.qaStandardLink}>לחץ להגעה לתקן בחינה</a>}
@@ -131,7 +123,6 @@ const ItemPage = () => {
                 {item.accessories && item.accessories.length > 0 && <InfoSection title="אביזרים" elements={item.accessories} />}
                 {item.consumables && item.consumables.length > 0 && <InfoSection title="מתכלים" elements={item.consumables} />}
 
-                {/* highlight-start */}
                 {/* The new Archive/Restore button, only for admins */}
                 {frontEndPrivilege === 'admin' && (
                     <BigButton
@@ -141,7 +132,6 @@ const ItemPage = () => {
                         overrideStyle={{ marginTop: "2rem", backgroundColor: (item.archived ?? false) ? "#3498db" : "#e67e22" }}
                     />
                 )}
-                {/* highlight-end */}
 
             </div>}
         </>

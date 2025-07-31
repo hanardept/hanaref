@@ -1,26 +1,72 @@
 @import '../../css-variables/constants.css';
 
-.searchMenu {
+.technicianPage {
+    text-align: right;
+    padding: 0 var(--gutterHorizontal);
+    padding-top: 0.5rem;
     display: flex;
     flex-direction: column;
-    padding: 0.5rem;
-    position: fixed;
-    z-index: 1;
-    top: var(--navbarHeight);
-    width: calc(100vw - 1rem);
-    background-color: white;
-    border-bottom: 1px solid #e4e4e4;
 }
-.searchMenu select {
-    font-size: 1.2rem;
+.technicianPage header {
+    display: flex;
+    justify-content: space-between;
+    padding-inline: 0.5rem;
+}
+.technicianPage header h6 {
+    margin-bottom: 0;
+}
+.technicianPage h1 {
+    font-size: 1.4rem;
     margin-top: 0.5rem;
-    padding: var(--searchPadding);
-    height: var(--searchSelectHeight);
+}
+.technicianPage h2 {
+    font-size: 1.3rem;
+}
+.technicianPage h2:first-of-type {
+    margin-top: 1rem;
+}
+.technicianPage p, a {
+    text-indent: 1rem;
+}
+.technicianPage a {
+    margin-block: 0.5rem;
 }
 
-.listItemPusher {
+.technicianPage * {
+    margin-top: 0;
+}
+
+.clickable {
+    background-color: #f1f2ff;
+    border-radius: 3rem;
+    padding: 3px;
+    padding-left: 1rem;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+    align-self: self-start;
+    font-weight: bold;
+}
+
+.certificationItemContainer {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    height: calc(var(--searchInputHeight) + 2*var(--searchSelectHeight) + 6*var(--searchPadding) + 2*0.5rem);
+}
+
+.certificationItemContainer[data-status="unknown"] {
+    background-color: purple;
+}
+
+.certificationItemContainer[data-status="expiring"] {
+    background-color: orange;
+}
+
+.certificationItemContainer[data-status="expired"] {
+    background-color: red;
+}
+
+.certificationItemContainer h6 {
+    padding-right: 1rem;
 }
 
 .listItem {
@@ -51,6 +97,7 @@
     margin: 0;
     margin-bottom: 0.5rem;
     text-align: right;
+    text-indent: 0;
 }
 
 .itemImage {
@@ -71,15 +118,8 @@
     /* No margin-right here because gap on .listItem handles spacing */
 }
 
-.customElementContainer[data-custom-element] {
-    display: flex;
-    width: fit-content;
-}
-
-.customElementContainer[data-custom-element] {
-    display: flex;
+.itemTextContent[data-custom-element] {
     width: 33%;
-    justify-content: center;
 }
 
 .itemsWrapper {
@@ -89,65 +129,7 @@
     height: calc(100vh - var(--navbarHeight) - var(--searchInputHeight) - 2*var(--searchSelectHeight) - 6*var(--searchPadding) - 2*0.5rem);
 }
 
-.searchRow {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.searchBarWrapper {
-    flex: 1 1 0;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    box-sizing: border-box;
-}
-.searchBarWrapper input {
-    font-size: 1.6rem;
-    padding: var(--searchPadding);
-    height: var(--searchInputHeight);
-    border: 1px solid #999;
-    grid-area: container;
-    width: 100%;
-}
-.xButton {
-    grid-area: container;
-    width: 2.5rem;
-    font-size: 2rem;
-    color: #888;
-    justify-self: end;
-}
-
-.archiveToggle {
-    flex: 0 0 auto;
-    margin-left: 0.5rem;
-}
-
-.archiveToggle label {
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.archiveToggle input {
-  margin-left: 8px; /* Space between checkbox and text */
-}
-
-.noResults {
-  text-align: center;
-  margin-top: 3rem;
-  color: #888;
-}
-
-.archivedBadge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background-color: #7f8c8d; /* A muted grey color for the badge */
-  color: white;
-  padding: 2px 8px;
-  font-size: 10px;
-  border-radius: 10px;
-  font-weight: bold;
-  text-transform: uppercase;
+.certificationStatusIcon {
+     size: 2rem;
+     font-size: 30px;
 }
