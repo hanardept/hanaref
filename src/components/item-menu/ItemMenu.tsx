@@ -50,28 +50,6 @@ const ItemMenu = () => {
     const [belongsToDevice, setBelongsToDevice] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
-    const itemDetails = {
-        name: name,
-        cat: cat.replace(/ /g, ''),
-        kitCat: kitCat,
-        sector: sector,
-        department: department,
-        catType: catType,
-        description: description,
-        imageLink: imageLink,
-        qaStandardLink: qaStandardLink,
-        userManualLink: userManualLink,
-        serviceManualLink: serviceManualLink,
-        hebrewManualLink: hebrewManualLink,
-        supplier: supplier,
-        lifeSpan: lifeSpan,
-        models: models,
-        accessories: accessories,
-        consumables: consumables,
-        spareParts: spareParts,
-        belongsToDevice: belongsToDevice
-    };
-
     useEffect(() => {
         const getSectors = async () => {
             const fetchedSectors = await fetch(`${backendFirebaseUri}/sectors`, {
@@ -145,12 +123,27 @@ const ItemMenu = () => {
         dispatch(viewingActions.changesAppliedToItem(true));
     }
     const handleSave = () => {
-        itemDetails.models = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.models);
-        itemDetails.kitCat = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.kitCat);
-        itemDetails.accessories = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.accessories);
-        itemDetails.consumables = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.consumables);
-        itemDetails.spareParts = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.spareParts);
-        itemDetails.belongsToDevice = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.belongsToDevice);
+        const itemDetails = {
+            name: name,
+            cat: cat.replace(/ /g, ''),
+            kitCat: vacateItemListIfEmptyAndRemoveSpaces(kitCat),
+            sector: sector,
+            department: department,
+            catType: catType,
+            description: description,
+            imageLink: imageLink,
+            qaStandardLink: qaStandardLink,
+            userManualLink: userManualLink,
+            serviceManualLink: serviceManualLink,
+            hebrewManualLink: hebrewManualLink,
+            supplier: supplier,
+            lifeSpan: lifeSpan,
+            models: vacateItemListIfEmptyAndRemoveSpaces(models),
+            accessories: vacateItemListIfEmptyAndRemoveSpaces(accessories),
+            consumables: vacateItemListIfEmptyAndRemoveSpaces(consumables),
+            spareParts: vacateItemListIfEmptyAndRemoveSpaces(spareParts),
+            belongsToDevice: vacateItemListIfEmptyAndRemoveSpaces(belongsToDevice)
+        };
 
         if (catType === "מכשיר") {
             itemDetails.belongsToDevice = [];
