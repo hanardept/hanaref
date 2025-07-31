@@ -5,7 +5,7 @@ export type Item = {
     cat: string,
     sector: string,
     department: string,
-    catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף",
+    catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף" | "חלק חילוף",
     description: string,
     imageLink?: string,
     qaStandardLink?: string,

@@ -34,7 +34,7 @@ const ItemMenu = () => {
     const [kitCat, setKitCat] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [sector, setSector] = useState("");
     const [department, setDepartment] = useState("");
-    const [catType, setCatType] = useState<"מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף">("מכשיר");
+    const [catType, setCatType] = useState<"מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף" | "חלק חילוף">("מכשיר");
     const [description, setDescription] = useState("");
     const [imageLink, setImageLink] = useState("");
     const [qaStandardLink, setQaStandardLink] = useState("");
@@ -140,7 +140,7 @@ const ItemMenu = () => {
         setDepartment(value);
         dispatch(viewingActions.changesAppliedToItem(true));
     }
-    const handleSetCatType = (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף") => {
+    const handleSetCatType = (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף" | "חלק חילוף") => {
         setCatType(catType);
         dispatch(viewingActions.changesAppliedToItem(true));
     }
@@ -155,7 +155,7 @@ const ItemMenu = () => {
         if (catType === "מכשיר") {
             itemDetails.belongsToDevice = [];
         }
-        if (catType === "אביזר" || catType === "מתכלה" || catType === "חלקי חילוף") {
+        if (catType === "אביזר" || catType === "מתכלה" || catType === "חלקי חילוף" || catType === "חלק חילוף") {
             itemDetails.kitCat = [];
         }
 
@@ -293,7 +293,7 @@ const ItemMenu = () => {
                     setModels={setModels}
                     setBelongsToDevice={setBelongsToDevice}
                 />}
-                {catType === "חלקי חילוף" && <SparePartFields
+                {(catType === "חלקי חילוף" || catType === "חלק חילוף") && <SparePartFields
                     imageLink={imageLink}
                     userManualLink={userManualLink}
                     supplier={supplier}
