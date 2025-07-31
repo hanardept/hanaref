@@ -13,13 +13,13 @@ interface ItemDetailsProps {
     sector: string;
     department: string;
     description: string;
-    catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף";
+    catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף" | "חלק חילוף";
     sectorsToChooseFrom: Sector[];
     handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => void;
     handleDescription: (event: ChangeEvent<HTMLTextAreaElement>) => void;
     handleSetSector: (value: string) => void;
     handleSetDepartment: (value: string) => void;
-    handleSetCatType: (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף") => void;
+    handleSetCatType: (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף" | "חלק חילוף") => void;
     setName: React.Dispatch<React.SetStateAction<string>>;
     setCat: React.Dispatch<React.SetStateAction<string>>;
     setKitCat: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
@@ -37,7 +37,7 @@ const ItemDetails = (props: ItemDetailsProps) => {
             {catType === "מכשיר" && <LabeledInput label='מק"ט ערכה' value={kitCat[0].cat} onChange={(e) => setKitCat([{cat: e.target.value, name: kitCat[0].name}])} placeholder='מק"ט ערכה' />}
             <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} priorChosenSector={sector} />
             <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} priorChosenDepartment={department} />
-            <CatTypeSelection selectCatType={handleSetCatType} />
+            <CatTypeSelection selectCatType={handleSetCatType} currentCatType={catType} />
             <textarea value={description} onChange={handleDescription} placeholder="תיאור" />
         </>
     )
