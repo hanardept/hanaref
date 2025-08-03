@@ -265,3 +265,8 @@ html {
     display: block;
     /* box-sizing is handled by the group selector above */
 }
+
+.addButtonContainer {
+    display: flex;
+    justify-content: center;
+}

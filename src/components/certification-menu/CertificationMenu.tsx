@@ -126,37 +126,41 @@ const CertificationMenu = () => {
 
         console.log(`Saving certification with details: ${JSON.stringify(certificationDetails, null, 4)}`);
 
-        if (!params.certificationid) {
-            fetch(`${backendFirebaseUri}/certifications`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'auth-token': authToken
-                },
-                body: JSON.stringify(certificationDetails)
-            }).then((res) => {
-                console.log("success saving certification");
-                dispatch(viewingActions.changesAppliedToCertification(false));
-                navigate(-1);
-            })
-            .catch((err) => console.log(`Error saving certification: ${err}`));
-        }
-        if (params.certificationid) {
-            fetch(encodeURI(`${backendFirebaseUri}/certifications/${params.certificationid}`), {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'auth-token': authToken
-                },
-                body: JSON.stringify(certificationDetails)
-            }).then((res) => {
-                console.log("success updating certification");
-                dispatch(viewingActions.changesAppliedToCertification(false));
-                navigate(-1);
-            })
-            .catch((err) => console.log(`Error updating certification: ${err}`));
+        const { technicians, ...restDetails } = certificationDetails;
+        for (const technician of technicians) {
+            const body = JSON.stringify({ ...restDetails, technician});
+            if (!params.certificationid) {
+                fetch(`${backendFirebaseUri}/certifications`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'auth-token': authToken
+                    },
+                    body
+                }).then((res) => {
+                    console.log("success saving certification");
+                    dispatch(viewingActions.changesAppliedToCertification(false));
+                    navigate(-1);
+                })
+                .catch((err) => console.log(`Error saving certification: ${err}`));
+            }
+            if (params.certificationid) {
+                fetch(encodeURI(`${backendFirebaseUri}/certifications/${params.certificationid}`), {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'auth-token': authToken
+                    },
+                    body
+                }).then((res) => {
+                    console.log("success updating certification");
+                    dispatch(viewingActions.changesAppliedToCertification(false));
+                    navigate(-1);
+                })
+                .catch((err) => console.log(`Error updating certification: ${err}`));
+            }
         }
     }
     // edit mode only:
@@ -262,7 +266,7 @@ const CertificationMenu = () => {
                                 lastName={technician?.lastName ?? ''}
                                 shouldBeColored={false}
                             />
-                            {params.technicianid ? (
+                            {params.certificationid ? (
                             <MdEdit
                                 onClick={() => setTechnicians([])}
                             />) : (
@@ -307,7 +311,10 @@ const CertificationMenu = () => {
                         }}
                     />
                 )}
-                {(!addTechniciansRequested && technicians.length) ? <button onClick={() => setAddTechniciansRequested(true) }><MdAddCircle/></button> : <></>}
+                {(!params.certificationid && !addTechniciansRequested && technicians.length) ? 
+                    <span className={classes.addButtonContainer}>
+                        <MdAddCircle onClick={() => setAddTechniciansRequested(true) }/>
+                    </span> : <></>}
                 </div>
             </div>
             <div className={classes.inputGroup}>
