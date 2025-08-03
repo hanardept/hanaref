@@ -5,6 +5,7 @@ import classes from './Certifications.module.css';
 import { UIEvent, useEffect } from "react";
 import { backendFirebaseUri } from "../../backend-variables/address";
 import { certificationsActions } from "../../store/certifications-slice";
+import { viewingActions } from "../../store/viewing-slice";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { IoCalendarNumberOutline } from "react-icons/io5";
@@ -19,7 +20,7 @@ const Certifications = () => {
     const navigate = useNavigate();
     const searchComplete = useAppSelector(state => state.certifications.searchComplete);
     const certifications = useAppSelector(state => state.certifications.certifications);
-    const { searchVal } = useAppSelector(state => state.viewing.searching);
+    const { searchVal, page, blockScrollSearch } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
     const dispatch = useAppDispatch();
     //const [initialized, setInitialized] = useState(false);
@@ -33,19 +34,21 @@ const Certifications = () => {
         console.log("Scroll event triggered");
 
         let scrollThrottler = true;
-        if (scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
+        if (!blockScrollSearch && scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
             scrollThrottler = false;
             
-            fetch(encodeURI(`${backendFirebaseUri}/certifications`), {
+            fetch(encodeURI(`${backendFirebaseUri}/certifications?page=${page}`), {
                 headers: { 'auth-token': authToken }
             })
             .then(res => res.json())
             .then((jsonedRes) => {
                 if (jsonedRes.length > 0) {
                     dispatch(certificationsActions.addCertifications(jsonedRes));
-                    dispatch(certificationsActions.declareSearchComplete(true));
+                    dispatch(viewingActions.changeSearchCriteria({ page: page + 1 }));
+                    //dispatch(certificationsActions.declareSearchComplete(true));
+                } else {
+                    dispatch(viewingActions.changeBlockSearcScroll(true));
                 }
-               dispatch(certificationsActions.declareSearchComplete(true));
             });
         } else {
             console.log(`no certifications search!`);
