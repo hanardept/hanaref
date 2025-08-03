@@ -246,7 +246,6 @@ const CertificationMenu = () => {
                         onClearSuggestions={() => { console.log(`clearing suggestions`); setItemSuggestions([]); }}
                         onBlur={() => {
                             if (!itemSuggestions.find((s: any) => s.cat === itemSearchText || s.name === itemSearchText)) {
-                                console.log(`couldn't find`)
                                 setItemSearchText("");
                             }
                         }}
