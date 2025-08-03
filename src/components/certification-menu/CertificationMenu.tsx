@@ -127,10 +127,10 @@ const CertificationMenu = () => {
         console.log(`Saving certification with details: ${JSON.stringify(certificationDetails, null, 4)}`);
 
         const { technicians, ...restDetails } = certificationDetails;
-        for (const technician of technicians) {
+        const promises = technicians.map((technician) => {
             const body = JSON.stringify({ ...restDetails, technician});
             if (!params.certificationid) {
-                fetch(`${backendFirebaseUri}/certifications`, {
+                return fetch(`${backendFirebaseUri}/certifications`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -138,15 +138,9 @@ const CertificationMenu = () => {
                         'auth-token': authToken
                     },
                     body
-                }).then((res) => {
-                    console.log("success saving certification");
-                    dispatch(viewingActions.changesAppliedToCertification(false));
-                    navigate(-1);
                 })
-                .catch((err) => console.log(`Error saving certification: ${err}`));
-            }
-            if (params.certificationid) {
-                fetch(encodeURI(`${backendFirebaseUri}/certifications/${params.certificationid}`), {
+            } else {
+                return fetch(encodeURI(`${backendFirebaseUri}/certifications/${params.certificationid}`), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -154,14 +148,16 @@ const CertificationMenu = () => {
                         'auth-token': authToken
                     },
                     body
-                }).then((res) => {
-                    console.log("success updating certification");
-                    dispatch(viewingActions.changesAppliedToCertification(false));
-                    navigate(-1);
-                })
-                .catch((err) => console.log(`Error updating certification: ${err}`));
+                });
             }
-        }
+        })
+        return Promise.all(promises)
+            .then(() => {
+                console.log("Successfully saved certification!");
+                dispatch(viewingActions.changesAppliedToCertification(false));
+                navigate(-1);
+            })
+            .catch((err) => console.log(`Error saving/updating certification: ${err}`));
     }
     // edit mode only:
     const handleDelete = () => {
