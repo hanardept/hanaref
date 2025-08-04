@@ -112,12 +112,12 @@ const ItemPage = () => {
                 </header>
                 <h1>{item.name}</h1>
                 <p>{`מק"ט: ${item.cat}`}</p>
+                {item.catType === "מכשיר" && <p>{`מק"ט ערכה: ${item.kitCat ?? ''}`}</p>}
                 <p>{`תוקף הסמכה בחודשים: ${item.certificationPeriodMonths ?? ''}`}</p>
                 {item.description && <p>{item.description}</p>}
                 {item.imageLink && <img src={item.imageLink} alt={item.name} />}
                 {(["admin", "hanar"].includes(frontEndPrivilege) && item.qaStandardLink) && <a href={item.qaStandardLink}>לחץ להגעה לתקן בחינה</a>}
                 {item.models && item.models.length > 0 && <InfoSection title="דגמים" elements={item.models} unclickable={true} />}
-                {item.catType === "מכשיר" && <p>{`מק"ט ערכה: ${item.certificationPeriodMonths ?? ''}`}</p>}
                 {item.belongsToDevice && item.belongsToDevice.length > 0 && <InfoSection title="שייך למכשיר" elements={item.belongsToDevice} />}
                 {item.accessories && item.accessories.length > 0 && <InfoSection title="אביזרים" elements={item.accessories} />}
                 {item.consumables && item.consumables.length > 0 && <InfoSection title="מתכלים" elements={item.consumables} />}
