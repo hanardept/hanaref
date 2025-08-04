@@ -43,7 +43,7 @@ const DeviceFields = (props: DeviceFieldsProps) => {
             <LabeledInput label="הוראות הפעלה בעברית" value={hebrewManualLink} onChange={(e) => handleInput(setHebrewManualLink, e)} placeholder="הוראות הפעלה בעברית" />
             <LabeledInput label="הוראות הנר" value={medicalEngineeringManualLink} onChange={(e) => handleInput(setMedicalEngineeringManualLink, e)} placeholder="הוראות הנר" />
             <LabeledInput label="תקן בחינה" value={qaStandardLink} onChange={(e) => handleInput(setQaStandardLink, e)} placeholder="תקן בחינה" />
-            <LabeledInput label="מדריך שירות" value={serviceManualLink} onChange={(e) => handleInput(setServiceManualLink, e)} placeholder="מדריך שירות" />
+            <LabeledInput label="Service Manual" value={serviceManualLink} onChange={(e) => handleInput(setServiceManualLink, e)} placeholder="Service Manual" />
             <LabeledInput label="ספק בארץ" value={supplier} onChange={(e) => handleInput(setSupplier, e)} placeholder="ספק בארץ" />
             <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />
             <InfoSectionMenu title="אביזרים" items={accessories} setItems={setAccessories} />

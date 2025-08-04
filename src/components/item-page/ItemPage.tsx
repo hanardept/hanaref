@@ -114,9 +114,22 @@ const ItemPage = () => {
                 <p>{`מק"ט: ${item.cat}`}</p>
                 {item.catType === "מכשיר" && <p>{`מק"ט ערכה: ${item.kitCats?.[0] ?? ''}`}</p>}
                 {item.catType === "מכשיר" && <p>{`תוקף הסמכה בחודשים: ${item.certificationPeriodMonths ?? ''}`}</p>}
+                {item.catType === "מתכלה" && <p>{`אורך חיים בחודשים: ${item.lifeSpan ?? ''}`}</p>}
+                <p>{`ספק בארץ: ${item.supplier ?? ''}`}</p>
                 {item.description && <p>{item.description}</p>}
                 {item.imageLink && <img src={item.imageLink} alt={item.name} />}
-                {(["admin", "hanar"].includes(frontEndPrivilege) && item.qaStandardLink) && <a href={item.qaStandardLink}>לחץ להגעה לתקן בחינה</a>}
+                {
+                    [ 
+                        { link: item.userManualLink, name: "מדריך למשתמש" },
+                        { link: item.hebrewManualLink, name: "הוראות הפעלה בעברית" },
+                        { link: item.medicalEngineeringManualLink, name: "הוראות הנר" },
+                        { link: item.qaStandardLink, name: "תקן בחינה" },
+                        { link: item.serviceManualLink, name: "Service Manual" },
+                    ]
+                        .map(({ link, name }) =>
+                            (["admin", "hanar"].includes(frontEndPrivilege) && link) && <a href={link}>לחץ להגעה ל{name}</a>)
+                }
+                
                 {item.models && item.models.length > 0 && <InfoSection title="דגמים" elements={item.models} unclickable={true} />}
                 {item.belongsToDevices && item.belongsToDevices.length > 0 && <InfoSection title="שייך למכשיר" elements={item.belongsToDevices} />}
                 {item.accessories && item.accessories.length > 0 && <InfoSection title="אביזרים" elements={item.accessories} />}
