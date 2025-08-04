@@ -7,6 +7,7 @@ interface DeviceFieldsProps {
     imageLink: string;
     qaStandardLink: string;
     userManualLink: string;
+    medicalEngineeringManualLink: string;
     serviceManualLink: string;
     hebrewManualLink: string;
     supplier: string;
@@ -17,6 +18,7 @@ interface DeviceFieldsProps {
     handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => void;
     setImageLink: React.Dispatch<React.SetStateAction<string>>;
     setQaStandardLink: React.Dispatch<React.SetStateAction<string>>;
+    setMedicalEngineeringManualLink: React.Dispatch<React.SetStateAction<string>>;
     setUserManualLink: React.Dispatch<React.SetStateAction<string>>;
     setServiceManualLink: React.Dispatch<React.SetStateAction<string>>;
     setHebrewManualLink: React.Dispatch<React.SetStateAction<string>>;
@@ -28,16 +30,20 @@ interface DeviceFieldsProps {
 }
 
 const DeviceFields = (props: DeviceFieldsProps) => {
-    const { imageLink, qaStandardLink, userManualLink, serviceManualLink, hebrewManualLink, supplier, models, accessories, consumables, spareParts, handleInput, setImageLink, setQaStandardLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier, setModels, setAccessories, setConsumables, setSpareParts } = props;
+    const {
+        imageLink, qaStandardLink, medicalEngineeringManualLink, userManualLink, serviceManualLink, hebrewManualLink, supplier, models, accessories, consumables, spareParts,
+        handleInput, setImageLink, setQaStandardLink, setMedicalEngineeringManualLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier, setModels,
+        setAccessories, setConsumables, setSpareParts
+    } = props;
 
     return (
         <>
             <LabeledInput label="קישור לתמונה" value={imageLink} onChange={(e) => handleInput(setImageLink, e)} placeholder="קישור לתמונה" />
-            <LabeledInput label="User manual" value={userManualLink} onChange={(e) => handleInput(setUserManualLink, e)} placeholder="User manual" />
+            <LabeledInput label="מדריך למשתמש" value={userManualLink} onChange={(e) => handleInput(setUserManualLink, e)} placeholder="מדריך למשתמש" />
             <LabeledInput label="הוראות הפעלה בעברית" value={hebrewManualLink} onChange={(e) => handleInput(setHebrewManualLink, e)} placeholder="הוראות הפעלה בעברית" />
-            <LabeledInput label="הוראות הנר" value={qaStandardLink} onChange={(e) => handleInput(setQaStandardLink, e)} placeholder="הוראות הנר" />
+            <LabeledInput label="הוראות הנר" value={medicalEngineeringManualLink} onChange={(e) => handleInput(setMedicalEngineeringManualLink, e)} placeholder="הוראות הנר" />
             <LabeledInput label="תקן בחינה" value={qaStandardLink} onChange={(e) => handleInput(setQaStandardLink, e)} placeholder="תקן בחינה" />
-            <LabeledInput label="Service manual" value={serviceManualLink} onChange={(e) => handleInput(setServiceManualLink, e)} placeholder="Service manual" />
+            <LabeledInput label="מדריך שירות" value={serviceManualLink} onChange={(e) => handleInput(setServiceManualLink, e)} placeholder="מדריך שירות" />
             <LabeledInput label="ספק בארץ" value={supplier} onChange={(e) => handleInput(setSupplier, e)} placeholder="ספק בארץ" />
             <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />
             <InfoSectionMenu title="אביזרים" items={accessories} setItems={setAccessories} />

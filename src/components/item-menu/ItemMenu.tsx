@@ -34,11 +34,12 @@ const ItemMenu = () => {
     const [kitCat, setKitCat] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [sector, setSector] = useState("");
     const [department, setDepartment] = useState("");
-    const [catType, setCatType] = useState<"מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף" | "חלק חילוף">("מכשיר");
+    const [catType, setCatType] = useState<"מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף">("מכשיר");
     const [certificationPeriodMonths, setCertificationPeriodMonths] = useState<number | null>(null);
     const [description, setDescription] = useState("");
     const [imageLink, setImageLink] = useState("");
     const [qaStandardLink, setQaStandardLink] = useState("");
+    const [medicalEngineeringManualLink, setMedicalEngineeringManualLink] = useState("");
     const [userManualLink, setUserManualLink] = useState("");
     const [serviceManualLink, setServiceManualLink] = useState("");
     const [hebrewManualLink, setHebrewManualLink] = useState("");
@@ -51,7 +52,6 @@ const ItemMenu = () => {
     const [belongsToDevice, setBelongsToDevice] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
-        certificationPeriodMonths,
     useEffect(() => {
         const getSectors = async () => {
             const fetchedSectors = await fetch(`${backendFirebaseUri}/sectors`, {
@@ -84,6 +84,7 @@ const ItemMenu = () => {
                 setDescription(i.description);
                 if (i.imageLink) setImageLink(i.imageLink);
                 if (i.qaStandardLink) setQaStandardLink(i.qaStandardLink);
+                if (i.medicalEngineeringManualLink) setMedicalEngineeringManualLink(i.medicalEngineeringManualLink);
                 if (i.userManualLink) setUserManualLink(i.userManualLink);
                 if (i.serviceManualLink) setServiceManualLink(i.serviceManualLink);
                 if (i.hebrewManualLink) setHebrewManualLink(i.hebrewManualLink);
@@ -121,10 +122,11 @@ const ItemMenu = () => {
         setDepartment(value);
         dispatch(viewingActions.changesAppliedToItem(true));
     }
-    const handleSetCatType = (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף" | "חלק חילוף") => {
+    const handleSetCatType = (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף") => {
         setCatType(catType);
         dispatch(viewingActions.changesAppliedToItem(true));
     }
+
     const handleSave = () => {
         const itemDetails = {
             name: name,
@@ -133,9 +135,11 @@ const ItemMenu = () => {
             sector: sector,
             department: department,
             catType: catType,
+            certificationPeriodMonths,
             description: description,
             imageLink: imageLink,
             qaStandardLink: qaStandardLink,
+            medicalEngineeringManualLink,
             userManualLink: userManualLink,
             serviceManualLink: serviceManualLink,
             hebrewManualLink: hebrewManualLink,
@@ -151,7 +155,7 @@ const ItemMenu = () => {
         if (catType === "מכשיר") {
             itemDetails.belongsToDevice = [];
         }
-        if (catType === "אביזר" || catType === "מתכלה" || catType === "חלקי חילוף" || catType === "חלק חילוף") {
+        if (catType === "אביזר" || catType === "מתכלה" || catType === "חלק חילוף") {
             itemDetails.kitCat = [];
         }
 
@@ -228,12 +232,14 @@ const ItemMenu = () => {
                     department={department}
                     description={description}
                     catType={catType}
+                    certificationPeriodMonths={certificationPeriodMonths}
                     sectorsToChooseFrom={sectorsToChooseFrom}
                     handleInput={handleInput}
                     handleDescription={handleDescription}
                     handleSetSector={handleSetSector}
                     handleSetDepartment={handleSetDepartment}
                     handleSetCatType={handleSetCatType}
+                    setCertificationPeriodMonths={setCertificationPeriodMonths}
                     setName={setName}
                     setCat={setCat}
                     setKitCat={setKitCat}
@@ -243,6 +249,7 @@ const ItemMenu = () => {
                 {catType === "מכשיר" && <DeviceFields
                     imageLink={imageLink}
                     qaStandardLink={qaStandardLink}
+                    medicalEngineeringManualLink={medicalEngineeringManualLink}
                     userManualLink={userManualLink}
                     serviceManualLink={serviceManualLink}
                     hebrewManualLink={hebrewManualLink}
@@ -254,6 +261,7 @@ const ItemMenu = () => {
                     handleInput={handleInput}
                     setImageLink={setImageLink}
                     setQaStandardLink={setQaStandardLink}
+                    setMedicalEngineeringManualLink={setMedicalEngineeringManualLink}
                     setUserManualLink={setUserManualLink}
                     setServiceManualLink={setServiceManualLink}
                     setHebrewManualLink={setHebrewManualLink}
@@ -291,7 +299,7 @@ const ItemMenu = () => {
                     setModels={setModels}
                     setBelongsToDevice={setBelongsToDevice}
                 />}
-                {(catType === "חלקי חילוף" || catType === "חלק חילוף") && <SparePartFields
+                {catType === "חלק חילוף" && <SparePartFields
                     imageLink={imageLink}
                     userManualLink={userManualLink}
                     supplier={supplier}

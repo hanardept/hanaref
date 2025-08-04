@@ -5,12 +5,15 @@ export type Item = {
     cat: string,
     sector: string,
     department: string,
-    catType: "מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף",
+<<<<<<< HEAD
+    catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף" | "חלק חילוף",
+=======
+    catType: "מקט רגיל" | "מקט ערכה",
     certificationPeriodMonths?: number,
+>>>>>>> main
     description: string,
     imageLink?: string,
     qaStandardLink?: string,
-    medicalEngineeringManualLink?: string;
     userManualLink?: string,
     serviceManualLink?: string,
     hebrewManualLink?: string,
