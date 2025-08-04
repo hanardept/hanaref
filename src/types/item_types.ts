@@ -6,6 +6,7 @@ export type Item = {
     sector: string,
     department: string,
     catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף" | "חלק חילוף",
+    certificationPeriodMonths?: number,
     description: string,
     imageLink?: string,
     qaStandardLink?: string,

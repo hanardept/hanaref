@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { backendFirebaseUri } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
@@ -35,6 +35,7 @@ const ItemMenu = () => {
     const [sector, setSector] = useState("");
     const [department, setDepartment] = useState("");
     const [catType, setCatType] = useState<"מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף" | "חלק חילוף">("מכשיר");
+    const [certificationPeriodMonths, setCertificationPeriodMonths] = useState<number | null>(null);
     const [description, setDescription] = useState("");
     const [imageLink, setImageLink] = useState("");
     const [qaStandardLink, setQaStandardLink] = useState("");
@@ -50,6 +51,7 @@ const ItemMenu = () => {
     const [belongsToDevice, setBelongsToDevice] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
+        certificationPeriodMonths,
     useEffect(() => {
         const getSectors = async () => {
             const fetchedSectors = await fetch(`${backendFirebaseUri}/sectors`, {
@@ -78,6 +80,7 @@ const ItemMenu = () => {
                 setSector(i.sector);
                 setDepartment(i.department);
                 setCatType(i.catType);
+                setCertificationPeriodMonths(i.certificationPeriodMonths ?? null);
                 setDescription(i.description);
                 if (i.imageLink) setImageLink(i.imageLink);
                 if (i.qaStandardLink) setQaStandardLink(i.qaStandardLink);
@@ -101,7 +104,7 @@ const ItemMenu = () => {
         }
     }, [params.itemid, authToken]);
 
-    const handleInput = (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => {
+    const handleInput = (setFunc: (val: string) => any, event: ChangeEvent<HTMLInputElement>) => {
         setFunc(event.target.value);
         dispatch(viewingActions.changesAppliedToItem(true));
     }
@@ -161,6 +164,8 @@ const ItemMenu = () => {
             alert("מק\"ט הוא שדה חובה");
             return;
         }
+
+        console.log("Saving item details:", itemDetails);
 
         if (!params.itemid) { // creating a new item
             fetch(`${backendFirebaseUri}/items`, {
