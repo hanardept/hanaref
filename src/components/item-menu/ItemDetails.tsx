@@ -9,7 +9,7 @@ import LabeledInput from "./LabeledInput";
 interface ItemDetailsProps {
     name: string;
     cat: string;
-    kitCat: AbbreviatedItem[];
+    kitCat: string;
     sector: string;
     department: string;
     description: string;
@@ -24,7 +24,7 @@ interface ItemDetailsProps {
     setName: React.Dispatch<React.SetStateAction<string>>;
     setCat: React.Dispatch<React.SetStateAction<string>>;
     setCertificationPeriodMonths: (value: number | null) => void;
-    setKitCat: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
+    setKitCat: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const ItemDetails = (props: ItemDetailsProps) => {
@@ -36,7 +36,7 @@ const ItemDetails = (props: ItemDetailsProps) => {
         <>
             <LabeledInput label="שם הפריט" value={name} onChange={(e) => handleInput(setName, e)} placeholder="שם הפריט" />
             <LabeledInput label='מק"ט' value={cat} onChange={(e) => handleInput(setCat, e)} placeholder='מק"ט' />
-            {catType === "מכשיר" && <LabeledInput label='מק"ט ערכה' value={kitCat[0].cat} onChange={(e) => setKitCat([{cat: e.target.value, name: kitCat[0].name}])} placeholder='מק"ט ערכה' />}
+            {catType === "מכשיר" && <LabeledInput label='מק"ט ערכה' value={kitCat} onChange={(e) => setKitCat(e.target.value)} placeholder='מק"ט ערכה' />}
             <LabeledInput
                 type="number"
                 label='תוקף הסמכה בחודשים'

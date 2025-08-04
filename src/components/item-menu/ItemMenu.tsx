@@ -31,7 +31,7 @@ const ItemMenu = () => {
     const navigate = useNavigate();
     const [name, setName] = useState("");
     const [cat, setCat] = useState(params.newitemid || "");
-    const [kitCat, setKitCat] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+    const [kitCat, setKitCat] = useState<string>("");
     const [sector, setSector] = useState("");
     const [department, setDepartment] = useState("");
     const [catType, setCatType] = useState<"מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף">("מכשיר");
@@ -95,7 +95,7 @@ const ItemMenu = () => {
                 if (i.consumables && i.consumables.length > 0) setConsumables(i.consumables);
                 if (i.spareParts && i.spareParts.length > 0) setSpareParts(i.spareParts);
                 if (i.belongsToDevice && i.belongsToDevice.length > 0) setBelongsToDevice(i.belongsToDevice);
-                if (i.kitCat && i.kitCat.length > 0) setKitCat(i.kitCat);
+                if (i.kitCat) setKitCat(i.kitCat);
             }).catch(e => console.log(`Error fetching item details: ${e}`));
         }
         if (!params.itemid) {
@@ -131,7 +131,7 @@ const ItemMenu = () => {
         const itemDetails = {
             name: name,
             cat: cat.replace(/ /g, ''),
-            kitCat: vacateItemListIfEmptyAndRemoveSpaces(kitCat),
+            kitCat: kitCat.replace(/ /g, ''),
             sector: sector,
             department: department,
             catType: catType,
@@ -156,7 +156,7 @@ const ItemMenu = () => {
             itemDetails.belongsToDevice = [];
         }
         if (catType === "אביזר" || catType === "מתכלה" || catType === "חלק חילוף") {
-            itemDetails.kitCat = [];
+            itemDetails.kitCat = "";
         }
 
         if (!itemDetails.name || !itemDetails.sector || !itemDetails.department) {
