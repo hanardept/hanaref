@@ -127,7 +127,7 @@ const ItemPage = () => {
                         { link: item.serviceManualLink, name: "Service Manual", privilegeRequired: true },
                     ]
                         .map(({ link, name, privilegeRequired }) =>
-                            (!privilegeRequired || (["admin", "hanar"].includes(frontEndPrivilege)) && link) && <a href={link}>לחץ להגעה ל{name}</a>)
+                            (!privilegeRequired || ["admin", "hanar"].includes(frontEndPrivilege)) && link && <a href={link}>לחץ להגעה ל{name}</a>)
                 }
                 
                 {item.models && item.models.length > 0 && <InfoSection title="דגמים" elements={item.models} unclickable={true} />}
