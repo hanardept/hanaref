@@ -9,7 +9,7 @@ import LabeledInput from "./LabeledInput";
 interface ItemDetailsProps {
     name: string;
     cat: string;
-    kitCat: string;
+    kitCats: string[];
     sector: string;
     department: string;
     description: string;
@@ -24,11 +24,11 @@ interface ItemDetailsProps {
     setName: React.Dispatch<React.SetStateAction<string>>;
     setCat: React.Dispatch<React.SetStateAction<string>>;
     setCertificationPeriodMonths: (value: number | null) => void;
-    setKitCat: React.Dispatch<React.SetStateAction<string>>;
+    setKitCats: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const ItemDetails = (props: ItemDetailsProps) => {
-    const { name, cat, sector, department, description, catType, certificationPeriodMonths, sectorsToChooseFrom, handleInput, handleDescription, handleSetSector, handleSetDepartment, handleSetCatType, setCertificationPeriodMonths, setName, setCat, kitCat, setKitCat } = props;
+    const { name, cat, kitCats, sector, department, description, catType, certificationPeriodMonths, sectorsToChooseFrom, handleInput, handleDescription, handleSetSector, handleSetDepartment, handleSetCatType, setCertificationPeriodMonths, setName, setCat, setKitCats } = props;
     const sectorNames = sectorsToChooseFrom.map(s => s.sectorName);
     const departmentsToChooseFrom = (sector && sectorsToChooseFrom.length > 0) ? sectorsToChooseFrom.filter(s => s.sectorName === sector)[0].departments : [];
 
@@ -36,7 +36,7 @@ const ItemDetails = (props: ItemDetailsProps) => {
         <>
             <LabeledInput label="שם הפריט" value={name} onChange={(e) => handleInput(setName, e)} placeholder="שם הפריט" />
             <LabeledInput label='מק"ט' value={cat} onChange={(e) => handleInput(setCat, e)} placeholder='מק"ט' />
-            {catType === "מכשיר" && <LabeledInput label='מק"ט ערכה' value={kitCat} onChange={(e) => setKitCat(e.target.value)} placeholder='מק"ט ערכה' />}
+            {catType === "מכשיר" && <LabeledInput label='מק"ט ערכה' value={kitCats[0]} onChange={(e) => setKitCats([e.target.value])} placeholder='מק"ט ערכה' />}
             <LabeledInput
                 type="number"
                 label='תוקף הסמכה בחודשים'

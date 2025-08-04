@@ -3,6 +3,7 @@ export type Item = {
     _id: string,
     name: string,
     cat: string,
+    kitCats?: string[],
     sector: string,
     department: string,
     catType: "מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף",
@@ -21,6 +22,5 @@ export type Item = {
     consumables?: AbbreviatedItem[],
     spareParts?: AbbreviatedItem[],
     belongsToDevices?: AbbreviatedItem[],
-    kitCat?: string,
     archived?: boolean;
 };
