@@ -36,14 +36,14 @@ const ItemDetails = (props: ItemDetailsProps) => {
             <LabeledInput label="שם הפריט" value={name} onChange={(e) => handleInput(setName, e)} placeholder="שם הפריט" />
             <LabeledInput label='מק"ט' value={cat} onChange={(e) => handleInput(setCat, e)} placeholder='מק"ט' />
             {catType === "מכשיר" && <LabeledInput label='מק"ט ערכה' value={kitCats[0]} onChange={(e) => setKitCats([e.target.value])} placeholder='מק"ט ערכה' />}
-            <LabeledInput
+            {catType === "מכשיר" && <LabeledInput
                 type="number"
                 label='תוקף הסמכה בחודשים'
                 placeholder='תוקף הסמכה בחודשים'
                 min={0}
                 value={certificationPeriodMonths ?? ''}
                 onChange={(e) => handleInput(val => setCertificationPeriodMonths(Number.parseInt(val) ? +val : null), e)}
-            />
+            />}
             <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} priorChosenSector={sector} />
             <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} priorChosenDepartment={department} />
             <CatTypeSelection selectCatType={handleSetCatType} currentCatType={catType} />
