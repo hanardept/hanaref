@@ -49,7 +49,7 @@ const ItemMenu = () => {
     const [accessories, setAccessories] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [consumables, setConsumables] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [spareParts, setSpareParts] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-    const [belongsToDevice, setBelongsToDevice] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+    const [belongsToDevices, setBelongsToDevices] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
     useEffect(() => {
@@ -94,7 +94,7 @@ const ItemMenu = () => {
                 if (i.accessories && i.accessories.length > 0) setAccessories(i.accessories);
                 if (i.consumables && i.consumables.length > 0) setConsumables(i.consumables);
                 if (i.spareParts && i.spareParts.length > 0) setSpareParts(i.spareParts);
-                if (i.belongsToDevice && i.belongsToDevice.length > 0) setBelongsToDevice(i.belongsToDevice);
+                if (i.belongsToDevices && i.belongsToDevices.length > 0) setBelongsToDevices(i.belongsToDevices);
                 if (i.kitCat) setKitCat(i.kitCat);
             }).catch(e => console.log(`Error fetching item details: ${e}`));
         }
@@ -149,11 +149,11 @@ const ItemMenu = () => {
             accessories: vacateItemListIfEmptyAndRemoveSpaces(accessories),
             consumables: vacateItemListIfEmptyAndRemoveSpaces(consumables),
             spareParts: vacateItemListIfEmptyAndRemoveSpaces(spareParts),
-            belongsToDevice: vacateItemListIfEmptyAndRemoveSpaces(belongsToDevice)
+            belongsToDevices: vacateItemListIfEmptyAndRemoveSpaces(belongsToDevices)
         };
 
         if (catType === "מכשיר") {
-            itemDetails.belongsToDevice = [];
+            itemDetails.belongsToDevices = [];
         }
         if (catType === "אביזר" || catType === "מתכלה" || catType === "חלק חילוף") {
             itemDetails.kitCat = "";
@@ -276,13 +276,13 @@ const ItemMenu = () => {
                     userManualLink={userManualLink}
                     supplier={supplier}
                     models={models}
-                    belongsToDevice={belongsToDevice}
+                    belongsToDevices={belongsToDevices}
                     handleInput={handleInput}
                     setImageLink={setImageLink}
                     setUserManualLink={setUserManualLink}
                     setSupplier={setSupplier}
                     setModels={setModels}
-                    setBelongsToDevice={setBelongsToDevice}
+                    setBelongsToDevices={setBelongsToDevices}
                 />}
                 {catType === "מתכלה" && <ConsumableFields
                     imageLink={imageLink}
@@ -290,27 +290,27 @@ const ItemMenu = () => {
                     supplier={supplier}
                     lifeSpan={lifeSpan}
                     models={models}
-                    belongsToDevice={belongsToDevice}
+                    belongsToDevices={belongsToDevices}
                     handleInput={handleInput}
                     setImageLink={setImageLink}
                     setUserManualLink={setUserManualLink}
                     setSupplier={setSupplier}
                     setLifeSpan={setLifeSpan}
                     setModels={setModels}
-                    setBelongsToDevice={setBelongsToDevice}
+                    setBelongsToDevices={setBelongsToDevices}
                 />}
                 {catType === "חלק חילוף" && <SparePartFields
                     imageLink={imageLink}
                     userManualLink={userManualLink}
                     supplier={supplier}
                     models={models}
-                    belongsToDevice={belongsToDevice}
+                    belongsToDevices={belongsToDevices}
                     handleInput={handleInput}
                     setImageLink={setImageLink}
                     setUserManualLink={setUserManualLink}
                     setSupplier={setSupplier}
                     setModels={setModels}
-                    setBelongsToDevice={setBelongsToDevice}
+                    setBelongsToDevices={setBelongsToDevices}
                 />}
             </div>
             <div className={classes.buttons}>
