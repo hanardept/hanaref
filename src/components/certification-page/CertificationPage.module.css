@@ -1,0 +1,49 @@
+@import '../../css-variables/constants.css';
+
+.certificationPage {
+    text-align: right;
+    padding: 0 var(--gutterHorizontal);
+    padding-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+}
+.certificationPage header {
+    display: flex;
+    justify-content: space-between;
+    padding-inline: 0.5rem;
+}
+.certificationPage header h6 {
+    margin-bottom: 0;
+}
+.certificationPage h1 {
+    font-size: 1.4rem;
+    margin-top: 0.5rem;
+}
+.certificationPage h2 {
+    font-size: 1.3rem;
+}
+.certificationPage h2:first-of-type {
+    margin-top: 1rem;
+}
+.certificationPage p, a {
+    text-indent: 1rem;
+    text-align: right;
+}
+.certificationPage a {
+    margin-block: 0.5rem;
+}
+
+.certificationPage * {
+    margin-top: 0;
+}
+
+.clickable {
+    background-color: #f1f2ff;
+    border-radius: 3rem;
+    padding: 3px;
+    padding-left: 1rem;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+    align-self: self-start;
+    font-weight: bold;
+}

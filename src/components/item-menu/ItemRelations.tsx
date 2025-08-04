@@ -8,18 +8,18 @@ interface ItemRelationsProps {
     models: AbbreviatedItem[];
     accessories: AbbreviatedItem[];
     consumables: AbbreviatedItem[];
-    belongsToKits: AbbreviatedItem[];
+    belongsToDevices: AbbreviatedItem[];
     similarItems: AbbreviatedItem[];
     setKitItem: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setModels: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setAccessories: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setConsumables: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
-    setBelongsToKits: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
+    setBelongsToDevices: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setSimilarItems: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
 }
 
 const ItemRelations = (props: ItemRelationsProps) => {
-    const { catType, kitItem, models, accessories, consumables, belongsToKits, similarItems, setKitItem, setModels, setAccessories, setConsumables, setBelongsToKits, setSimilarItems } = props;
+    const { catType, kitItem, models, accessories, consumables, belongsToDevices, similarItems, setKitItem, setModels, setAccessories, setConsumables, setBelongsToDevices, setSimilarItems } = props;
 
     return (
         <>
@@ -27,7 +27,7 @@ const ItemRelations = (props: ItemRelationsProps) => {
             {catType === "מקט רגיל" && <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />}
             <InfoSectionMenu title="אביזרים" items={accessories} setItems={setAccessories} />
             <InfoSectionMenu title="מתכלים" items={consumables} setItems={setConsumables} />
-            {catType === "מקט רגיל" && <InfoSectionMenu title="שייך לערכות" items={belongsToKits} setItems={setBelongsToKits} />}
+            {catType === "מקט רגיל" && <InfoSectionMenu title="שייך לערכות" items={belongsToDevices} setItems={setBelongsToDevices} />}
             {catType === "מקט רגיל" && <InfoSectionMenu title="קשור ל..." items={similarItems} setItems={setSimilarItems} />}
         </>
     )

@@ -3,12 +3,15 @@ export type Item = {
     _id: string,
     name: string,
     cat: string,
+    kitCats?: string[],
     sector: string,
     department: string,
-    catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף",
+    catType: "מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף",
+    certificationPeriodMonths?: number,
     description: string,
     imageLink?: string,
     qaStandardLink?: string,
+    medicalEngineeringManualLink?: string;
     userManualLink?: string,
     serviceManualLink?: string,
     hebrewManualLink?: string,
@@ -18,7 +21,6 @@ export type Item = {
     accessories?: AbbreviatedItem[],
     consumables?: AbbreviatedItem[],
     spareParts?: AbbreviatedItem[],
-    belongsToDevice?: AbbreviatedItem[],
-    kitCat?: AbbreviatedItem[]
+    belongsToDevices?: AbbreviatedItem[],
     archived?: boolean;
 };

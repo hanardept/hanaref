@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { backendFirebaseUri } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
@@ -31,13 +31,15 @@ const ItemMenu = () => {
     const navigate = useNavigate();
     const [name, setName] = useState("");
     const [cat, setCat] = useState(params.newitemid || "");
-    const [kitCat, setKitCat] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+    const [kitCats, setKitCats] = useState<string[]>([]);
     const [sector, setSector] = useState("");
     const [department, setDepartment] = useState("");
-    const [catType, setCatType] = useState<"מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף">("מכשיר");
+    const [catType, setCatType] = useState<"מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף">("מכשיר");
+    const [certificationPeriodMonths, setCertificationPeriodMonths] = useState<number | null>(null);
     const [description, setDescription] = useState("");
     const [imageLink, setImageLink] = useState("");
     const [qaStandardLink, setQaStandardLink] = useState("");
+    const [medicalEngineeringManualLink, setMedicalEngineeringManualLink] = useState("");
     const [userManualLink, setUserManualLink] = useState("");
     const [serviceManualLink, setServiceManualLink] = useState("");
     const [hebrewManualLink, setHebrewManualLink] = useState("");
@@ -47,30 +49,8 @@ const ItemMenu = () => {
     const [accessories, setAccessories] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [consumables, setConsumables] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [spareParts, setSpareParts] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-    const [belongsToDevice, setBelongsToDevice] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
+    const [belongsToDevices, setBelongsToDevices] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
-
-    const itemDetails = {
-        name: name,
-        cat: cat.replace(/ /g, ''),
-        kitCat: kitCat,
-        sector: sector,
-        department: department,
-        catType: catType,
-        description: description,
-        imageLink: imageLink,
-        qaStandardLink: qaStandardLink,
-        userManualLink: userManualLink,
-        serviceManualLink: serviceManualLink,
-        hebrewManualLink: hebrewManualLink,
-        supplier: supplier,
-        lifeSpan: lifeSpan,
-        models: models,
-        accessories: accessories,
-        consumables: consumables,
-        spareParts: spareParts,
-        belongsToDevice: belongsToDevice
-    };
 
     useEffect(() => {
         const getSectors = async () => {
@@ -100,9 +80,11 @@ const ItemMenu = () => {
                 setSector(i.sector);
                 setDepartment(i.department);
                 setCatType(i.catType);
+                setCertificationPeriodMonths(i.certificationPeriodMonths ?? null);
                 setDescription(i.description);
                 if (i.imageLink) setImageLink(i.imageLink);
                 if (i.qaStandardLink) setQaStandardLink(i.qaStandardLink);
+                if (i.medicalEngineeringManualLink) setMedicalEngineeringManualLink(i.medicalEngineeringManualLink);
                 if (i.userManualLink) setUserManualLink(i.userManualLink);
                 if (i.serviceManualLink) setServiceManualLink(i.serviceManualLink);
                 if (i.hebrewManualLink) setHebrewManualLink(i.hebrewManualLink);
@@ -112,8 +94,8 @@ const ItemMenu = () => {
                 if (i.accessories && i.accessories.length > 0) setAccessories(i.accessories);
                 if (i.consumables && i.consumables.length > 0) setConsumables(i.consumables);
                 if (i.spareParts && i.spareParts.length > 0) setSpareParts(i.spareParts);
-                if (i.belongsToDevice && i.belongsToDevice.length > 0) setBelongsToDevice(i.belongsToDevice);
-                if (i.kitCat && i.kitCat.length > 0) setKitCat(i.kitCat);
+                if (i.belongsToDevices && i.belongsToDevices.length > 0) setBelongsToDevices(i.belongsToDevices);
+                if (i.kitCats) setKitCats(i.kitCats);
             }).catch(e => console.log(`Error fetching item details: ${e}`));
         }
         if (!params.itemid) {
@@ -123,7 +105,7 @@ const ItemMenu = () => {
         }
     }, [params.itemid, authToken]);
 
-    const handleInput = (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => {
+    const handleInput = (setFunc: (val: string) => any, event: ChangeEvent<HTMLInputElement>) => {
         setFunc(event.target.value);
         dispatch(viewingActions.changesAppliedToItem(true));
     }
@@ -140,23 +122,41 @@ const ItemMenu = () => {
         setDepartment(value);
         dispatch(viewingActions.changesAppliedToItem(true));
     }
-    const handleSetCatType = (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלקי חילוף") => {
+    const handleSetCatType = (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף") => {
         setCatType(catType);
+        dispatch(viewingActions.changesAppliedToItem(true));
     }
+
     const handleSave = () => {
-        itemDetails.models = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.models);
-        itemDetails.kitCat = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.kitCat);
-        itemDetails.accessories = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.accessories);
-        itemDetails.consumables = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.consumables);
-        itemDetails.spareParts = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.spareParts);
-        itemDetails.belongsToDevice = vacateItemListIfEmptyAndRemoveSpaces(itemDetails.belongsToDevice);
+        const itemDetails = {
+            name: name,
+            cat: cat.replace(/ /g, ''),
+            kitCats: kitCats?.map(kc => kc.replace(/ /g, '')),
+            sector: sector,
+            department: department,
+            catType: catType,
+            certificationPeriodMonths,
+            description: description,
+            imageLink: imageLink,
+            qaStandardLink: qaStandardLink,
+            medicalEngineeringManualLink,
+            userManualLink: userManualLink,
+            serviceManualLink: serviceManualLink,
+            hebrewManualLink: hebrewManualLink,
+            supplier: supplier,
+            lifeSpan: lifeSpan,
+            models: vacateItemListIfEmptyAndRemoveSpaces(models),
+            accessories: vacateItemListIfEmptyAndRemoveSpaces(accessories),
+            consumables: vacateItemListIfEmptyAndRemoveSpaces(consumables),
+            spareParts: vacateItemListIfEmptyAndRemoveSpaces(spareParts),
+            belongsToDevices: vacateItemListIfEmptyAndRemoveSpaces(belongsToDevices)
+        };
 
         if (catType === "מכשיר") {
-            itemDetails.belongsToDevice = [];
+            itemDetails.belongsToDevices = [];
         }
-        if (catType === "אביזר" || catType === "מתכלה" || catType === "חלקי חילוף") {
-            itemDetails.kitCat = [];
-            itemDetails.spareParts = [];
+        if (catType === "אביזר" || catType === "מתכלה" || catType === "חלק חילוף") {
+            itemDetails.kitCats = [];
         }
 
         if (!itemDetails.name || !itemDetails.sector || !itemDetails.department) {
@@ -168,6 +168,8 @@ const ItemMenu = () => {
             alert("מק\"ט הוא שדה חובה");
             return;
         }
+
+        console.log("Saving item details:", itemDetails);
 
         if (!params.itemid) { // creating a new item
             fetch(`${backendFirebaseUri}/items`, {
@@ -225,26 +227,29 @@ const ItemMenu = () => {
                 <ItemDetails
                     name={name}
                     cat={cat}
-                    kitCat={kitCat}
+                    kitCats={kitCats}
                     sector={sector}
                     department={department}
                     description={description}
                     catType={catType}
+                    certificationPeriodMonths={certificationPeriodMonths}
                     sectorsToChooseFrom={sectorsToChooseFrom}
                     handleInput={handleInput}
                     handleDescription={handleDescription}
                     handleSetSector={handleSetSector}
                     handleSetDepartment={handleSetDepartment}
                     handleSetCatType={handleSetCatType}
+                    setCertificationPeriodMonths={setCertificationPeriodMonths}
                     setName={setName}
                     setCat={setCat}
-                    setKitCat={setKitCat}
+                    setKitCats={setKitCats}
                 />
             </div>
             <div className={classes.relations}>
                 {catType === "מכשיר" && <DeviceFields
                     imageLink={imageLink}
                     qaStandardLink={qaStandardLink}
+                    medicalEngineeringManualLink={medicalEngineeringManualLink}
                     userManualLink={userManualLink}
                     serviceManualLink={serviceManualLink}
                     hebrewManualLink={hebrewManualLink}
@@ -256,6 +261,7 @@ const ItemMenu = () => {
                     handleInput={handleInput}
                     setImageLink={setImageLink}
                     setQaStandardLink={setQaStandardLink}
+                    setMedicalEngineeringManualLink={setMedicalEngineeringManualLink}
                     setUserManualLink={setUserManualLink}
                     setServiceManualLink={setServiceManualLink}
                     setHebrewManualLink={setHebrewManualLink}
@@ -270,13 +276,13 @@ const ItemMenu = () => {
                     userManualLink={userManualLink}
                     supplier={supplier}
                     models={models}
-                    belongsToDevice={belongsToDevice}
+                    belongsToDevices={belongsToDevices}
                     handleInput={handleInput}
                     setImageLink={setImageLink}
                     setUserManualLink={setUserManualLink}
                     setSupplier={setSupplier}
                     setModels={setModels}
-                    setBelongsToDevice={setBelongsToDevice}
+                    setBelongsToDevices={setBelongsToDevices}
                 />}
                 {catType === "מתכלה" && <ConsumableFields
                     imageLink={imageLink}
@@ -284,27 +290,27 @@ const ItemMenu = () => {
                     supplier={supplier}
                     lifeSpan={lifeSpan}
                     models={models}
-                    belongsToDevice={belongsToDevice}
+                    belongsToDevices={belongsToDevices}
                     handleInput={handleInput}
                     setImageLink={setImageLink}
                     setUserManualLink={setUserManualLink}
                     setSupplier={setSupplier}
                     setLifeSpan={setLifeSpan}
                     setModels={setModels}
-                    setBelongsToDevice={setBelongsToDevice}
+                    setBelongsToDevices={setBelongsToDevices}
                 />}
-                {catType === "חלקי חילוף" && <SparePartFields
+                {catType === "חלק חילוף" && <SparePartFields
                     imageLink={imageLink}
                     userManualLink={userManualLink}
                     supplier={supplier}
                     models={models}
-                    belongsToDevice={belongsToDevice}
+                    belongsToDevices={belongsToDevices}
                     handleInput={handleInput}
                     setImageLink={setImageLink}
                     setUserManualLink={setUserManualLink}
                     setSupplier={setSupplier}
                     setModels={setModels}
-                    setBelongsToDevice={setBelongsToDevice}
+                    setBelongsToDevices={setBelongsToDevices}
                 />}
             </div>
             <div className={classes.buttons}>

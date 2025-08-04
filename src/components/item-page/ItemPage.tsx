@@ -9,12 +9,9 @@ import classes from './ItemPage.module.css';
 import { viewingActions } from "../../store/viewing-slice";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { backendFirebaseUri } from "../../backend-variables/address";
-// highlight-start
 import BigButton from "../UI/BigButton"; // Importing your existing button component
-// highlight-end
 
 
-// highlight-start
 // A new helper function to call our backend archive endpoint
 const toggleItemArchiveStatus = async (itemCat: string, authToken: string) => {
     // The backend route is POST /api/items/:cat/toggle-archive
@@ -32,7 +29,6 @@ const toggleItemArchiveStatus = async (itemCat: string, authToken: string) => {
     }
     return response.json();
 };
-// highlight-end
 
 
 const ItemPage = () => {
@@ -43,9 +39,7 @@ const ItemPage = () => {
     const frontEndPrivilege = useAppSelector(state => state.auth.frontEndPrivilege);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    // highlight-start
     const [isArchiving, setIsArchiving] = useState(false); // State to handle button disabling
-    // highlight-end
 
     useEffect(() => {
         const getItem = async () => {
@@ -81,8 +75,6 @@ const ItemPage = () => {
         // We removed `frontEndPrivilege`, `dispatch`, and `navigate` because they are stable and don't need to trigger re-fetches.
     }, [params.itemid, authToken, navigate, dispatch, frontEndPrivilege]);
 
-
-    // highlight-start
     // Handler for the new archive/restore button
     const handleArchiveToggle = async () => {
         if (!item) return;
@@ -106,7 +98,6 @@ const ItemPage = () => {
             setIsArchiving(false);
         }
     };
-    // highlight-end
 
 
     return (
@@ -121,17 +112,30 @@ const ItemPage = () => {
                 </header>
                 <h1>{item.name}</h1>
                 <p>{`מק"ט: ${item.cat}`}</p>
+                {item.catType === "מכשיר" && <p>{`מק"ט ערכה: ${item.kitCats?.[0] ?? ''}`}</p>}
+                {item.catType === "מכשיר" && <p>{`תוקף הסמכה בחודשים: ${item.certificationPeriodMonths ?? ''}`}</p>}
+                {item.catType === "מתכלה" && <p>{`אורך חיים בחודשים: ${item.lifeSpan ?? ''}`}</p>}
+                <p>{`ספק בארץ: ${item.supplier ?? ''}`}</p>
                 {item.description && <p>{item.description}</p>}
                 {item.imageLink && <img src={item.imageLink} alt={item.name} />}
-                {(["admin", "hanar"].includes(frontEndPrivilege) && item.qaStandardLink) && <a href={item.qaStandardLink}>לחץ להגעה לתקן בחינה</a>}
+                {
+                    [ 
+                        { link: item.userManualLink, name: "מדריך למשתמש" },
+                        { link: item.hebrewManualLink, name: "הוראות הפעלה בעברית" },
+                        { link: item.medicalEngineeringManualLink, name: "הוראות הנר" },
+                        { link: item.qaStandardLink, name: "תקן בחינה", privilegeRequired: true },
+                        { link: item.serviceManualLink, name: "Service Manual", privilegeRequired: true },
+                    ]
+                        .map(({ link, name, privilegeRequired }) =>
+                            (!privilegeRequired || ["admin", "hanar"].includes(frontEndPrivilege)) && link && <a href={link}>לחץ להגעה ל{name}</a>)
+                }
+                
                 {item.models && item.models.length > 0 && <InfoSection title="דגמים" elements={item.models} unclickable={true} />}
-                {item.kitCat && item.kitCat.length > 0 && <InfoSection title="מכשיר" elements={item.kitCat} />}
-                {item.belongsToDevice && item.belongsToDevice.length > 0 && <InfoSection title="שייך למכשיר" elements={item.belongsToDevice} />}
+                {item.belongsToDevices && item.belongsToDevices.length > 0 && <InfoSection title="שייך למכשיר" elements={item.belongsToDevices} />}
                 {item.accessories && item.accessories.length > 0 && <InfoSection title="אביזרים" elements={item.accessories} />}
                 {item.consumables && item.consumables.length > 0 && <InfoSection title="מתכלים" elements={item.consumables} />}
                 {item.spareParts && item.spareParts.length > 0 && <InfoSection title="חלקי חילוף" elements={item.spareParts} />}
 
-                {/* highlight-start */}
                 {/* The new Archive/Restore button, only for admins */}
                 {frontEndPrivilege === 'admin' && (
                     <BigButton
@@ -141,7 +145,6 @@ const ItemPage = () => {
                         overrideStyle={{ marginTop: "2rem", backgroundColor: (item.archived ?? false) ? "#3498db" : "#e67e22" }}
                     />
                 )}
-                {/* highlight-end */}
 
             </div>}
         </>

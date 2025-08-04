@@ -3,7 +3,8 @@
 .bigBtn {
     background-color: #002A48;
     color: #fff;
-    width: calc(100vw - 2*var(--gutterHorizontal));
+    /* width: calc(100vw - 2*var(--gutterHorizontal)); */
+    width: 100%;
     padding: 7px 0;
     margin: auto;
     display: flex;
