@@ -123,11 +123,11 @@ const ItemPage = () => {
                         { link: item.userManualLink, name: "מדריך למשתמש" },
                         { link: item.hebrewManualLink, name: "הוראות הפעלה בעברית" },
                         { link: item.medicalEngineeringManualLink, name: "הוראות הנר" },
-                        { link: item.qaStandardLink, name: "תקן בחינה" },
-                        { link: item.serviceManualLink, name: "Service Manual" },
+                        { link: item.qaStandardLink, name: "תקן בחינה", privilegeRequired: true },
+                        { link: item.serviceManualLink, name: "Service Manual", privilegeRequired: true },
                     ]
-                        .map(({ link, name }) =>
-                            (["admin", "hanar"].includes(frontEndPrivilege) && link) && <a href={link}>לחץ להגעה ל{name}</a>)
+                        .map(({ link, name, privilegeRequired }) =>
+                            (!privilegeRequired || (["admin", "hanar"].includes(frontEndPrivilege)) && link) && <a href={link}>לחץ להגעה ל{name}</a>)
                 }
                 
                 {item.models && item.models.length > 0 && <InfoSection title="דגמים" elements={item.models} unclickable={true} />}
