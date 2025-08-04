@@ -1,20 +1,26 @@
-export type AbbreviatedItem = { _id?: string, name: string, cat: string, imageLink?: string, archived?: boolean };
+export type AbbreviatedItem = { _id?: string, name: string, cat: string, imageLink?: string, manufacturer?: string, archived?: boolean };
 export type Item = {
     _id: string,
     name: string,
     cat: string,
+    kitCats?: string[],
     sector: string,
     department: string,
-    catType: "מקט רגיל" | "מקט ערכה",
+    catType: "מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף",
     certificationPeriodMonths?: number,
     description: string,
     imageLink?: string,
     qaStandardLink?: string,
+    medicalEngineeringManualLink?: string;
+    userManualLink?: string,
+    serviceManualLink?: string,
+    hebrewManualLink?: string,
+    supplier?: string,
+    lifeSpan?: string,
     models?: AbbreviatedItem[],
     accessories?: AbbreviatedItem[],
     consumables?: AbbreviatedItem[],
-    belongsToKits?: AbbreviatedItem[],
-    similarItems?: AbbreviatedItem[],
-    kitItem?: AbbreviatedItem[]
+    spareParts?: AbbreviatedItem[],
+    belongsToDevices?: AbbreviatedItem[],
     archived?: boolean;
 };

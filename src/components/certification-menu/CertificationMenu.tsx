@@ -8,7 +8,7 @@ import BigButton from '../UI/BigButton';
 import "./react-datepicker.css";
 import classes from './CertificationMenu.module.css';
 import { Certification } from '../../types/certification_types';
-import DebouncingInput from './DebouncingInput';
+import DebouncingInput from '../UI/DebouncingInput';
 import { default as ItemListItem } from '../item-search/ListItem';
 import { default as TechnicianListItem } from '../technician-page/ListItem';
 import { MdEdit } from "react-icons/md";
@@ -190,7 +190,7 @@ const CertificationMenu = () => {
     const certificationPeriodMonths = item?.certificationPeriodMonths ?? 0;
     const lastCertificationExpirationDate = lastCertificationDate ? moment(lastCertificationDate).add(certificationPeriodMonths ?? 0, 'months').toDate() : undefined; 
 
-    const regularCat = "מקט רגיל";
+    const deviceCat = "מכשיר";
 
     return (
         <div className={classes.certificationMenu}>
@@ -228,7 +228,7 @@ const CertificationMenu = () => {
                         placeholder='חפש מכשיר (שם, מק"ט)'
                         suggestions={itemSuggestions}
                         onFetchSuggestions={(value: string) => {
-                            fetch(encodeURI(`${backendFirebaseUri}/items?search=${value}`), {
+                            fetch(encodeURI(`${backendFirebaseUri}/items?catType=${deviceCat}&search=${value}`), {
                                 method: 'GET',
                                 headers: {
                                     'auth-token': authToken
@@ -287,7 +287,7 @@ const CertificationMenu = () => {
                         placeholder='חפש טכנאי (שם, ת.ז.)'
                         suggestions={technicianSuggestions.filter(ts => technicians.every(t => t?.id !== ts.id))}
                         onFetchSuggestions={(value: string) => {
-                            fetch(encodeURI(`${backendFirebaseUri}/technicians?search=${value}&catType=${regularCat}`), {
+                            fetch(encodeURI(`${backendFirebaseUri}/technicians?search=${value}`), {
                                 method: 'GET',
                                 headers: {
                                     'auth-token': authToken

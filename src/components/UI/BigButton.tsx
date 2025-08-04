@@ -6,9 +6,10 @@ interface BigButtonProps {
     action: () => void;
     overrideStyle?: CSSProperties;
     disabled?: boolean;
+    className?: string;
 }
 
-const BigButton: React.FC<BigButtonProps> = ({ text, action, overrideStyle, disabled }) => {
+const BigButton: React.FC<BigButtonProps> = ({ text, action, overrideStyle, disabled, className }) => {
     const handleClick = () => {
         if (disabled) {
             return;
@@ -23,7 +24,7 @@ const BigButton: React.FC<BigButtonProps> = ({ text, action, overrideStyle, disa
 
     return (
         <button
-            className={classes.bigBtn}
+            className={`${classes.bigBtn} ${className}`}
             onClick={handleClick}
             style={combinedStyles}
             disabled={disabled}
