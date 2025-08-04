@@ -8,7 +8,7 @@ import BigButton from '../UI/BigButton';
 import "./react-datepicker.css";
 import classes from './CertificationMenu.module.css';
 import { Certification } from '../../types/certification_types';
-import DebouncingInput from './DebouncingInput';
+import DebouncingInput from '../UI/DebouncingInput';
 import { default as ItemListItem } from '../item-search/ListItem';
 import { default as TechnicianListItem } from '../technician-page/ListItem';
 import { MdEdit } from "react-icons/md";
