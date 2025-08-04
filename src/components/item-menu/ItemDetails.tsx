@@ -1,5 +1,4 @@
 import React, { ChangeEvent } from "react";
-import { AbbreviatedItem } from "../../types/item_types";
 import { Sector } from "../../types/sector_types";
 import DepartmentSelection from "../item-search/DepartmentSelection";
 import SectorSelection from "../item-search/SectorSelection";
