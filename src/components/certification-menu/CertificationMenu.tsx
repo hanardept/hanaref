@@ -12,6 +12,8 @@ import DebouncingInput from '../UI/DebouncingInput';
 import { default as ItemListItem } from '../item-search/ListItem';
 import { default as TechnicianListItem } from '../technician-page/ListItem';
 import { MdEdit } from "react-icons/md";
+import { MdAddCircle, MdRemoveCircle } from "react-icons/md";
+
 import DatePicker from "react-datepicker";
 import moment from 'moment';
 
@@ -40,7 +42,7 @@ const CertificationMenu = () => {
     const [itemSearchText, setItemSearchText] = useState("")
     const [item, setItem] = useState(null as ItemSummary | null);
     const [technicianSearchText, setTechnicianSearchText] = useState("");
-    const [technician, setTechnician] = useState(null as TechnicianSummary | null);
+    const [technicians, setTechnicians] = useState<(TechnicianSummary | null)[]>([]);
     const [certificationDocumentLink, setCertificationDocumentLink] = useState("");
     const [firstCertificationDate, setFirstCertificationDate] = useState(null as Date | null);
     const [lastCertificationDate, setLastCertificationDate] = useState(null as Date | null);
@@ -51,12 +53,13 @@ const CertificationMenu = () => {
     const [showItemInput, setShowItemInput] = useState(false);
 
     const [technicianSuggestions, setTechnicianSuggestions] = useState([] as TechnicianSummary[]);
-    const [showTechnicianInput, setShowTechnicianInput] = useState(false);
+    //const [showTechnicianInput, setShowTechnicianInput] = useState(false);
+    const [addTechniciansRequested, setAddTechniciansRequested] = useState(false);
 
     const certificationDetails = {
         id: id,
         item,
-        technician,
+        technicians,
         certificationDocumentLink,
         firstCertificationDate,
         lastCertificationDate,
@@ -92,7 +95,7 @@ const CertificationMenu = () => {
                     setItemSearchText(c.item.cat);
                     setItem(c.item);
                     setTechnicianSearchText(c.technician.id);
-                    setTechnician(c.technician);
+                    setTechnicians([ c.technician ]);
                     setCertificationDocumentLink(c.certificationDocumentLink ?? "");
                     setFirstCertificationDate(c.firstCertificationDate ?? null);
                     setLastCertificationDate(c.lastCertificationDate ?? null);
@@ -114,7 +117,7 @@ const CertificationMenu = () => {
     
     const handleSave = () => {
 
-        if (!certificationDetails.item || !certificationDetails.technician ||
+        if (!certificationDetails.item || !certificationDetails.technicians?.length ||
             (!certificationDetails.lastCertificationDate && !certificationDetails.plannedCertificationDate)) {
             // if the required fields of the Certification mongo schema are not filled then don't save
             console.log("Please make sure to enter an item name, technician and either last or planned certification date");
@@ -123,38 +126,38 @@ const CertificationMenu = () => {
 
         console.log(`Saving certification with details: ${JSON.stringify(certificationDetails, null, 4)}`);
 
-        if (!params.certificationid) {
-            fetch(`${backendFirebaseUri}/certifications`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'auth-token': authToken
-                },
-                body: JSON.stringify(certificationDetails)
-            }).then((res) => {
-                console.log("success saving certification");
+        const { technicians, ...restDetails } = certificationDetails;
+        const promises = technicians.map((technician) => {
+            const body = JSON.stringify({ ...restDetails, technician});
+            if (!params.certificationid) {
+                return fetch(`${backendFirebaseUri}/certifications`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'auth-token': authToken
+                    },
+                    body
+                })
+            } else {
+                return fetch(encodeURI(`${backendFirebaseUri}/certifications/${params.certificationid}`), {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'auth-token': authToken
+                    },
+                    body
+                });
+            }
+        })
+        return Promise.all(promises)
+            .then(() => {
+                console.log("Successfully saved certification!");
                 dispatch(viewingActions.changesAppliedToCertification(false));
                 navigate(-1);
             })
-            .catch((err) => console.log(`Error saving certification: ${err}`));
-        }
-        if (params.certificationid) {
-            fetch(encodeURI(`${backendFirebaseUri}/certifications/${params.certificationid}`), {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'auth-token': authToken
-                },
-                body: JSON.stringify(certificationDetails)
-            }).then((res) => {
-                console.log("success updating certification");
-                dispatch(viewingActions.changesAppliedToCertification(false));
-                navigate(-1);
-            })
-            .catch((err) => console.log(`Error updating certification: ${err}`));
-        }
+            .catch((err) => console.log(`Error saving/updating certification: ${err}`));
     }
     // edit mode only:
     const handleDelete = () => {
@@ -173,7 +176,7 @@ const CertificationMenu = () => {
     }
 
     const showItemListItem = !showItemInput && item;
-    const showTechnicianListItem = !showTechnicianInput && technician;
+    //const showTechnicianListItem = !showTechnicianInput && technician;
 
     const isPastDate = (date: Date) => {
         return date < new Date();
@@ -239,7 +242,6 @@ const CertificationMenu = () => {
                         onClearSuggestions={() => { console.log(`clearing suggestions`); setItemSuggestions([]); }}
                         onBlur={() => {
                             if (!itemSuggestions.find((s: any) => s.cat === itemSearchText || s.name === itemSearchText)) {
-                                console.log(`couldn't find`)
                                 setItemSearchText("");
                             }
                         }}
@@ -248,21 +250,27 @@ const CertificationMenu = () => {
             </div>
             <div className={classes.inputGroup}>
                 <label htmlFor="technicianSearch">טכנאי</label>
-                {showTechnicianListItem ? (
-                    <span className={classes.listItemContainer}>
-                        <TechnicianListItem
-                            className={classes.technicianListItem}
-                            textContentClassName={classes.technicianTextContent}
-                            id={technician.id}
-                            firstName={technician.firstName}
-                            lastName={technician.lastName}
-                            shouldBeColored={false}
-                        />
-                        <MdEdit
-                            onClick={() => setShowTechnicianInput(true)}
-                        />
-                    </span>
-                ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                    {technicians.map((technician, i) =>
+                        <span className={classes.listItemContainer}>
+                            <TechnicianListItem
+                                className={classes.technicianListItem}
+                                textContentClassName={classes.technicianTextContent}
+                                id={technician?.id ?? ''}
+                                firstName={technician?.firstName ?? ''}
+                                lastName={technician?.lastName ?? ''}
+                                shouldBeColored={false}
+                            />
+                            {params.certificationid ? (
+                            <MdEdit
+                                onClick={() => setTechnicians([])}
+                            />) : (
+                            <MdRemoveCircle
+                                onClick={() => setTechnicians(technicians.filter((_, index) => index !== i))}
+                            />)}
+                        </span>
+                    )}
+                {(addTechniciansRequested || !technicians?.length) && (
                     <DebouncingInput
                         id="technicianSearch"
                         className={classes.itemCat}
@@ -271,12 +279,13 @@ const CertificationMenu = () => {
                             setTechnicianSearchText(val);
                         }}
                         onSuggestionSelected={(t: any) => {
-                            setTechnician(t)
-                            setShowTechnicianInput(false)
+                            setTechnicians([...technicians, t ])
+                            setAddTechniciansRequested(false)
+                            setTechnicianSearchText("");
                         }}
                         getSuggestionValue={s => s.id}
                         placeholder='חפש טכנאי (שם, ת.ז.)'
-                        suggestions={technicianSuggestions}
+                        suggestions={technicianSuggestions.filter(ts => technicians.every(t => t?.id !== ts.id))}
                         onFetchSuggestions={(value: string) => {
                             fetch(encodeURI(`${backendFirebaseUri}/technicians?search=${value}&catType=${regularCat}`), {
                                 method: 'GET',
@@ -297,6 +306,11 @@ const CertificationMenu = () => {
                         }}
                     />
                 )}
+                {(!params.certificationid && !addTechniciansRequested && technicians.length) ? 
+                    <span className={classes.addButtonContainer}>
+                        <MdAddCircle onClick={() => setAddTechniciansRequested(true) }/>
+                    </span> : <></>}
+                </div>
             </div>
             <div className={classes.inputGroup}>
                 <label htmlFor="firstCertificationDate">תאריך הסמכה ראשונה</label>
