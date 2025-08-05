@@ -32,11 +32,8 @@ const HomePage = () => {
         navigate(`/items/${cat}`);
     }
 
-    console.log(`show archived: ${showArchived}`);
-
     // This useEffect will now trigger a new search whenever the checkbox state changes.
     useEffect(() => {
-        console.log(`dependencies changed: showArchived: ${showArchived}, searchVal: ${searchVal}, sector: ${sector}, department: ${department}, authToken: ${authToken}`);
 
         if (!initialized) return;
 
@@ -71,14 +68,11 @@ const HomePage = () => {
     }, [dispatch, showArchived, searchVal, sector, department, authToken, initialized]);
 
      useEffect(() => {
-        console.log(`dependencies changed: searchParams: ${searchParams}`);
 
         const urlSector = searchParams.get('sector') || '';
         const urlDepartment = searchParams.get('department') || '';
         const urlShowArchived = searchParams.get('showArchived') === 'true';
         const urlSearchVal = searchParams.get('search') || '';
-
-        console.log(`URL Params - Sector: ${urlSector}, Department: ${urlDepartment}, Show Archived: ${urlShowArchived}, Search Value: ${urlSearchVal}`);
 
         if (urlSector || urlDepartment || urlSearchVal || urlShowArchived) {
             dispatch(viewingActions.changeSearchCriteria({
@@ -93,48 +87,19 @@ const HomePage = () => {
         setInitialized(true);
     }, [dispatch, searchParams]);
 
-    // NEW: Fetch data whenever search criteria change
-    // useEffect(() => {
-    //     console.log(`dependencies changed: searchVal: ${searchVal}, sector: ${sector}, department: ${department}, showArchived: ${showArchived}, authToken: ${authToken}, initialized: ${initialized}`);
-
-    //     if (!initialized) return;
-
-    //     // Clear existing items first
-    //     dispatch(itemsActions.clearItemList());
-        
-    //     const archiveStatus = showArchived ? 'all' : 'active';
-    //     // Fetch new data
-    //     fetch(encodeURI(`${backendFirebaseUri}/items?search=${searchVal}&sector=${sector}&department=${department}&status=${archiveStatus}&page=0`), {
-    //         headers: {
-    //             'auth-token': authToken
-    //         }
-    //     })
-    //     .then((res) => res.json())
-    //     .then((jsonedRes) => {
-    //         dispatch(itemsActions.addItems(jsonedRes));
-    //         dispatch(viewingActions.changeSearchCriteria({ page: 1 })); // Reset page for infinite scroll
-    //         dispatch(viewingActions.changeBlockSearcScroll(false)); // Re-enable scrolling
-    //     })
-    //     .catch((error) => {
-    //         console.error("Failed to fetch items:", error);
-    //     });
-    // }, [searchVal, sector, department, showArchived, authToken, dispatch, initialized]);
-
     // Update URL when filters change
     useEffect(() => {
         const params = new URLSearchParams();
         if (searchVal) params.set('search', searchVal);
         if (sector) params.set('sector', sector);
         if (department) params.set('department', department);
-        params.set('showArchived', showArchived.toString());
-        console.log(`url params: ${params.toString()}`);
+        if (showArchived) params.set('showArchived', showArchived.toString());
         
         setSearchParams(params, { replace: true });
     }, [searchVal, sector, department, showArchived, setSearchParams]);
 
     let scrollThrottler = true;
     const handleScroll = (event: UIEvent<HTMLDivElement>) => {
-        console.log("Scroll event triggered");
         if (!blockScrollSearch && scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
             scrollThrottler = false;
             // 2. Ensure the infinite scroll also respects the archive status
