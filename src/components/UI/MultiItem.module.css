@@ -1,0 +1,28 @@
+.listItemContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px; /* Your desired gap */
+    width: 100%; /* Important: This means 100% of the parent's content area (368px) */
+    max-width: 100%;
+    min-width: 0; /* Ensures the container itself can shrink */
+    overflow: hidden; /* Hides any visual overflow */
+    box-sizing: border-box; /* Proper box model */
+    flex-shrink: 1; /* Allows this container to shrink */
+    /* flex-basis: auto; // Keep or remove, default is fine */
+}
+
+.listItemContainer svg { /* The MdEdit icon */
+    flex-shrink: 0; /* Prevents SVG from shrinking */
+    flex-basis: auto; /* Allows it to take its natural size (24px) */
+    width: 24px; /* Ensure its fixed width */
+    height: 24px;
+    color: var(--primary-color);
+}
+
+.addButtonContainer {
+    display: flex;
+    justify-content: center;
+    font-size: 30px;
+}
+
