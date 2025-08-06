@@ -13,6 +13,7 @@ import DeviceFields from './DeviceFields';
 import AccessoryFields from './AccessoryFields';
 import ConsumableFields from './ConsumableFields';
 import SparePartFields from './SparePartFields';
+import { getFilename } from '../../utils';
 
 function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
     const filteredList = itemList.filter(i => i.cat !== "" || i.name !== "");
@@ -161,8 +162,9 @@ const ItemMenu = () => {
                     method: 'PUT',
                     headers: { 'Content-Type': contentType }
                 })
-            })
-            .then(res => setter(json.url))
+            )
+            .then(res => res.json())
+            .then(json => setter(json.url))
         ))
         .then(res => {
             const itemDetails = {
@@ -200,8 +202,6 @@ const ItemMenu = () => {
                 alert("מק\"ט הוא שדה חובה");
                 return;
             }
-
-            console.log("Saving item details:", itemDetails);
 
             if (!params.itemid) { // creating a new item
                 fetch(`${backendFirebaseUri}/items`, {
@@ -280,12 +280,12 @@ const ItemMenu = () => {
             </div>
             <div className={classes.relations}>
                 {catType === "מכשיר" && <DeviceFields
-                    imageLink={imageLink}
-                    qaStandardLink={qaStandardLink}
-                    medicalEngineeringManualLink={medicalEngineeringManualLink}
-                    userManualLink={userManualLink}
-                    serviceManualLink={serviceManualLink}
-                    hebrewManualLink={hebrewManualLink}
+                    imageLink={getFilename(imageLink)}
+                    qaStandardLink={getFilename(qaStandardLink)}
+                    medicalEngineeringManualLink={getFilename(medicalEngineeringManualLink)}
+                    userManualLink={getFilename(userManualLink)}
+                    serviceManualLink={getFilename(serviceManualLink)}
+                    hebrewManualLink={getFilename(hebrewManualLink)}
                     supplier={supplier}
                     models={models}
                     accessories={accessories}
@@ -305,8 +305,8 @@ const ItemMenu = () => {
                     setSpareParts={setSpareParts}
                 />}
                 {catType === "אביזר" && <AccessoryFields
-                    imageLink={imageLink}
-                    userManualLink={userManualLink}
+                    imageLink={getFilename(imageLink)}
+                    userManualLink={getFilename(userManualLink)}
                     supplier={supplier}
                     models={models}
                     belongsToDevices={belongsToDevices}
@@ -318,8 +318,8 @@ const ItemMenu = () => {
                     setBelongsToDevices={setBelongsToDevices}
                 />}
                 {catType === "מתכלה" && <ConsumableFields
-                    imageLink={imageLink}
-                    userManualLink={userManualLink}
+                    imageLink={getFilename(imageLink)}
+                    userManualLink={getFilename(userManualLink)}
                     supplier={supplier}
                     lifeSpan={lifeSpan}
                     models={models}
@@ -333,8 +333,8 @@ const ItemMenu = () => {
                     setBelongsToDevices={setBelongsToDevices}
                 />}
                 {catType === "חלק חילוף" && <SparePartFields
-                    imageLink={imageLink}
-                    userManualLink={userManualLink}
+                    imageLink={getFilename(imageLink)}
+                    userManualLink={getFilename(userManualLink)}
                     supplier={supplier}
                     models={models}
                     belongsToDevices={belongsToDevices}
