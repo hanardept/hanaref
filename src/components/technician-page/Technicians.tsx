@@ -5,6 +5,7 @@ import classes from './Technicians.module.css';
 import { UIEvent, useEffect } from "react";
 import { backendFirebaseUri } from "../../backend-variables/address";
 import { techniciansActions } from "../../store/technicians-slice";
+import { viewingActions } from "../../store/viewing-slice";
 import { useNavigate } from "react-router-dom";
 import SearchMenu from "./SearchMenu";
 
@@ -14,7 +15,7 @@ const Technicians = () => {
     const navigate = useNavigate();
     const searchComplete = useAppSelector(state => state.technicians.searchComplete);
     const technicians = useAppSelector(state => state.technicians.technicians);
-    const { searchVal, showArchived } = useAppSelector(state => state.viewing.searching);
+    const { searchVal, showArchived, page, blockScrollSearch } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
     const dispatch = useAppDispatch();
     //const [initialized, setInitialized] = useState(false);
@@ -28,21 +29,22 @@ const Technicians = () => {
         console.log("Scroll event triggered");
 
         let scrollThrottler = true;
-        if (scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
+        if (!blockScrollSearch && scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
             scrollThrottler = false;
 
             const archiveStatus = showArchived ? 'all' : 'active';
             
-            fetch(encodeURI(`${backendFirebaseUri}/technicians?status=${archiveStatus}`), {
+            fetch(encodeURI(`${backendFirebaseUri}/technicians?status=${archiveStatus}&page=${page}`), {
                 headers: { 'auth-token': authToken }
             })
             .then(res => res.json())
             .then((jsonedRes) => {
                 if (jsonedRes.length > 0) {
                     dispatch(techniciansActions.addTechnicians(jsonedRes));
+                    dispatch(viewingActions.changeSearchCriteria({ page: page + 1 }));
+                } else {
                     dispatch(techniciansActions.declareSearchComplete(true));
                 }
-               dispatch(techniciansActions.declareSearchComplete(true));
             });
         } else {
             console.log(`no technicians search!`);
