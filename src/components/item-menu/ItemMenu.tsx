@@ -37,12 +37,12 @@ const ItemMenu = () => {
     const [catType, setCatType] = useState<"מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף">("מכשיר");
     const [certificationPeriodMonths, setCertificationPeriodMonths] = useState<number | null>(null);
     const [description, setDescription] = useState("");
-    const [imageLink, setImageLink] = useState("");
-    const [qaStandardLink, setQaStandardLink] = useState("");
-    const [medicalEngineeringManualLink, setMedicalEngineeringManualLink] = useState("");
-    const [userManualLink, setUserManualLink] = useState("");
-    const [serviceManualLink, setServiceManualLink] = useState("");
-    const [hebrewManualLink, setHebrewManualLink] = useState("");
+    const [imageLink, setImageLink] = useState("" as (string | File));
+    const [qaStandardLink, setQaStandardLink] = useState("" as (string | File));
+    const [medicalEngineeringManualLink, setMedicalEngineeringManualLink] = useState("" as (string | File));
+    const [userManualLink, setUserManualLink] = useState("" as (string | File));
+    const [serviceManualLink, setServiceManualLink] = useState("" as (string | File));
+    const [hebrewManualLink, setHebrewManualLink] = useState("" as (string | File));
     const [supplier, setSupplier] = useState("");
     const [lifeSpan, setLifeSpan] = useState("");
     const [models, setModels] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
@@ -128,81 +128,114 @@ const ItemMenu = () => {
     }
 
     const handleSave = () => {
-        const itemDetails = {
-            name: name,
-            cat: cat.replace(/ /g, ''),
-            kitCats: kitCats?.map(kc => kc.replace(/ /g, '')),
-            sector: sector,
-            department: department,
-            catType: catType,
-            certificationPeriodMonths,
-            description: description,
-            imageLink: imageLink,
-            qaStandardLink: qaStandardLink,
-            medicalEngineeringManualLink,
-            userManualLink: userManualLink,
-            serviceManualLink: serviceManualLink,
-            hebrewManualLink: hebrewManualLink,
-            supplier: supplier,
-            lifeSpan: lifeSpan,
-            models: vacateItemListIfEmptyAndRemoveSpaces(models),
-            accessories: vacateItemListIfEmptyAndRemoveSpaces(accessories),
-            consumables: vacateItemListIfEmptyAndRemoveSpaces(consumables),
-            spareParts: vacateItemListIfEmptyAndRemoveSpaces(spareParts),
-            belongsToDevices: vacateItemListIfEmptyAndRemoveSpaces(belongsToDevices)
-        };
-
-        if (catType === "מכשיר") {
-            itemDetails.belongsToDevices = [];
-        }
-        if (catType === "אביזר" || catType === "מתכלה" || catType === "חלק חילוף") {
-            itemDetails.kitCats = [];
-        }
-
-        if (!itemDetails.name || !itemDetails.sector || !itemDetails.department) {
+        if (!name || !sector || !department) {
             // if the required fields of the Item mongo schema are not filled then don't save
             console.log("Please make sure to enter a name, catalog number, sector and department");
             return;
         }
-        if(!itemDetails.cat){
-            alert("מק\"ט הוא שדה חובה");
-            return;
-        }
 
-        console.log("Saving item details:", itemDetails);
+        const newFileFields =//: Array<keyof typeof itemDetails> = [ 
+            [
+                { value: imageLink, setter: setImageLink, contentType: 'application/image' },
+                { value: qaStandardLink, setter: setQaStandardLink, contentType: 'application/pdf' },
+                { value: medicalEngineeringManualLink, setter: setMedicalEngineeringManualLink, contentType: 'application/pdf' },
+                { value: userManualLink, setter: setUserManualLink, contentType: 'application/pdf' },
+                { value: serviceManualLink, setter: setServiceManualLink, contentType: 'application/pdf' },
+                { value: hebrewManualLink, setter: setHebrewManualLink, contentType: 'application/pdf' },
+            ]
+            .filter(({ value }) => value && typeof value !== 'string' );
 
-        if (!params.itemid) { // creating a new item
-            fetch(`${backendFirebaseUri}/items`, {
+        Promise.all(newFileFields.map(({ value, setter, contentType }) => 
+            fetch(encodeURI(`${backendFirebaseUri}/items/${params.itemid}/url`), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                     'auth-token': authToken
                 },
-                body: JSON.stringify(itemDetails)
-            }).then((res) => {
-                console.log("success saving item");
-                dispatch(viewingActions.changesAppliedToItem(false));
-                navigate(-1);
+                body: JSON.stringify({ filename: (value as File).name })
             })
-            .catch((err) => console.log(`Error saving item: ${err}`));
-        }
-        if (params.itemid) { // editing existing iten
-            fetch(encodeURI(`${backendFirebaseUri}/items/${params.itemid}`), {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'auth-token': authToken
-                },
-                body: JSON.stringify(itemDetails)
-            }).then((res) => {
-                console.log("success updating item");
-                dispatch(viewingActions.changesAppliedToItem(false));
-                navigate(-1);
+            .then(res => res.json())
+            .then(json =>
+                fetch(json.url, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': contentType }
+                })
             })
-            .catch((err) => console.log(`Error updating item: ${err}`));
-        }
+            .then(res => setter(json.url))
+        ))
+        .then(res => {
+            const itemDetails = {
+                name: name,
+                cat: cat.replace(/ /g, ''),
+                kitCats: kitCats?.map(kc => kc.replace(/ /g, '')),
+                sector: sector,
+                department: department,
+                catType: catType,
+                certificationPeriodMonths,
+                description: description,
+                imageLink: imageLink,
+                qaStandardLink: qaStandardLink,
+                medicalEngineeringManualLink: medicalEngineeringManualLink,
+                userManualLink: userManualLink,
+                serviceManualLink: serviceManualLink,
+                hebrewManualLink: hebrewManualLink,
+                supplier: supplier,
+                lifeSpan: lifeSpan,
+                models: vacateItemListIfEmptyAndRemoveSpaces(models),
+                accessories: vacateItemListIfEmptyAndRemoveSpaces(accessories),
+                consumables: vacateItemListIfEmptyAndRemoveSpaces(consumables),
+                spareParts: vacateItemListIfEmptyAndRemoveSpaces(spareParts),
+                belongsToDevices: vacateItemListIfEmptyAndRemoveSpaces(belongsToDevices)
+            };
+
+            if (catType === "מכשיר") {
+                itemDetails.belongsToDevices = [];
+            }
+            if (catType === "אביזר" || catType === "מתכלה" || catType === "חלק חילוף") {
+                itemDetails.kitCats = [];
+            }
+
+            if(!itemDetails.cat){
+                alert("מק\"ט הוא שדה חובה");
+                return;
+            }
+
+            console.log("Saving item details:", itemDetails);
+
+            if (!params.itemid) { // creating a new item
+                fetch(`${backendFirebaseUri}/items`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'auth-token': authToken
+                    },
+                    body: JSON.stringify(itemDetails)
+                }).then((res) => {
+                    console.log("success saving item");
+                    dispatch(viewingActions.changesAppliedToItem(false));
+                    navigate(-1);
+                })
+                .catch((err) => console.log(`Error saving item: ${err}`));
+            }
+            if (params.itemid) { // editing existing iten
+                fetch(encodeURI(`${backendFirebaseUri}/items/${params.itemid}`), {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'auth-token': authToken
+                    },
+                    body: JSON.stringify(itemDetails)
+                }).then((res) => {
+                    console.log("success updating item");
+                    dispatch(viewingActions.changesAppliedToItem(false));
+                    navigate(-1);
+                })
+                .catch((err) => console.log(`Error updating item: ${err}`));
+            }
+        });
     }
     // edit mode only:
     const handleDelete = () => {

@@ -1,7 +1,7 @@
 import React, { ChangeEvent } from "react";
 import { AbbreviatedItem } from "../../types/item_types";
 import InfoSectionMenu from "./InfoSectionMenu";
-import LabeledInput from "./LabeledInput";
+import LabeledInput from "../UI/LabeledInput";
 
 interface AccessoryFieldsProps {
     imageLink: string;

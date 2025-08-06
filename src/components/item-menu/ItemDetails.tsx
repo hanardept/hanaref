@@ -3,7 +3,7 @@ import { Sector } from "../../types/sector_types";
 import DepartmentSelection from "../item-search/DepartmentSelection";
 import SectorSelection from "../item-search/SectorSelection";
 import CatTypeSelection from "./CatTypeSelection";
-import LabeledInput from "./LabeledInput";
+import LabeledInput from "../UI/LabeledInput";
 
 interface ItemDetailsProps {
     name: string;

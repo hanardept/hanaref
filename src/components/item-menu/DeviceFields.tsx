@@ -1,7 +1,9 @@
 import React, { ChangeEvent } from "react";
 import { AbbreviatedItem } from "../../types/item_types";
 import InfoSectionMenu from "./InfoSectionMenu";
-import LabeledInput from "./LabeledInput";
+import LabeledInput from "../UI/LabeledInput";
+import UploadFile from "../UI/UploadFile";
+import { backendFirebaseUri } from "../../backend-variables/address";
 
 interface DeviceFieldsProps {
     imageLink: string;
@@ -38,7 +40,8 @@ const DeviceFields = (props: DeviceFieldsProps) => {
 
     return (
         <>
-            <LabeledInput label="קישור לתמונה" value={imageLink} onChange={(e) => handleInput(setImageLink, e)} placeholder="קישור לתמונה" />
+            <LabeledInput type="file" label="קישור לתמונה" value={imageLink} onChange={(e) => handleInput(setImageLink, e)} placeholder="קישור לתמונה" 
+                customInputElement={<UploadFile placeholder= "קישור לתמונה" url={imageLink} onChange={(e) => setImageLink(e.target.value)}/>}/>
             <LabeledInput label="מדריך למשתמש" value={userManualLink} onChange={(e) => handleInput(setUserManualLink, e)} placeholder="מדריך למשתמש" />
             <LabeledInput label="הוראות הפעלה בעברית" value={hebrewManualLink} onChange={(e) => handleInput(setHebrewManualLink, e)} placeholder="הוראות הפעלה בעברית" />
             <LabeledInput label="הוראות הנר" value={medicalEngineeringManualLink} onChange={(e) => handleInput(setMedicalEngineeringManualLink, e)} placeholder="הוראות הנר" />
