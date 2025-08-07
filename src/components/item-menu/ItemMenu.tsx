@@ -135,38 +135,50 @@ const ItemMenu = () => {
             return;
         }
 
-        const newFileFields =//: Array<keyof typeof itemDetails> = [ 
-            [
-                { value: imageLink, setter: setImageLink, contentType: 'application/image' },
-                { value: qaStandardLink, setter: setQaStandardLink, contentType: 'application/pdf' },
-                { value: medicalEngineeringManualLink, setter: setMedicalEngineeringManualLink, contentType: 'application/pdf' },
-                { value: userManualLink, setter: setUserManualLink, contentType: 'application/pdf' },
-                { value: serviceManualLink, setter: setServiceManualLink, contentType: 'application/pdf' },
-                { value: hebrewManualLink, setter: setHebrewManualLink, contentType: 'application/pdf' },
-            ]
-            .filter(({ value }) => value && typeof value !== 'string' );
+        const getIfFile = (obj : { value: string | File, setter: React.Dispatch<React.SetStateAction<string | File>>, contentType: string })
+            : { value: string | File, setter: React.Dispatch<React.SetStateAction<string | File>>, contentType: string } | undefined => 
+                (obj.value && typeof obj.value !== 'string') ? obj : undefined ;
+        const newFileFields: Record<string, { value: string | File, setter: React.Dispatch<React.SetStateAction<string | File>>, contentType: string } | undefined> = {//: Array<keyof typeof itemDetails> = [ 
+            imageLink: getIfFile({ value: imageLink, setter: setImageLink, contentType: 'image/png' }),
+            qaStandardLink: getIfFile({ value: qaStandardLink, setter: setQaStandardLink, contentType: 'application/pdf' }),
+            medicalEngineeringManualLink: getIfFile({ value: medicalEngineeringManualLink, setter: setMedicalEngineeringManualLink, contentType: 'application/pdf' }),
+            userManualLink: getIfFile({ value: userManualLink, setter: setUserManualLink, contentType: 'application/pdf' }),
+            serviceManualLink: getIfFile({ value: serviceManualLink, setter: setServiceManualLink, contentType: 'application/pdf' }),
+            hebrewManualLink: getIfFile({ value: hebrewManualLink, setter: setHebrewManualLink, contentType: 'application/pdf' }),
+        };
 
-        Promise.all(newFileFields.map(({ value, setter, contentType }) => 
-            fetch(encodeURI(`${backendFirebaseUri}/items/${params.itemid}/url`), {
+        const newLinks: Record<string, string> = {};
+        Promise.all(Object.keys(newFileFields).map(key => {
+            if (!newFileFields[key]) {
+                return;
+            }
+            const { value, setter, contentType } = newFileFields[key]!;
+            return fetch(encodeURI(`${backendFirebaseUri}/items/${params.itemid}/url`), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                     'auth-token': authToken
                 },
-                body: JSON.stringify({ filename: (value as File).name })
+                body: JSON.stringify({ filename: (value as File).name, contentType })
             })
             .then(res => res.json())
-            .then(json =>
-                fetch(json.url, {
+            .then(json => {
+                console.log(`setting to ${json.url}`);
+                const urlObj = new URL(json.url);
+                urlObj.search = '';
+                const objectUrl = urlObj.toString();
+                setter(objectUrl);
+                return fetch(json.url, {
                     method: 'PUT',
-                    headers: { 'Content-Type': contentType }
-                })
+                    headers: { 'Content-Type': contentType },
+                    body: value
+                }).then(res => newLinks[key] = objectUrl)
+            }
             )
-            .then(res => res.json())
-            .then(json => setter(json.url))
-        ))
+        }))
         .then(res => {
+            //console.log(`res: ${JSON.stringify(res)}, is array: ${Array.isArray(res)}`);
             const itemDetails = {
                 name: name,
                 cat: cat.replace(/ /g, ''),
@@ -176,12 +188,12 @@ const ItemMenu = () => {
                 catType: catType,
                 certificationPeriodMonths,
                 description: description,
-                imageLink: imageLink,
-                qaStandardLink: qaStandardLink,
-                medicalEngineeringManualLink: medicalEngineeringManualLink,
-                userManualLink: userManualLink,
-                serviceManualLink: serviceManualLink,
-                hebrewManualLink: hebrewManualLink,
+                imageLink: newLinks.imageLink ?? imageLink,
+                qaStandardLink: newLinks.qaStandardLink ?? qaStandardLink,
+                medicalEngineeringManualLink: newLinks.medicalEngineeringManualLink ?? medicalEngineeringManualLink,
+                userManualLink: newLinks.userManualLink ?? userManualLink,
+                serviceManualLink: newLinks.serviceManualLink ?? serviceManualLink,
+                hebrewManualLink: newLinks.hebrewManualLink ?? hebrewManualLink,
                 supplier: supplier,
                 lifeSpan: lifeSpan,
                 models: vacateItemListIfEmptyAndRemoveSpaces(models),

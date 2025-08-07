@@ -31,11 +31,12 @@ const ItemDetails = (props: ItemDetailsProps) => {
     const sectorNames = sectorsToChooseFrom.map(s => s.sectorName);
     const departmentsToChooseFrom = (sector && sectorsToChooseFrom.length > 0) ? sectorsToChooseFrom.filter(s => s.sectorName === sector)[0].departments : [];
 
+    console.log(`item details kitCats: ${JSON.stringify(kitCats)}`);
     return (
         <>
             <LabeledInput label="שם הפריט" value={name} onChange={(e) => handleInput(setName, e)} placeholder="שם הפריט" />
             <LabeledInput label='מק"ט' value={cat} onChange={(e) => handleInput(setCat, e)} placeholder='מק"ט' />
-            {catType === "מכשיר" && <LabeledInput label='מק"ט ערכה' value={kitCats[0]} onChange={(e) => setKitCats([e.target.value])} placeholder='מק"ט ערכה' />}
+            {catType === "מכשיר" && <LabeledInput label='מק"ט ערכה' value={kitCats[0] ?? ''} onChange={(e) => { console.log(`settings kit cats`); setKitCats([e.target.value]); }} placeholder='מק"ט ערכה' />}
             {catType === "מכשיר" && <LabeledInput
                 type="number"
                 label='תוקף הסמכה בחודשים'

@@ -3,7 +3,6 @@ import { AbbreviatedItem } from "../../types/item_types";
 import InfoSectionMenu from "./InfoSectionMenu";
 import LabeledInput from "../UI/LabeledInput";
 import UploadFile from "../UI/UploadFile";
-import { backendFirebaseUri } from "../../backend-variables/address";
 
 interface DeviceFieldsProps {
     imageLink: string;
