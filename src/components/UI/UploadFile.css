@@ -1,10 +1,9 @@
 .file-upload {
   text-align: center;
-  border: 3px dashed rgb(210, 227, 244);
   /* padding: 1.5rem; */
   position: relative;
   cursor: pointer;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   margin-bottom: 0;
 }
 
@@ -29,12 +28,11 @@
   margin: 2px;
   padding: 0px 5px;
   border-color: black;
-  height: 80%;
+  height: 70%;
 }
 
 .file-upload > span > span > * {
-  grid-column-start: 1;
-  grid-row-start: 1;
+  grid-area: 1 / 1 / 2 / 2; /* A shorthand for grid-column and grid-row */
 }
 
 .file-upload * {
@@ -42,21 +40,30 @@
 }
 
 .file-upload input[type="text"] {
-  width: auto;
   flex-grow: 1;
 }
 
 .file-upload input[type="file"] {
-  /* display: block; */
   height: 100%;
   width: 100%;
-  /* position: absolute; */
-  flex-shrink: 1;
-  /* position: relative; */
+  position: absolute;
   top: 0;
-  bottom: 0;
   left: 0;
-  right: 0;
   opacity: 0;
   cursor: pointer;
+  z-index: 1; /* Ensure it's on top of the icon */
 }
+
+.file-upload > span > span {
+  display: grid;
+  place-items: center; /* A shorthand for align-items and justify-items */
+  width: auto; /* Change from a fixed size */
+  height: auto; /* Change from a fixed size */
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 2px;
+  padding: 5px; /* Add padding to give space around the icon */
+  position: relative; /* Make this a positioning context for the file input */
+  overflow: hidden; /* This will clip the file input's default text/button */
+}
+

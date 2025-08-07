@@ -39,6 +39,7 @@ const ItemMenu = () => {
     const [certificationPeriodMonths, setCertificationPeriodMonths] = useState<number | null>(null);
     const [description, setDescription] = useState("");
     const [imageLink, setImageLink] = useState("" as (string | File));
+    const [isImageUploading, setIsImageUploading] = useState(false);
     const [qaStandardLink, setQaStandardLink] = useState("" as (string | File));
     const [medicalEngineeringManualLink, setMedicalEngineeringManualLink] = useState("" as (string | File));
     const [userManualLink, setUserManualLink] = useState("" as (string | File));
@@ -135,11 +136,11 @@ const ItemMenu = () => {
             return;
         }
 
-        const getIfFile = (obj : { value: string | File, setter: React.Dispatch<React.SetStateAction<string | File>>, contentType: string })
-            : { value: string | File, setter: React.Dispatch<React.SetStateAction<string | File>>, contentType: string } | undefined => 
+        const getIfFile = (obj : { value: string | File, setter: React.Dispatch<React.SetStateAction<string | File>>, contentType: string, isUploadingSetter?: React.Dispatch<React.SetStateAction<boolean>> })
+            : { value: string | File, setter: React.Dispatch<React.SetStateAction<string | File>>, contentType: string, isUploadingSetter?: React.Dispatch<React.SetStateAction<boolean>> } | undefined => 
                 (obj.value && typeof obj.value !== 'string') ? obj : undefined ;
-        const newFileFields: Record<string, { value: string | File, setter: React.Dispatch<React.SetStateAction<string | File>>, contentType: string } | undefined> = {//: Array<keyof typeof itemDetails> = [ 
-            imageLink: getIfFile({ value: imageLink, setter: setImageLink, contentType: 'image/png' }),
+        const newFileFields: Record<string, { value: string | File, setter: React.Dispatch<React.SetStateAction<string | File>>, contentType: string, isUploadingSetter?: React.Dispatch<React.SetStateAction<boolean>> } | undefined> = {//: Array<keyof typeof itemDetails> = [ 
+            imageLink: getIfFile({ value: imageLink, setter: setImageLink, contentType: 'image/png', isUploadingSetter: setIsImageUploading }),
             qaStandardLink: getIfFile({ value: qaStandardLink, setter: setQaStandardLink, contentType: 'application/pdf' }),
             medicalEngineeringManualLink: getIfFile({ value: medicalEngineeringManualLink, setter: setMedicalEngineeringManualLink, contentType: 'application/pdf' }),
             userManualLink: getIfFile({ value: userManualLink, setter: setUserManualLink, contentType: 'application/pdf' }),
@@ -152,7 +153,8 @@ const ItemMenu = () => {
             if (!newFileFields[key]) {
                 return;
             }
-            const { value, setter, contentType } = newFileFields[key]!;
+            const { value, setter, isUploadingSetter } = newFileFields[key]!;
+            console.log(`file type: ${(value as File).type}`)
             return fetch(encodeURI(`${backendFirebaseUri}/items/${params.itemid}/url`), {
                 method: 'POST',
                 headers: {
@@ -160,25 +162,27 @@ const ItemMenu = () => {
                     'Accept': 'application/json',
                     'auth-token': authToken
                 },
-                body: JSON.stringify({ filename: (value as File).name, contentType })
+                body: JSON.stringify({ 
+                    filename: (value as File).name,
+                    contentType: (value as File).type
+                })
             })
             .then(res => res.json())
             .then(json => {
-                console.log(`setting to ${json.url}`);
                 const urlObj = new URL(json.url);
                 urlObj.search = '';
                 const objectUrl = urlObj.toString();
                 setter(objectUrl);
+                isUploadingSetter?.(true);
                 return fetch(json.url, {
                     method: 'PUT',
-                    headers: { 'Content-Type': contentType },
+                    headers: { 'Content-Type': (value as File).type },
                     body: value
-                }).then(res => newLinks[key] = objectUrl)
+                }).then(res => { newLinks[key] = objectUrl; isUploadingSetter?.(false); })
             }
             )
         }))
         .then(res => {
-            //console.log(`res: ${JSON.stringify(res)}, is array: ${Array.isArray(res)}`);
             const itemDetails = {
                 name: name,
                 cat: cat.replace(/ /g, ''),
@@ -293,6 +297,7 @@ const ItemMenu = () => {
             <div className={classes.relations}>
                 {catType === "מכשיר" && <DeviceFields
                     imageLink={getFilename(imageLink)}
+                    isImageUploading={isImageUploading}
                     qaStandardLink={getFilename(qaStandardLink)}
                     medicalEngineeringManualLink={getFilename(medicalEngineeringManualLink)}
                     userManualLink={getFilename(userManualLink)}
