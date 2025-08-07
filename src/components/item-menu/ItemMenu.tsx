@@ -180,8 +180,6 @@ const ItemMenu = () => {
                 body: JSON.stringify(itemDetails)
             }).then((res) => {
                 console.log("success saving item");
-                dispatch(viewingActions.changesAppliedToItem(false));
-                navigate(-1);
             })
             .catch((err) => console.log(`Error saving item: ${err}`));
         }            
@@ -196,8 +194,6 @@ const ItemMenu = () => {
                 body: JSON.stringify(itemDetails)
             }).then((res) => {
                 console.log("success updating item");
-                dispatch(viewingActions.changesAppliedToItem(false));
-                navigate(-1);
             })
             .catch((err) => console.log(`Error updating item: ${err}`));
         }    
@@ -270,110 +266,21 @@ const ItemMenu = () => {
         }
 
         if (params.itemid) {
-            saveLinks().then(newLinks => saveItem(false, true, newLinks));
+            saveLinks()
+                .then(newLinks => saveItem(false, true, newLinks))
+                .then(() => {
+                    dispatch(viewingActions.changesAppliedToItem(false));
+                    navigate(-1);
+                })
         } else {
-            saveItem(true, false, {}).then(saveLinks).then(newLinks => saveItem(false, true, newLinks));
+            saveItem(true, false, {})
+                .then(saveLinks)
+                .then(newLinks => saveItem(false, true, newLinks))
+                .then(() => {
+                    dispatch(viewingActions.changesAppliedToItem(false));
+                    navigate(-1);
+                })
         }
-
-        // const newLinks: Record<string, string> = {};
-        // Promise.all(Object.keys(newFileFields).map(key => {
-        //     if (!newFileFields[key]) {
-        //         return undefined;
-        //     }
-        //     const { value, setter, isUploadingSetter } = newFileFields[key]!;
-        //     console.log(`file type: ${(value as File).type}`)
-        //     return fetch(encodeURI(`${backendFirebaseUri}/items/${params.itemid}/url`), {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //             'Accept': 'application/json',
-        //             'auth-token': authToken
-        //         },
-        //         body: JSON.stringify({ 
-        //             filename: (value as File).name,
-        //             contentType: (value as File).type
-        //         })
-        //     })
-        //     .then(res => res.json())
-        //     .then(json => {
-        //         const urlObj = new URL(json.url);
-        //         urlObj.search = '';
-        //         const objectUrl = urlObj.toString();
-        //         setter(objectUrl);
-        //         isUploadingSetter?.(true);
-        //         return fetch(json.url, {
-        //             method: 'PUT',
-        //             headers: { 'Content-Type': (value as File).type },
-        //             body: value
-        //         }).then(res => { newLinks[key] = objectUrl; isUploadingSetter?.(false); })
-        //     }
-        //     )
-        // }))
-        // .then(res => {
-        //     const itemDetails = {
-        //         name: name,
-        //         cat: cat.replace(/ /g, ''),
-        //         kitCats: kitCats?.map(kc => kc.replace(/ /g, '')),
-        //         sector: sector,
-        //         department: department,
-        //         catType: catType,
-        //         certificationPeriodMonths,
-        //         description: description,
-        //         imageLink: newLinks.imageLink ?? imageLink,
-        //         qaStandardLink: newLinks.qaStandardLink ?? qaStandardLink,
-        //         medicalEngineeringManualLink: newLinks.medicalEngineeringManualLink ?? medicalEngineeringManualLink,
-        //         userManualLink: newLinks.userManualLink ?? userManualLink,
-        //         serviceManualLink: newLinks.serviceManualLink ?? serviceManualLink,
-        //         hebrewManualLink: newLinks.hebrewManualLink ?? hebrewManualLink,
-        //         supplier: supplier,
-        //         lifeSpan: lifeSpan,
-        //         models: vacateItemListIfEmptyAndRemoveSpaces(models),
-        //         accessories: vacateItemListIfEmptyAndRemoveSpaces(accessories),
-        //         consumables: vacateItemListIfEmptyAndRemoveSpaces(consumables),
-        //         spareParts: vacateItemListIfEmptyAndRemoveSpaces(spareParts),
-        //         belongsToDevices: vacateItemListIfEmptyAndRemoveSpaces(belongsToDevices)
-        //     };
-
-        //     if (catType === "מכשיר") {
-        //         itemDetails.belongsToDevices = [];
-        //     }
-        //     if (catType === "אביזר" || catType === "מתכלה" || catType === "חלק חילוף") {
-        //         itemDetails.kitCats = [];
-        //     }
-
-        //     if (!params.itemid) { // creating a new item
-        //         fetch(`${backendFirebaseUri}/items`, {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //                 'Accept': 'application/json',
-        //                 'auth-token': authToken
-        //             },
-        //             body: JSON.stringify(itemDetails)
-        //         }).then((res) => {
-        //             console.log("success saving item");
-        //             dispatch(viewingActions.changesAppliedToItem(false));
-        //             navigate(-1);
-        //         })
-        //         .catch((err) => console.log(`Error saving item: ${err}`));
-        //     }            
-        //     if (params.itemid) { // editing existing iten
-        //         fetch(encodeURI(`${backendFirebaseUri}/items/${params.itemid}`), {
-        //             method: 'PUT',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //                 'Accept': 'application/json',
-        //                 'auth-token': authToken
-        //             },
-        //             body: JSON.stringify(itemDetails)
-        //         }).then((res) => {
-        //             console.log("success updating item");
-        //             dispatch(viewingActions.changesAppliedToItem(false));
-        //             navigate(-1);
-        //         })
-        //         .catch((err) => console.log(`Error updating item: ${err}`));
-        //     }
-        // });
     }
     // edit mode only:
     const handleDelete = () => {
