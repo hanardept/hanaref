@@ -156,7 +156,7 @@ const ItemMenu = () => {
         const newLinks: Record<string, string> = {};
         Promise.all(Object.keys(newFileFields).map(key => {
             if (!newFileFields[key]) {
-                return;
+                return undefined;
             }
             const { value, setter, isUploadingSetter } = newFileFields[key]!;
             console.log(`file type: ${(value as File).type}`)
