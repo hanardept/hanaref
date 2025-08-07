@@ -8,10 +8,15 @@ interface DeviceFieldsProps {
     imageLink: string;
     isImageUploading?: boolean;
     qaStandardLink: string;
+    isQaStandardUploading?: boolean;
     userManualLink: string;
+    isUserManualUploading?: boolean;
     medicalEngineeringManualLink: string;
+    isMedicalEngineeringManualUploading?: boolean;
     serviceManualLink: string;
+    isServiceManualUploading?: boolean;
     hebrewManualLink: string;
+    isHebrewManualUploading?: boolean;
     supplier: string;
     models: AbbreviatedItem[];
     accessories: AbbreviatedItem[];
@@ -33,8 +38,8 @@ interface DeviceFieldsProps {
 
 const DeviceFields = (props: DeviceFieldsProps) => {
     const {
-        imageLink, isImageUploading, qaStandardLink, medicalEngineeringManualLink, userManualLink, serviceManualLink, hebrewManualLink, supplier, models, accessories, consumables, spareParts,
-        handleInput, setImageLink, setQaStandardLink, setMedicalEngineeringManualLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier, setModels,
+        imageLink, isImageUploading, qaStandardLink, isQaStandardUploading, medicalEngineeringManualLink, isMedicalEngineeringManualUploading, userManualLink, isUserManualUploading, serviceManualLink, isServiceManualUploading,
+        hebrewManualLink, isHebrewManualUploading, supplier, models, accessories, consumables, spareParts, handleInput, setImageLink, setQaStandardLink, setMedicalEngineeringManualLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier, setModels,
         setAccessories, setConsumables, setSpareParts
     } = props;
 
@@ -43,13 +48,13 @@ const DeviceFields = (props: DeviceFieldsProps) => {
             <LabeledInput type="file" label="קישור לתמונה" value={imageLink}  placeholder="קישור לתמונה" 
                 customInputElement={<UploadFile placeholder= "קישור לתמונה" url={imageLink} accept="image/png, image/jpeg" isUploading={isImageUploading} onChange={(e) => setImageLink(e.target.files?.[0] ?? '')}/>}/>
             <LabeledInput type="file" label="הוראות הפעלה בעברית" value={hebrewManualLink} placeholder="הוראות הפעלה בעברית" 
-                customInputElement={<UploadFile placeholder="הוראות הפעלה בעברית" url={hebrewManualLink} onChange={(e) => setHebrewManualLink(e.target.files?.[0] ?? '')}/>}/>
+                customInputElement={<UploadFile placeholder="הוראות הפעלה בעברית" url={hebrewManualLink} isUploading={isHebrewManualUploading} onChange={(e) => setHebrewManualLink(e.target.files?.[0] ?? '')}/>}/>
             <LabeledInput type="file" label="הוראות הנר" value={medicalEngineeringManualLink} placeholder="הוראות הנר" 
-                customInputElement={<UploadFile placeholder="הוראות הנר" url={medicalEngineeringManualLink} onChange={(e) => setMedicalEngineeringManualLink(e.target.files?.[0] ?? '')}/>}/>
+                customInputElement={<UploadFile placeholder="הוראות הנר" url={medicalEngineeringManualLink} isUploading={isMedicalEngineeringManualUploading} onChange={(e) => setMedicalEngineeringManualLink(e.target.files?.[0] ?? '')}/>}/>
             <LabeledInput type="file" label="תקן בחינה" value={qaStandardLink} placeholder="תקן בחינה"
-                customInputElement={<UploadFile placeholder="תקן בחינה" url={qaStandardLink} onChange={(e) => setQaStandardLink(e.target.files?.[0] ?? '')}/>}/>
+                customInputElement={<UploadFile placeholder="תקן בחינה" url={qaStandardLink} isUploading={isQaStandardUploading} onChange={(e) => setQaStandardLink(e.target.files?.[0] ?? '')}/>}/>
             <LabeledInput type="file" label="Service Manual" value={serviceManualLink} placeholder="Service Manual" 
-                customInputElement={<UploadFile placeholder="Service Manual" url={serviceManualLink} onChange={(e) => setServiceManualLink(e.target.files?.[0] ?? '')}/>}/>
+                customInputElement={<UploadFile placeholder="Service Manual" url={serviceManualLink} isUploading={isServiceManualUploading} onChange={(e) => setServiceManualLink(e.target.files?.[0] ?? '')}/>}/>
             <LabeledInput label="ספק בארץ" value={supplier} onChange={(e) => handleInput(setSupplier, e)} placeholder="ספק בארץ" />
             <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />
             <InfoSectionMenu title="אביזרים" items={accessories} setItems={setAccessories} />

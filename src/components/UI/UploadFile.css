@@ -43,6 +43,10 @@
   flex-grow: 1;
 }
 
+.upload-progress {
+  flex-grow: 1;
+}
+
 .file-upload input[type="file"] {
   height: 100%;
   width: 100%;

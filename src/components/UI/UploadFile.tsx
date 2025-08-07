@@ -7,7 +7,7 @@ const UploadFile = <T extends HTMLInputElement>({ placeholder, url, accept, isUp
     return <div className="file-upload">
         <span>
             {isUploading ?
-            <progress/> :
+            <progress className="upload-progress"/> :
             <input type="text" placeholder={placeholder} value={url} disabled={true}/>}
             <span>
                 <IoCloudUploadOutline/>

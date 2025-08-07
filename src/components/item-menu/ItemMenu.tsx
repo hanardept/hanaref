@@ -41,10 +41,15 @@ const ItemMenu = () => {
     const [imageLink, setImageLink] = useState("" as (string | File));
     const [isImageUploading, setIsImageUploading] = useState(false);
     const [qaStandardLink, setQaStandardLink] = useState("" as (string | File));
+    const [isQaStandardUploading, setIsQaStandardUploading] = useState(false);
     const [medicalEngineeringManualLink, setMedicalEngineeringManualLink] = useState("" as (string | File));
+    const [isMedicalEngineeringManualUploading, setIsMedicalEngineeringManualUploading] = useState(false);
     const [userManualLink, setUserManualLink] = useState("" as (string | File));
+    const [isUserManualUploading, setIsUserManualUploading] = useState(false);
     const [serviceManualLink, setServiceManualLink] = useState("" as (string | File));
+    const [isServiceManualUploading, setServiceManualUploading] = useState(false);
     const [hebrewManualLink, setHebrewManualLink] = useState("" as (string | File));
+    const [isHebrewManualUploading, setIsHebrewManualUploading] = useState(false);
     const [supplier, setSupplier] = useState("");
     const [lifeSpan, setLifeSpan] = useState("");
     const [models, setModels] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
@@ -141,11 +146,11 @@ const ItemMenu = () => {
                 (obj.value && typeof obj.value !== 'string') ? obj : undefined ;
         const newFileFields: Record<string, { value: string | File, setter: React.Dispatch<React.SetStateAction<string | File>>, contentType: string, isUploadingSetter?: React.Dispatch<React.SetStateAction<boolean>> } | undefined> = {//: Array<keyof typeof itemDetails> = [ 
             imageLink: getIfFile({ value: imageLink, setter: setImageLink, contentType: 'image/png', isUploadingSetter: setIsImageUploading }),
-            qaStandardLink: getIfFile({ value: qaStandardLink, setter: setQaStandardLink, contentType: 'application/pdf' }),
-            medicalEngineeringManualLink: getIfFile({ value: medicalEngineeringManualLink, setter: setMedicalEngineeringManualLink, contentType: 'application/pdf' }),
-            userManualLink: getIfFile({ value: userManualLink, setter: setUserManualLink, contentType: 'application/pdf' }),
-            serviceManualLink: getIfFile({ value: serviceManualLink, setter: setServiceManualLink, contentType: 'application/pdf' }),
-            hebrewManualLink: getIfFile({ value: hebrewManualLink, setter: setHebrewManualLink, contentType: 'application/pdf' }),
+            qaStandardLink: getIfFile({ value: qaStandardLink, setter: setQaStandardLink, contentType: 'application/pdf', isUploadingSetter: setIsQaStandardUploading }),
+            medicalEngineeringManualLink: getIfFile({ value: medicalEngineeringManualLink, setter: setMedicalEngineeringManualLink, contentType: 'application/pdf', isUploadingSetter: setIsMedicalEngineeringManualUploading }),
+            userManualLink: getIfFile({ value: userManualLink, setter: setUserManualLink, contentType: 'application/pdf', isUploadingSetter: setIsUserManualUploading }),
+            serviceManualLink: getIfFile({ value: serviceManualLink, setter: setServiceManualLink, contentType: 'application/pdf', isUploadingSetter: setServiceManualUploading }),
+            hebrewManualLink: getIfFile({ value: hebrewManualLink, setter: setHebrewManualLink, contentType: 'application/pdf', isUploadingSetter: setIsHebrewManualUploading }),
         };
 
         const newLinks: Record<string, string> = {};
@@ -299,10 +304,15 @@ const ItemMenu = () => {
                     imageLink={getFilename(imageLink)}
                     isImageUploading={isImageUploading}
                     qaStandardLink={getFilename(qaStandardLink)}
+                    isQaStandardUploading={isQaStandardUploading}
                     medicalEngineeringManualLink={getFilename(medicalEngineeringManualLink)}
+                    isMedicalEngineeringManualUploading={isMedicalEngineeringManualUploading}
                     userManualLink={getFilename(userManualLink)}
+                    isUserManualUploading={isUserManualUploading}
                     serviceManualLink={getFilename(serviceManualLink)}
+                    isServiceManualUploading={isServiceManualUploading}
                     hebrewManualLink={getFilename(hebrewManualLink)}
+                    isHebrewManualUploading={isHebrewManualUploading}
                     supplier={supplier}
                     models={models}
                     accessories={accessories}
@@ -323,7 +333,9 @@ const ItemMenu = () => {
                 />}
                 {catType === "אביזר" && <AccessoryFields
                     imageLink={getFilename(imageLink)}
+                    isImageUploading={isImageUploading}
                     userManualLink={getFilename(userManualLink)}
+                    isUserManualUploading={isUserManualUploading}
                     supplier={supplier}
                     models={models}
                     belongsToDevices={belongsToDevices}
@@ -336,7 +348,9 @@ const ItemMenu = () => {
                 />}
                 {catType === "מתכלה" && <ConsumableFields
                     imageLink={getFilename(imageLink)}
+                    isImageUploading={isImageUploading}
                     userManualLink={getFilename(userManualLink)}
+                    isUserManualUploading={isUserManualUploading}
                     supplier={supplier}
                     lifeSpan={lifeSpan}
                     models={models}
@@ -351,7 +365,9 @@ const ItemMenu = () => {
                 />}
                 {catType === "חלק חילוף" && <SparePartFields
                     imageLink={getFilename(imageLink)}
+                    isImageUploading={isImageUploading}
                     userManualLink={getFilename(userManualLink)}
+                    isUserManualUploading={isUserManualUploading}
                     supplier={supplier}
                     models={models}
                     belongsToDevices={belongsToDevices}

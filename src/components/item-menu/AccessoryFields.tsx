@@ -6,7 +6,9 @@ import UploadFile from "../UI/UploadFile";
 
 interface AccessoryFieldsProps {
     imageLink: string;
+    isImageUploading?: boolean;
     userManualLink: string;
+    isUserManualUploading?: boolean;
     supplier: string;
     models: AbbreviatedItem[];
     belongsToDevices: AbbreviatedItem[];
@@ -19,14 +21,14 @@ interface AccessoryFieldsProps {
 }
 
 const AccessoryFields = (props: AccessoryFieldsProps) => {
-    const { imageLink, userManualLink, supplier, models, belongsToDevices, handleInput, setImageLink, setUserManualLink, setSupplier, setModels, setBelongsToDevices } = props;
+    const { imageLink, isImageUploading, userManualLink, isUserManualUploading, supplier, models, belongsToDevices, handleInput, setImageLink, setUserManualLink, setSupplier, setModels, setBelongsToDevices } = props;
 
     return (
         <>
             <LabeledInput type="file" label="קישור לתמונה" value={imageLink} placeholder="קישור לתמונה" 
-                customInputElement={<UploadFile placeholder="קישור לתמונה" url={imageLink} onChange={(e) => setImageLink(e.target.files?.[0] ?? '')}/>}/>
+                customInputElement={<UploadFile placeholder="קישור לתמונה" url={imageLink} isUploading={isImageUploading} onChange={(e) => setImageLink(e.target.files?.[0] ?? '')}/>}/>
             <LabeledInput type="file" label="מדריך למשתמש" value={userManualLink} placeholder="מדריך למשתמש" 
-                customInputElement={<UploadFile placeholder="מדריך למשתמש" url={userManualLink} onChange={(e) => setUserManualLink(e.target.files?.[0] ?? '')}/>}/>
+                customInputElement={<UploadFile placeholder="מדריך למשתמש" url={userManualLink} isUploading={isUserManualUploading} onChange={(e) => setUserManualLink(e.target.files?.[0] ?? '')}/>}/>
             <LabeledInput label="ספק בארץ" value={supplier} onChange={(e) => handleInput(setSupplier, e)} placeholder="ספק בארץ" />
             <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />
             <InfoSectionMenu title="שייך למכשיר" items={belongsToDevices} setItems={setBelongsToDevices} />
