@@ -47,8 +47,8 @@ const DeviceFields = (props: DeviceFieldsProps) => {
             <LabeledInput label="ספק בארץ" value={supplier} onChange={(e) => handleInput(setSupplier, e)} placeholder="ספק בארץ" />
             <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />
             <InfoSectionMenu title="אביזרים" items={accessories} setItems={setAccessories} />
-            <InfoSectionMenu title="מתכלים" items={consumables} setItems={setConsumables} />
-            <InfoSectionMenu title="חלקי חילוף" items={spareParts} setItems={setSpareParts} />
+            {/* <InfoSectionMenu title="מתכלים" items={consumables} setItems={setConsumables} />
+            <InfoSectionMenu title="חלקי חילוף" items={spareParts} setItems={setSpareParts} /> */}
         </>
     )
 }
