@@ -64,7 +64,7 @@ const InfoSectionLine = ({ isLast, item, addLine, deleteLine, editItemCat, editI
                 getSuggestionValue={s => s.cat}
                 placeholder={modelsLine ? 'מק"ט יצרן' : 'מק"ט'}
                 suggestions={itemSuggestions}
-                onFetchSuggestions={onFetchSuggestions}
+                onFetchSuggestions={f => { console.log(`fetching`); return onFetchSuggestions?.(f); }}
                 renderSuggestion={s => <span>{s.cat} {s.name}</span>}
                 onClearSuggestions={onClearSuggestions}
                 onBlur={onBlur}

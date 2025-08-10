@@ -59,7 +59,7 @@ const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, onFetchSugge
                 first={true}
                 modelsLine={title==="דגמים"}
                 itemSuggestions={itemSuggestions}
-                onFetchSuggestions={onFetchSuggestions}
+                onFetchSuggestions={s => { console.log(`f2`); return onFetchSuggestions?.(s); }}
                 onClearSuggestions={onClearSuggestions}
             />
             {items.map((item, index) => {
@@ -80,7 +80,18 @@ const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, onFetchSugge
                                 onClearSuggestions={onClearSuggestions}
                             />
                 } else {
-                    return <InfoSectionLine key={index+title+"b"} isLast={false} addLine={addLine} deleteLine={deleteLine} item={item} editItemName={(name: string) => editItemName(index, name)} editItemCat={(cat: string) => editItemCat(index, cat)} editItemManufacturer={(manufacturer: string) => editItemManufacturer(index, manufacturer)} modelsLine={title==="דגמים"} itemSuggestions={itemSuggestions} onFetchSuggestions={onFetchSuggestions} onClearSuggestions={onClearSuggestions} />
+                    return <InfoSectionLine 
+                        key={index+title+"b"}
+                        isLast={false}
+                        addLine={addLine}
+                        deleteLine={deleteLine}
+                        item={item}
+                        editItemName={(name: string) => editItemName(index, name)}
+                        editItemCat={(cat: string) => editItemCat(index, cat)}
+                        editItemManufacturer={(manufacturer: string) => editItemManufacturer(index, manufacturer)}
+                        modelsLine={title==="דגמים"} itemSuggestions={itemSuggestions}
+                        onFetchSuggestions={onFetchSuggestions}
+                        onClearSuggestions={onClearSuggestions} />
                 }
             })}
         </>

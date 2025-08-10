@@ -1,7 +1,9 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { AbbreviatedItem } from "../../types/item_types";
 import InfoSectionMenu from "./InfoSectionMenu";
 import LabeledInput from "./LabeledInput";
+import { backendFirebaseUri } from "../../backend-variables/address";
+import { useAppSelector } from "../../hooks/redux-hooks";
 
 interface DeviceFieldsProps {
     imageLink: string;
@@ -36,6 +38,9 @@ const DeviceFields = (props: DeviceFieldsProps) => {
         setAccessories, setConsumables, setSpareParts
     } = props;
 
+    const authToken = useAppSelector(state => state.auth.jwt);
+    const [ itemSuggestions, setItemSuggestions ] = useState([]);
+
     return (
         <>
             <LabeledInput label="קישור לתמונה" value={imageLink} onChange={(e) => handleInput(setImageLink, e)} placeholder="קישור לתמונה" />
@@ -46,7 +51,25 @@ const DeviceFields = (props: DeviceFieldsProps) => {
             <LabeledInput label="Service Manual" value={serviceManualLink} onChange={(e) => handleInput(setServiceManualLink, e)} placeholder="Service Manual" />
             <LabeledInput label="ספק בארץ" value={supplier} onChange={(e) => handleInput(setSupplier, e)} placeholder="ספק בארץ" />
             <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />
-            <InfoSectionMenu title="אביזרים" items={accessories} setItems={setAccessories} />
+            <InfoSectionMenu 
+                title="אביזרים"
+                items={accessories}
+                setItems={setAccessories}
+                itemSuggestions={itemSuggestions}
+                onFetchSuggestions={(value: string) => {
+                    console.log(`fetching suggestions`);
+                    return fetch(encodeURI(`${backendFirebaseUri}/items?catType=אביזר&search=${value}`), {
+                        method: 'GET',
+                        headers: {
+                            'auth-token': authToken
+                        }
+                    })
+                    .then((res) => res.json())
+                    .then(jsonRes => { console.log(`received`); setItemSuggestions(jsonRes); })
+                    .catch((err) => console.log(`Error getting item suggestions: ${err}`));
+                }}
+                onClearSuggestions={() => setItemSuggestions([])}
+            />
             {/* <InfoSectionMenu title="מתכלים" items={consumables} setItems={setConsumables} />
             <InfoSectionMenu title="חלקי חילוף" items={spareParts} setItems={setSpareParts} /> */}
         </>

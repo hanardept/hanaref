@@ -79,12 +79,14 @@
     font-size: 1.1rem;
 }
 
-.autosuggest {
-    line-height: 0 !important;
+.autosuggest input {
+    height: unset;
 }
-.autosuggest {
-    height: 100% !important;
+
+.autosuggest * {
+    margin-bottom: 0;
 }
+
 .infoSectionLine div :not(.autosuggest *) {
     line-height: 1.6;
     height: calc(100% + 10px);
