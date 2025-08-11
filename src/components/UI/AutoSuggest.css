@@ -4,7 +4,7 @@
 }
 
 .react-autosuggest__input {
-  /* width: 150px; */
+  width: 100%;
   height: 30px;
   padding: 10px 5px;
   font-family: Helvetica, sans-serif;
@@ -15,11 +15,11 @@
 }
 
 #react-autosuggest_cat .react-autosuggest__input{
-  width: 300px;
+  width: 100%;
 }
 
 #react-autosuggest_name .react-autosuggest__input {
-  width: 350px;
+  width: 100%;
 }
 
 .react-autosuggest__input--focused {
@@ -77,23 +77,4 @@
 
 .container {
   display: flex;
-}
-
-.xButton {
-  position: absolute;
-  left: 8px; /* For RTL: left side */
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  font-size: 1.2em;
-  color: #888;
-  z-index: 2;
-  background: white;
-  border-radius: 50%;
-  width: 1.5em;
-  height: 1.5em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
 }

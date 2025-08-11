@@ -56,9 +56,9 @@ const DeviceFields = (props: DeviceFieldsProps) => {
                 items={accessories}
                 setItems={setAccessories}
                 itemSuggestions={itemSuggestions}
-                onFetchSuggestions={(value: string) => {
+                onFetchSuggestions={(value: string, field: string) => {
                     console.log(`fetching suggestions`);
-                    return fetch(encodeURI(`${backendFirebaseUri}/items?catType=אביזר&search=${value}`), {
+                    return fetch(encodeURI(`${backendFirebaseUri}/items?catType=אביזר&search=${value}&searchFields=${field}`), {
                         method: 'GET',
                         headers: {
                             'auth-token': authToken
@@ -69,6 +69,7 @@ const DeviceFields = (props: DeviceFieldsProps) => {
                     .catch((err) => console.log(`Error getting item suggestions: ${err}`));
                 }}
                 onClearSuggestions={() => setItemSuggestions([])}
+            
             />
             {/* <InfoSectionMenu title="מתכלים" items={consumables} setItems={setConsumables} />
             <InfoSectionMenu title="חלקי חילוף" items={spareParts} setItems={setSpareParts} /> */}

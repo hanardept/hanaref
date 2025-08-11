@@ -16,12 +16,13 @@ const InfoSectionLine = ({ isLast, item, addLine, deleteLine, editItemCat, editI
         first?: boolean,
         modelsLine?: boolean,
         itemSuggestions?: AbbreviatedItem[],
-        onFetchSuggestions?: (value: string) => any,
+        onFetchSuggestions?: (value: string, field: string) => any,
         onClearSuggestions?: () => any,
         onBlur?: () => any,
     }) => {
 
-    const [ itemSearchText, setItemSearchText] = useState("");    
+    const [ itemCatSearchText, setItemCatSearchText] = useState<string | null>(null);
+    const [ itemNameSearchText, setItemNameSearchText] = useState<string | null>(null);    
     
     const handleCatInput = (event: ChangeEvent<HTMLInputElement>) => {
         event.preventDefault();
@@ -53,23 +54,42 @@ const InfoSectionLine = ({ isLast, item, addLine, deleteLine, editItemCat, editI
             {modelsLine && <input type="text" placeholder='יצרן' value={item.manufacturer} onChange={handleManufacturerInput} onBlur={conditionalDeleteUponBlur} />}
             {/* <input type="text" placeholder={modelsLine ? 'מק"ט יצרן' : 'מק"ט'} value={item.cat} onChange={handleCatInput} onBlur={conditionalDeleteUponBlur} /> */}
             <DebouncingInput
-                id="search"
+                id="searchCat"
                 className={classes.autosuggest}
-                inputValue={itemSearchText}
-                onValueChanged={(val: any) => setItemSearchText(val)}
+                inputValue={itemCatSearchText ?? item.cat ?? ''}
+                onValueChanged={(val: any) => setItemCatSearchText(val)}
                 onSuggestionSelected={(s: any) => {
                     editItemCat(s.cat);
-                    editItemName(s.name)
+                    editItemName(s.name);
+                    setItemCatSearchText(null);
                 }}
                 getSuggestionValue={s => s.cat}
                 placeholder={modelsLine ? 'מק"ט יצרן' : 'מק"ט'}
                 suggestions={itemSuggestions}
-                onFetchSuggestions={f => { console.log(`fetching`); return onFetchSuggestions?.(f); }}
+                onFetchSuggestions={s => onFetchSuggestions?.(s, 'cat')}
                 renderSuggestion={s => <span>{s.cat} {s.name}</span>}
                 onClearSuggestions={onClearSuggestions}
-                onBlur={onBlur}
+                onBlur={() => { setItemCatSearchText(null); conditionalDeleteUponBlur(); }}
             />
-            <input type="text" disabled placeholder={modelsLine ? 'שם דגם' : 'שם'} value={item.name} onChange={handleNameInput} onBlur={conditionalDeleteUponBlur} />
+            <DebouncingInput
+                id="searchName"
+                className={classes.autosuggest}
+                inputValue={itemNameSearchText ?? item.name ?? ''}
+                onValueChanged={(val: any) => setItemNameSearchText(val)}
+                onSuggestionSelected={(s: any) => {
+                    editItemCat(s.cat);
+                    editItemName(s.name);
+                    setItemNameSearchText(null);
+                }}
+                getSuggestionValue={s => s.name}
+                placeholder={modelsLine ? 'שם דגם' : 'שם'}
+                suggestions={itemSuggestions}
+                onFetchSuggestions={s => onFetchSuggestions?.(s, 'name')}
+                renderSuggestion={s => <span>{s.cat} {s.name}</span>}
+                onClearSuggestions={onClearSuggestions}
+                onBlur={() => { setItemNameSearchText(null); conditionalDeleteUponBlur(); }}
+            />
+            {/* <input type="text" placeholder={modelsLine ? 'שם דגם' : 'שם'} value={item.name} onChange={handleNameInput} onBlur={conditionalDeleteUponBlur} /> */}
             <div onClick={handleClick} className={(item.cat.length > 0 && item.name.length > 0) ? classes.infoSectionPlusClickable : classes.infoSectionPlusGrayed} style={{ display: isLast ? "flex" : "none" }}>+</div>
         </div>
     )
