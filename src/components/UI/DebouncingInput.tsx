@@ -59,7 +59,7 @@ const DebouncingInput = ({ inputValue, onValueErased, onValueChanged, onSuggesti
                     }
                 }
             />
-            {localValue.length > 0 && <div className={classes.xButton} onClick={eraseValue}>×</div>}
+            {/* {localValue.length > 0 && <div className={classes.xButton} onClick={eraseValue}>×</div>} */}
         </div>
     )
 };
