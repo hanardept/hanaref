@@ -2,13 +2,14 @@ import React from 'react';
 import { AbbreviatedItem } from '../../types/item_types';
 import InfoSectionLine from './InfoSectionLine';
 
-const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, onFetchSuggestions, onClearSuggestions }: { 
+const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, onFetchSuggestions, onClearSuggestions, onBlur }: { 
         title: string,
         items: AbbreviatedItem[],
         setItems: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>
         itemSuggestions?: AbbreviatedItem[],
-        onFetchSuggestions?: (value: string) => any,
+        onFetchSuggestions?: (value: string, field: string) => any,
         onClearSuggestions?: () => any,
+        onBlur?: () => any,
     }) => {
     const editItemCat = (index: number, cat: string) => {
         setItems(prev => {
@@ -59,8 +60,9 @@ const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, onFetchSugge
                 first={true}
                 modelsLine={title==="דגמים"}
                 itemSuggestions={itemSuggestions}
-                onFetchSuggestions={s => { console.log(`f2`); return onFetchSuggestions?.(s); }}
+                onFetchSuggestions={onFetchSuggestions}
                 onClearSuggestions={onClearSuggestions}
+                onBlur={onBlur}
             />
             {items.map((item, index) => {
                 if (index === 0) return <React.Fragment key={title+"f"}></React.Fragment>;
@@ -78,6 +80,7 @@ const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, onFetchSugge
                                 itemSuggestions={itemSuggestions}
                                 onFetchSuggestions={onFetchSuggestions}
                                 onClearSuggestions={onClearSuggestions}
+                                onBlur={onBlur}
                             />
                 } else {
                     return <InfoSectionLine 
@@ -91,7 +94,8 @@ const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, onFetchSugge
                         editItemManufacturer={(manufacturer: string) => editItemManufacturer(index, manufacturer)}
                         modelsLine={title==="דגמים"} itemSuggestions={itemSuggestions}
                         onFetchSuggestions={onFetchSuggestions}
-                        onClearSuggestions={onClearSuggestions} />
+                        onClearSuggestions={onClearSuggestions}
+                        onBlur={onBlur}/>
                 }
             })}
         </>
