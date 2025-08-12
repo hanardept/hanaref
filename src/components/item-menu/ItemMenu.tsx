@@ -13,6 +13,7 @@ import DeviceFields from './DeviceFields';
 import AccessoryFields from './AccessoryFields';
 import ConsumableFields from './ConsumableFields';
 import SparePartFields from './SparePartFields';
+import { getFilename } from '../../utils';
 
 function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
     const filteredList = itemList.filter(i => i.cat !== "" || i.name !== "");
@@ -37,12 +38,18 @@ const ItemMenu = () => {
     const [catType, setCatType] = useState<"מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף">("מכשיר");
     const [certificationPeriodMonths, setCertificationPeriodMonths] = useState<number | null>(null);
     const [description, setDescription] = useState("");
-    const [imageLink, setImageLink] = useState("");
-    const [qaStandardLink, setQaStandardLink] = useState("");
-    const [medicalEngineeringManualLink, setMedicalEngineeringManualLink] = useState("");
-    const [userManualLink, setUserManualLink] = useState("");
-    const [serviceManualLink, setServiceManualLink] = useState("");
-    const [hebrewManualLink, setHebrewManualLink] = useState("");
+    const [imageLink, setImageLink] = useState("" as (string | File));
+    const [isImageUploading, setIsImageUploading] = useState(false);
+    const [qaStandardLink, setQaStandardLink] = useState("" as (string | File));
+    const [isQaStandardUploading, setIsQaStandardUploading] = useState(false);
+    const [medicalEngineeringManualLink, setMedicalEngineeringManualLink] = useState("" as (string | File));
+    const [isMedicalEngineeringManualUploading, setIsMedicalEngineeringManualUploading] = useState(false);
+    const [userManualLink, setUserManualLink] = useState("" as (string | File));
+    const [isUserManualUploading, setIsUserManualUploading] = useState(false);
+    const [serviceManualLink, setServiceManualLink] = useState("" as (string | File));
+    const [isServiceManualUploading, setServiceManualUploading] = useState(false);
+    const [hebrewManualLink, setHebrewManualLink] = useState("" as (string | File));
+    const [isHebrewManualUploading, setIsHebrewManualUploading] = useState(false);
     const [supplier, setSupplier] = useState("");
     const [lifeSpan, setLifeSpan] = useState("");
     const [models, setModels] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
@@ -127,22 +134,25 @@ const ItemMenu = () => {
         dispatch(viewingActions.changesAppliedToItem(true));
     }
 
-    const handleSave = () => {
+    const saveItem = (newItem: boolean, saveLinks: boolean, newLinks: Record<string, string>): Promise<any> => {
+
+        const itemCat = cat.replace(/ /g, '');
+
         const itemDetails = {
             name: name,
-            cat: cat.replace(/ /g, ''),
+            cat: itemCat,
             kitCats: kitCats?.map(kc => kc?.replace(/ /g, '')),
             sector: sector,
             department: department,
             catType: catType,
             certificationPeriodMonths,
             description: description,
-            imageLink: imageLink,
-            qaStandardLink: qaStandardLink,
-            medicalEngineeringManualLink,
-            userManualLink: userManualLink,
-            serviceManualLink: serviceManualLink,
-            hebrewManualLink: hebrewManualLink,
+            imageLink: saveLinks ? (newLinks.imageLink ?? imageLink) : undefined,
+            qaStandardLink: saveLinks ? newLinks.qaStandardLink ?? qaStandardLink : undefined,
+            medicalEngineeringManualLink: saveLinks ? newLinks.medicalEngineeringManualLink ?? medicalEngineeringManualLink : undefined,
+            userManualLink: saveLinks ? newLinks.userManualLink ?? userManualLink : undefined,
+            serviceManualLink: saveLinks ? newLinks.serviceManualLink ?? serviceManualLink : undefined,
+            hebrewManualLink: saveLinks ? newLinks.hebrewManualLink ?? hebrewManualLink : undefined,
             supplier: supplier,
             lifeSpan: lifeSpan,
             models: vacateItemListIfEmptyAndRemoveSpaces(models),
@@ -159,20 +169,8 @@ const ItemMenu = () => {
             itemDetails.kitCats = [];
         }
 
-        if (!itemDetails.name || !itemDetails.sector || !itemDetails.department) {
-            // if the required fields of the Item mongo schema are not filled then don't save
-            console.log("Please make sure to enter a name, catalog number, sector and department");
-            return;
-        }
-        if(!itemDetails.cat){
-            alert("מק\"ט הוא שדה חובה");
-            return;
-        }
-
-        console.log("Saving item details:", itemDetails);
-
-        if (!params.itemid) { // creating a new item
-            fetch(`${backendFirebaseUri}/items`, {
+        if (newItem) { // creating a new item
+            return fetch(`${backendFirebaseUri}/items`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -182,13 +180,11 @@ const ItemMenu = () => {
                 body: JSON.stringify(itemDetails)
             }).then((res) => {
                 console.log("success saving item");
-                dispatch(viewingActions.changesAppliedToItem(false));
-                navigate(-1);
             })
             .catch((err) => console.log(`Error saving item: ${err}`));
-        }
-        if (params.itemid) { // editing existing iten
-            fetch(encodeURI(`${backendFirebaseUri}/items/${params.itemid}`), {
+        }            
+        if (!newItem) { // editing existing iten
+            return fetch(encodeURI(`${backendFirebaseUri}/items/${params.itemid ?? itemCat}`), {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -198,10 +194,92 @@ const ItemMenu = () => {
                 body: JSON.stringify(itemDetails)
             }).then((res) => {
                 console.log("success updating item");
-                dispatch(viewingActions.changesAppliedToItem(false));
-                navigate(-1);
             })
             .catch((err) => console.log(`Error updating item: ${err}`));
+        }    
+        return Promise.resolve();    
+    }
+    
+    const saveLinks = (): Promise<Record<string, string>> => {
+        const getIfFile = (obj : { value: string | File, setter: React.Dispatch<React.SetStateAction<string | File>>, contentType: string, isUploadingSetter?: React.Dispatch<React.SetStateAction<boolean>> })
+            : { value: string | File, setter: React.Dispatch<React.SetStateAction<string | File>>, contentType: string, isUploadingSetter?: React.Dispatch<React.SetStateAction<boolean>> } | undefined => 
+                (obj.value && typeof obj.value !== 'string') ? obj : undefined ;
+        const newFileFields: Record<string, { value: string | File, setter: React.Dispatch<React.SetStateAction<string | File>>, contentType: string, isUploadingSetter?: React.Dispatch<React.SetStateAction<boolean>> } | undefined> = {//: Array<keyof typeof itemDetails> = [ 
+            imageLink: getIfFile({ value: imageLink, setter: setImageLink, contentType: 'image/png', isUploadingSetter: setIsImageUploading }),
+            qaStandardLink: getIfFile({ value: qaStandardLink, setter: setQaStandardLink, contentType: 'application/pdf', isUploadingSetter: setIsQaStandardUploading }),
+            medicalEngineeringManualLink: getIfFile({ value: medicalEngineeringManualLink, setter: setMedicalEngineeringManualLink, contentType: 'application/pdf', isUploadingSetter: setIsMedicalEngineeringManualUploading }),
+            userManualLink: getIfFile({ value: userManualLink, setter: setUserManualLink, contentType: 'application/pdf', isUploadingSetter: setIsUserManualUploading }),
+            serviceManualLink: getIfFile({ value: serviceManualLink, setter: setServiceManualLink, contentType: 'application/pdf', isUploadingSetter: setServiceManualUploading }),
+            hebrewManualLink: getIfFile({ value: hebrewManualLink, setter: setHebrewManualLink, contentType: 'application/pdf', isUploadingSetter: setIsHebrewManualUploading }),
+        };
+
+        const newLinks: Record<string, string> = {};
+        return Promise.all(Object.keys(newFileFields).map(key => {
+            if (!newFileFields[key]) {
+                return undefined;
+            }
+            const { value, setter, isUploadingSetter } = newFileFields[key]!;
+            console.log(`file type: ${(value as File).type}`)
+            const itemCat = cat.replace(/ /g, '');
+            return fetch(encodeURI(`${backendFirebaseUri}/items/${params.itemid ?? itemCat}/url`), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'auth-token': authToken
+                },
+                body: JSON.stringify({ 
+                    filename: (value as File).name,
+                    contentType: (value as File).type
+                })
+            })
+            .then(res => res.json())
+            .then(json => {
+                const urlObj = new URL(json.url);
+                urlObj.search = '';
+                const objectUrl = urlObj.toString();
+                setter(objectUrl);
+                isUploadingSetter?.(true);
+                return fetch(json.url, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': (value as File).type },
+                    body: value
+                }).then(res => { 
+                    newLinks[key] = objectUrl;
+                    isUploadingSetter?.(false);
+                })
+            }
+            )
+        })).then(() => newLinks);
+    }
+
+    const handleSave = () => {
+        if (!name || !sector || !department) {
+            // if the required fields of the Item mongo schema are not filled then don't save
+            console.log("Please make sure to enter a name, catalog number, sector and department");
+            return;
+        }
+
+        if(!cat){
+            alert("מק\"ט הוא שדה חובה");
+            return;
+        }
+
+        if (params.itemid) {
+            saveLinks()
+                .then(newLinks => saveItem(false, true, newLinks))
+                .then(() => {
+                    dispatch(viewingActions.changesAppliedToItem(false));
+                    navigate(-1);
+                })
+        } else {
+            saveItem(true, false, {})
+                .then(saveLinks)
+                .then(newLinks => saveItem(false, true, newLinks))
+                .then(() => {
+                    dispatch(viewingActions.changesAppliedToItem(false));
+                    navigate(-1);
+                })
         }
     }
     // edit mode only:
@@ -247,12 +325,18 @@ const ItemMenu = () => {
             </div>
             <div className={classes.relations}>
                 {catType === "מכשיר" && <DeviceFields
-                    imageLink={imageLink}
-                    qaStandardLink={qaStandardLink}
-                    medicalEngineeringManualLink={medicalEngineeringManualLink}
-                    userManualLink={userManualLink}
-                    serviceManualLink={serviceManualLink}
-                    hebrewManualLink={hebrewManualLink}
+                    imageLink={getFilename(imageLink)}
+                    isImageUploading={isImageUploading}
+                    qaStandardLink={getFilename(qaStandardLink)}
+                    isQaStandardUploading={isQaStandardUploading}
+                    medicalEngineeringManualLink={getFilename(medicalEngineeringManualLink)}
+                    isMedicalEngineeringManualUploading={isMedicalEngineeringManualUploading}
+                    userManualLink={getFilename(userManualLink)}
+                    isUserManualUploading={isUserManualUploading}
+                    serviceManualLink={getFilename(serviceManualLink)}
+                    isServiceManualUploading={isServiceManualUploading}
+                    hebrewManualLink={getFilename(hebrewManualLink)}
+                    isHebrewManualUploading={isHebrewManualUploading}
                     supplier={supplier}
                     models={models}
                     accessories={accessories}
@@ -272,8 +356,10 @@ const ItemMenu = () => {
                     setSpareParts={setSpareParts}
                 />}
                 {catType === "אביזר" && <AccessoryFields
-                    imageLink={imageLink}
-                    userManualLink={userManualLink}
+                    imageLink={getFilename(imageLink)}
+                    isImageUploading={isImageUploading}
+                    userManualLink={getFilename(userManualLink)}
+                    isUserManualUploading={isUserManualUploading}
                     supplier={supplier}
                     models={models}
                     belongsToDevices={belongsToDevices}
@@ -285,8 +371,10 @@ const ItemMenu = () => {
                     setBelongsToDevices={setBelongsToDevices}
                 />}
                 {catType === "מתכלה" && <ConsumableFields
-                    imageLink={imageLink}
-                    userManualLink={userManualLink}
+                    imageLink={getFilename(imageLink)}
+                    isImageUploading={isImageUploading}
+                    userManualLink={getFilename(userManualLink)}
+                    isUserManualUploading={isUserManualUploading}
                     supplier={supplier}
                     lifeSpan={lifeSpan}
                     models={models}
@@ -300,8 +388,10 @@ const ItemMenu = () => {
                     setBelongsToDevices={setBelongsToDevices}
                 />}
                 {catType === "חלק חילוף" && <SparePartFields
-                    imageLink={imageLink}
-                    userManualLink={userManualLink}
+                    imageLink={getFilename(imageLink)}
+                    isImageUploading={isImageUploading}
+                    userManualLink={getFilename(userManualLink)}
+                    isUserManualUploading={isUserManualUploading}
                     supplier={supplier}
                     models={models}
                     belongsToDevices={belongsToDevices}
