@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import classes from './DebouncingInput.module.css';
 import Autosuggest from 'react-autosuggest';
 import './AutoSuggest.css';
@@ -22,9 +22,9 @@ const DebouncingInput = ({ inputValue, onValueErased, onValueChanged, onSuggesti
 
     let debouncer = useRef(setTimeout(() => {}, DEBOUNCE_LAG));
 
-    const handleClear = () => {
+    const handleClear = useCallback(() => {
         onValueErased?.();
-    };
+    }, [ onValueErased ]);
 
     const autosuggest = useRef<any>(null);
 
