@@ -31,7 +31,6 @@ const ItemDetails = (props: ItemDetailsProps) => {
     const sectorNames = sectorsToChooseFrom.map(s => s.sectorName);
     const departmentsToChooseFrom = (sector && sectorsToChooseFrom.length > 0) ? sectorsToChooseFrom.filter(s => s.sectorName === sector)[0].departments : [];
 
-    console.log(`item details kitCats: ${JSON.stringify(kitCats)}`);
     return (
         <>
             <LabeledInput label="שם הפריט" value={name} onChange={(e) => handleInput(setName, e)} placeholder="שם הפריט" />

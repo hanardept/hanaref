@@ -53,7 +53,7 @@ const InfoSectionLine = ({ isLast, item, allowNewItem, addLine, deleteLine, edit
 
     const getSuggestions = (typedValue: string, suggestionField: keyof AbbreviatedItem) => {
         return (allowNewItem && itemSuggestions && !itemSuggestions.some(s => s[suggestionField] === typedValue)) ? 
-            [ ...itemSuggestions, { cat: editingNewItem ? item.cat : "", name: editingNewItem ? item.name : "", [suggestionField]: typedValue, isNew: true } ] : itemSuggestions;
+            [ { cat: editingNewItem ? item.cat : "", name: editingNewItem ? item.name : "", [suggestionField]: typedValue, isNew: true }, ...itemSuggestions ] : itemSuggestions;
     };
 
     return (
