@@ -57,7 +57,6 @@ const DeviceFields = (props: DeviceFieldsProps) => {
                 setItems={setAccessories}
                 itemSuggestions={itemSuggestions}
                 onFetchSuggestions={(value: string, field: string) => {
-                    console.log(`fetching suggestions`);
                     return fetch(encodeURI(`${backendFirebaseUri}/items?catType=אביזר&search=${value}&searchFields=${field}`), {
                         method: 'GET',
                         headers: {
@@ -65,14 +64,50 @@ const DeviceFields = (props: DeviceFieldsProps) => {
                         }
                     })
                     .then((res) => res.json())
-                    .then(jsonRes => { console.log(`received`); setItemSuggestions(jsonRes); })
+                    .then(jsonRes => setItemSuggestions(jsonRes))
                     .catch((err) => console.log(`Error getting item suggestions: ${err}`));
                 }}
                 onClearSuggestions={() => setItemSuggestions([])}
             
             />
-            {/* <InfoSectionMenu title="מתכלים" items={consumables} setItems={setConsumables} />
-            <InfoSectionMenu title="חלקי חילוף" items={spareParts} setItems={setSpareParts} /> */}
+            <InfoSectionMenu 
+                title="מתכלים"
+                items={consumables}
+                setItems={setConsumables}
+                itemSuggestions={itemSuggestions}
+                onFetchSuggestions={(value: string, field: string) => {
+                    return fetch(encodeURI(`${backendFirebaseUri}/items?catType=מתכלה&search=${value}&searchFields=${field}`), {
+                        method: 'GET',
+                        headers: {
+                            'auth-token': authToken
+                        }
+                    })
+                    .then((res) => res.json())
+                    .then(jsonRes => setItemSuggestions(jsonRes))
+                    .catch((err) => console.log(`Error getting item suggestions: ${err}`));
+                }}
+                onClearSuggestions={() => setItemSuggestions([])}
+            
+            />   
+            <InfoSectionMenu 
+                title="חלקי חילוף"
+                items={spareParts}
+                setItems={setSpareParts}
+                itemSuggestions={itemSuggestions}
+                onFetchSuggestions={(value: string, field: string) => {
+                    return fetch(encodeURI(`${backendFirebaseUri}/items?catType=חלק חילוף&search=${value}&searchFields=${field}`), {
+                        method: 'GET',
+                        headers: {
+                            'auth-token': authToken
+                        }
+                    })
+                    .then((res) => res.json())
+                    .then(jsonRes => setItemSuggestions(jsonRes))
+                    .catch((err) => console.log(`Error getting item suggestions: ${err}`));
+                }}
+                onClearSuggestions={() => setItemSuggestions([])}
+            
+            />
         </>
     )
 }

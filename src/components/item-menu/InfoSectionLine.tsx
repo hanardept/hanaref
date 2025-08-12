@@ -43,21 +43,23 @@ const InfoSectionLine = ({ isLast, item, addLine, deleteLine, editItemCat, editI
             addLine();
         }
     }
-    const conditionalDeleteUponBlur = () => {
-        if (!first && item.cat.length === 0 && item.name.length === 0) {
+    const conditionalDeleteUponBlur = (force: boolean = false) => {
+        if (item.cat.length === 0 && item.name.length === 0) {
+            console.log(`deleting line`);
             deleteLine();
         }
     }
 
     return (
         <div className={classes.infoSectionLine} style={{ gridTemplateColumns: modelsLine ? "1fr 1fr 1fr 2.5rem" : "1fr 2fr 2.5rem" }}>
-            {modelsLine && <input type="text" placeholder='יצרן' value={item.manufacturer} onChange={handleManufacturerInput} onBlur={conditionalDeleteUponBlur} />}
-            {/* <input type="text" placeholder={modelsLine ? 'מק"ט יצרן' : 'מק"ט'} value={item.cat} onChange={handleCatInput} onBlur={conditionalDeleteUponBlur} /> */}
+            {modelsLine && <input type="text" placeholder='יצרן' value={item.manufacturer} onChange={handleManufacturerInput} onBlur={() => conditionalDeleteUponBlur()} />}
+            {onFetchSuggestions ?
             <DebouncingInput
                 id="searchCat"
                 className={classes.autosuggest}
                 inputValue={itemCatSearchText ?? item.cat ?? ''}
                 onValueChanged={(val: any) => setItemCatSearchText(val)}
+                onValueErased={deleteLine}
                 onSuggestionSelected={(s: any) => {
                     editItemCat(s.cat);
                     editItemName(s.name);
@@ -70,12 +72,16 @@ const InfoSectionLine = ({ isLast, item, addLine, deleteLine, editItemCat, editI
                 renderSuggestion={s => <span>{s.cat} {s.name}</span>}
                 onClearSuggestions={onClearSuggestions}
                 onBlur={() => { setItemCatSearchText(null); conditionalDeleteUponBlur(); }}
-            />
+            /> :
+            <input type="text" placeholder={modelsLine ? 'מק"ט יצרן' : 'מק"ט'} value={item.cat} onChange={handleCatInput} onBlur={() => conditionalDeleteUponBlur()} />
+            }
+            {onFetchSuggestions ?
             <DebouncingInput
                 id="searchName"
                 className={classes.autosuggest}
                 inputValue={itemNameSearchText ?? item.name ?? ''}
                 onValueChanged={(val: any) => setItemNameSearchText(val)}
+                onValueErased={deleteLine}
                 onSuggestionSelected={(s: any) => {
                     editItemCat(s.cat);
                     editItemName(s.name);
@@ -88,8 +94,9 @@ const InfoSectionLine = ({ isLast, item, addLine, deleteLine, editItemCat, editI
                 renderSuggestion={s => <span>{s.cat} {s.name}</span>}
                 onClearSuggestions={onClearSuggestions}
                 onBlur={() => { setItemNameSearchText(null); conditionalDeleteUponBlur(); }}
-            />
-            {/* <input type="text" placeholder={modelsLine ? 'שם דגם' : 'שם'} value={item.name} onChange={handleNameInput} onBlur={conditionalDeleteUponBlur} /> */}
+            /> :
+            <input type="text" placeholder={modelsLine ? 'שם דגם' : 'שם'} value={item.name} onChange={handleNameInput} onBlur={() => conditionalDeleteUponBlur()} />
+            }
             <div onClick={handleClick} className={(item.cat.length > 0 && item.name.length > 0) ? classes.infoSectionPlusClickable : classes.infoSectionPlusGrayed} style={{ display: isLast ? "flex" : "none" }}>+</div>
         </div>
     )

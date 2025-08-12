@@ -126,6 +126,8 @@
     background-color: #f1f1f1;
     color: #d1d1d1;
     border: 1px solid #d1d1d1;
+    justify-content: center;
+    align-items: center;
 }
 .infoSectionPlusClickable {
     background-color: #f1f1f1;

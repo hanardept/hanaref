@@ -39,64 +39,44 @@ const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, onFetchSugge
             return output;
         })
     };
-    const deleteLine = () => {
+    const deleteLine = (index: number) => {
         setItems(prev => {
             const output = [...prev];
-            return output.slice(0, output.length-1);
+            // if there is 1 item left, do not delete it, just reset the fields
+            if (output.length === 1) {
+                output[0].cat = "";
+                output[0].name = "";
+                output[0].manufacturer = "";
+            } else {
+                output.splice(index, 1);
+            }
+            return output;
         });
     }
 
     return (
         <>
             <h3 style={{ textAlign: "right" }}>{title}</h3>
-            <InfoSectionLine 
-                isLast={items.length === 1}
-                addLine={addLine}
-                deleteLine={deleteLine}
-                item={items[0]}
-                editItemName={(name: string) => editItemName(0, name)}
-                editItemCat={(cat: string) => editItemCat(0, cat)}
-                editItemManufacturer={(manufacturer: string) => editItemManufacturer(0, manufacturer)}
-                first={true}
-                modelsLine={title==="דגמים"}
-                itemSuggestions={itemSuggestions}
-                onFetchSuggestions={onFetchSuggestions}
-                onClearSuggestions={onClearSuggestions}
-                onBlur={onBlur}
-            />
-            {items.map((item, index) => {
-                if (index === 0) return <React.Fragment key={title+"f"}></React.Fragment>;
-                if (index === items.length - 1) {
-                    return <InfoSectionLine 
-                                key={index+title+"a"}
-                                isLast={true}
-                                addLine={addLine}
-                                deleteLine={deleteLine}
-                                item={item}
-                                editItemName={(name: string) => editItemName(index, name)}
-                                editItemCat={(cat: string) => editItemCat(index, cat)}
-                                editItemManufacturer={(manufacturer: string) => editItemManufacturer(index, manufacturer)}
-                                modelsLine={title==="דגמים"}
-                                itemSuggestions={itemSuggestions}
-                                onFetchSuggestions={onFetchSuggestions}
-                                onClearSuggestions={onClearSuggestions}
-                                onBlur={onBlur}
-                            />
-                } else {
-                    return <InfoSectionLine 
-                        key={index+title+"b"}
-                        isLast={false}
-                        addLine={addLine}
-                        deleteLine={deleteLine}
-                        item={item}
-                        editItemName={(name: string) => editItemName(index, name)}
-                        editItemCat={(cat: string) => editItemCat(index, cat)}
-                        editItemManufacturer={(manufacturer: string) => editItemManufacturer(index, manufacturer)}
-                        modelsLine={title==="דגמים"} itemSuggestions={itemSuggestions}
-                        onFetchSuggestions={onFetchSuggestions}
-                        onClearSuggestions={onClearSuggestions}
-                        onBlur={onBlur}/>
-                }
+            {/* Display at least 1 line, even if there are no items */}
+            {Array.from({ length: items?.length ? items.length : 1 }).map((_, index) => {
+                const isLast = index === items.length - 1;
+                const item = items[index];
+                return <InfoSectionLine 
+                            first={index === 0}
+                            key={index+title+(isLast ? "b" : "a")}
+                            isLast={isLast}
+                            addLine={addLine}
+                            deleteLine={() => deleteLine(index)}
+                            item={item}
+                            editItemName={(name: string) => editItemName(index, name)}
+                            editItemCat={(cat: string) => editItemCat(index, cat)}
+                            editItemManufacturer={(manufacturer: string) => editItemManufacturer(index, manufacturer)}
+                            modelsLine={title==="דגמים"}
+                            itemSuggestions={itemSuggestions}
+                            onFetchSuggestions={onFetchSuggestions}
+                            onClearSuggestions={onClearSuggestions}
+                            onBlur={onBlur}
+                        />
             })}
         </>
     )

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import classes from './DebouncingInput.module.css';
 import Autosuggest from 'react-autosuggest';
 import './AutoSuggest.css';
@@ -22,9 +22,39 @@ const DebouncingInput = ({ inputValue, onValueErased, onValueChanged, onSuggesti
 
     let debouncer = useRef(setTimeout(() => {}, DEBOUNCE_LAG));
 
+    const handleClear = () => {
+        onValueErased?.();
+    };
+
+    const autosuggest = useRef<any>(null);
+
+    useEffect(() => {
+        const inputElement = autosuggest.current?.input;
+
+        if (inputElement) {
+            inputElement.addEventListener('search', handleClear);
+        }
+
+        return () => {
+            if (inputElement) {
+                inputElement.removeEventListener('search', handleClear);
+            }
+        };
+    }, [ handleClear ]);
+
+
+    const inputProps = {
+            value: inputValue,
+            onChange: (_: any, params: any) => onValueChanged?.(params.newValue),
+            onBlur: onBlur,
+            type: "search",
+            placeholder,
+    };
+
     return (
         <div className={classes.container} {...props}>
            <Autosuggest
+                ref={autosuggest}
                 suggestions={suggestions ?? []}
                 onSuggestionsFetchRequested={({ value }) => {
                     if (debouncer.current) {
@@ -37,15 +67,7 @@ const DebouncingInput = ({ inputValue, onValueErased, onValueChanged, onSuggesti
                 onSuggestionsClearRequested={onClearSuggestions}
                 getSuggestionValue={getSuggestionValue}
                 renderSuggestion={s => renderSuggestion?.(s) ?? <span>{s}</span>}
-                inputProps={
-                    {
-                        value: inputValue,
-                        onChange: (_, { newValue }) => onValueChanged?.(newValue),
-                        onBlur: onBlur,
-                        type: "search",
-                        placeholder,
-                    }
-                }
+                inputProps={inputProps}
             />
         </div>
     )
