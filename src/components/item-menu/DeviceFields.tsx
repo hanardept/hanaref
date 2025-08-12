@@ -1,8 +1,10 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { AbbreviatedItem } from "../../types/item_types";
 import InfoSectionMenu from "./InfoSectionMenu";
 import LabeledInput from "../UI/LabeledInput";
 import UploadFile from "../UI/UploadFile";
+import { backendFirebaseUri } from "../../backend-variables/address";
+import { useAppSelector } from "../../hooks/redux-hooks";
 
 interface DeviceFieldsProps {
     imageLink: string;
@@ -43,6 +45,9 @@ const DeviceFields = (props: DeviceFieldsProps) => {
         setAccessories, setConsumables, setSpareParts
     } = props;
 
+    const authToken = useAppSelector(state => state.auth.jwt);
+    const [ itemSuggestions, setItemSuggestions ] = useState([]);
+
     return (
         <>
             <LabeledInput type="file" label="קישור לתמונה" value={imageLink}  placeholder="קישור לתמונה" 
@@ -59,9 +64,66 @@ const DeviceFields = (props: DeviceFieldsProps) => {
                 customInputElement={<UploadFile placeholder="Service Manual" url={serviceManualLink} isUploading={isServiceManualUploading} onChange={(e) => setServiceManualLink(e.target.files?.[0] ?? '')}  onClear={() => setServiceManualLink("")}/>}/>
             <LabeledInput label="ספק בארץ" value={supplier} onChange={(e) => handleInput(setSupplier, e)} placeholder="ספק בארץ" />
             <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />
-            <InfoSectionMenu title="אביזרים" items={accessories} setItems={setAccessories} />
-            <InfoSectionMenu title="מתכלים" items={consumables} setItems={setConsumables} />
-            <InfoSectionMenu title="חלקי חילוף" items={spareParts} setItems={setSpareParts} />
+            <InfoSectionMenu 
+                title="אביזרים"
+                items={accessories}
+                setItems={setAccessories}
+                itemSuggestions={itemSuggestions}
+                allowNewItem={true}
+                onFetchSuggestions={(value: string, field: string) => {
+                    return fetch(encodeURI(`${backendFirebaseUri}/items?catType=אביזר&search=${value}&searchFields=${field}`), {
+                        method: 'GET',
+                        headers: {
+                            'auth-token': authToken
+                        }
+                    })
+                    .then((res) => res.json())
+                    .then(jsonRes => setItemSuggestions(jsonRes))
+                    .catch((err) => console.log(`Error getting item suggestions: ${err}`));
+                }}
+                onClearSuggestions={() => setItemSuggestions([])}
+            
+            />
+            <InfoSectionMenu 
+                title="מתכלים"
+                items={consumables}
+                setItems={setConsumables}
+                itemSuggestions={itemSuggestions}
+                allowNewItem={true}
+                onFetchSuggestions={(value: string, field: string) => {
+                    return fetch(encodeURI(`${backendFirebaseUri}/items?catType=מתכלה&search=${value}&searchFields=${field}`), {
+                        method: 'GET',
+                        headers: {
+                            'auth-token': authToken
+                        }
+                    })
+                    .then((res) => res.json())
+                    .then(jsonRes => setItemSuggestions(jsonRes))
+                    .catch((err) => console.log(`Error getting item suggestions: ${err}`));
+                }}
+                onClearSuggestions={() => setItemSuggestions([])}
+            
+            />   
+            <InfoSectionMenu 
+                title="חלקי חילוף"
+                items={spareParts}
+                setItems={setSpareParts}
+                itemSuggestions={itemSuggestions}
+                allowNewItem={true}
+                onFetchSuggestions={(value: string, field: string) => {
+                    return fetch(encodeURI(`${backendFirebaseUri}/items?catType=חלק חילוף&search=${value}&searchFields=${field}`), {
+                        method: 'GET',
+                        headers: {
+                            'auth-token': authToken
+                        }
+                    })
+                    .then((res) => res.json())
+                    .then(jsonRes => setItemSuggestions(jsonRes))
+                    .catch((err) => console.log(`Error getting item suggestions: ${err}`));
+                }}
+                onClearSuggestions={() => setItemSuggestions([])}
+            
+            />
         </>
     )
 }

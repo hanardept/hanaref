@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import classes from './DebouncingInput.module.css';
 import Autosuggest from 'react-autosuggest';
 import './AutoSuggest.css';
@@ -20,46 +20,55 @@ const DebouncingInput = ({ inputValue, onValueErased, onValueChanged, onSuggesti
     [x: string]: any
 }) => {
 
-    const [localValue, setLocalValue] = useState("");
+    let debouncer = useRef(setTimeout(() => {}, DEBOUNCE_LAG));
 
-
-    const eraseValue = () => {
+    const handleClear = useCallback(() => {
         onValueErased?.();
-    }
+    }, [ onValueErased ]);
+
+    const autosuggest = useRef<any>(null);
 
     useEffect(() => {
-        setLocalValue?.(inputValue);
-    }, [inputValue]);
+        const inputElement = autosuggest.current?.input;
 
-    let debouncer = useRef(setTimeout(() => {}, DEBOUNCE_LAG));
+        if (inputElement) {
+            inputElement.addEventListener('search', handleClear);
+        }
+
+        return () => {
+            if (inputElement) {
+                inputElement.removeEventListener('search', handleClear);
+            }
+        };
+    }, [ handleClear ]);
+
+
+    const inputProps = {
+            value: inputValue,
+            onChange: (_: any, params: any) => onValueChanged?.(params.newValue),
+            onBlur: onBlur,
+            type: "search",
+            placeholder,
+    };
 
     return (
         <div className={classes.container} {...props}>
            <Autosuggest
+                ref={autosuggest}
                 suggestions={suggestions ?? []}
                 onSuggestionsFetchRequested={({ value }) => {
-                    setLocalValue(value);
                     if (debouncer.current) {
                         clearTimeout(debouncer.current);
                     }
                     debouncer.current = setTimeout(() => onFetchSuggestions?.(value), DEBOUNCE_LAG)}
                     
                 }
-                onSuggestionSelected={(_, { suggestion }) => { console.log(`hii`); onSuggestionSelected?.(suggestion); }}
+                onSuggestionSelected={(_, { suggestion }) => onSuggestionSelected?.(suggestion)}
                 onSuggestionsClearRequested={onClearSuggestions}
                 getSuggestionValue={getSuggestionValue}
                 renderSuggestion={s => renderSuggestion?.(s) ?? <span>{s}</span>}
-                inputProps={
-                    {
-                        value: inputValue,
-                        onChange: (_, { newValue }) => { console.log(`new value: ${newValue}`); onValueChanged?.(newValue); },
-                        onBlur: onBlur,
-                        type: "search",
-                        placeholder,
-                    }
-                }
+                inputProps={inputProps}
             />
-            {localValue.length > 0 && <div className={classes.xButton} onClick={eraseValue}>×</div>}
         </div>
     )
 };

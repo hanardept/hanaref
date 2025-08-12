@@ -47,6 +47,7 @@
     font-size: 1.4rem;
 }
 .itemMenu input {
+    width: 100%;
     font-size: 1.3rem;
     padding: 5px;
 }
@@ -72,13 +73,49 @@
     height: 1.4rem;
     margin-bottom: calc(1rem + 5px);
 }
-.infoSectionLine input {
+.infoSectionLine input .autosuggest {
     width: 100%;
     height: 100%;
     margin-bottom: 0;
     font-size: 1.1rem;
 }
-.infoSectionLine div {
+
+.autosuggest {
+    position: relative;
+}
+
+.autosuggest input {
+    height: unset;
+}
+
+.autosuggest * {
+    margin-bottom: 0;
+}
+
+.react-autosuggest__container {
+  position: relative;
+  width: 100%;
+  direction: rtl;
+  display: flex;
+  align-items: center;
+}
+
+/* Ensure the dropdown is absolutely positioned */
+.react-autosuggest__suggestions-container, .react-autosuggest__suggestions-container--open {
+  position: absolute !important;
+  top: 100% !important;
+  right: 0 !important; /* For RTL */
+  left: auto !important;
+  width: 100% !important;
+  z-index: 10;
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.infoSectionLine div :not(.autosuggest *) {
     line-height: 1.6;
     height: calc(100% + 10px);
     display: flex;
@@ -89,10 +126,14 @@
     background-color: #f1f1f1;
     color: #d1d1d1;
     border: 1px solid #d1d1d1;
+    justify-content: center;
+    align-items: center;
 }
 .infoSectionPlusClickable {
     background-color: #f1f1f1;
     color: #797979;
     border: 1px solid #797979;
     font-weight: bold;
+    align-items: center;
+    justify-content: center;
 }

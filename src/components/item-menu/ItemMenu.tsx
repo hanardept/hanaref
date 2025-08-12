@@ -141,7 +141,7 @@ const ItemMenu = () => {
         const itemDetails = {
             name: name,
             cat: itemCat,
-            kitCats: kitCats?.map(kc => kc.replace(/ /g, '')),
+            kitCats: kitCats?.map(kc => kc?.replace(/ /g, '')),
             sector: sector,
             department: department,
             catType: catType,
