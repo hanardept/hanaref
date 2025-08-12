@@ -2,11 +2,12 @@ import React from 'react';
 import { AbbreviatedItem } from '../../types/item_types';
 import InfoSectionLine from './InfoSectionLine';
 
-const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, onFetchSuggestions, onClearSuggestions, onBlur }: { 
+const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, allowNewItem, onFetchSuggestions, onClearSuggestions, onBlur }: { 
         title: string,
         items: AbbreviatedItem[],
         setItems: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>
         itemSuggestions?: AbbreviatedItem[],
+        allowNewItem?: boolean,
         onFetchSuggestions?: (value: string, field: string) => any,
         onClearSuggestions?: () => any,
         onBlur?: () => any,
@@ -73,6 +74,7 @@ const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, onFetchSugge
                             editItemManufacturer={(manufacturer: string) => editItemManufacturer(index, manufacturer)}
                             modelsLine={title==="דגמים"}
                             itemSuggestions={itemSuggestions}
+                            allowNewItem={allowNewItem}
                             onFetchSuggestions={onFetchSuggestions}
                             onClearSuggestions={onClearSuggestions}
                             onBlur={onBlur}
