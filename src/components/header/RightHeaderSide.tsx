@@ -10,6 +10,8 @@ import { slide as Menu } from 'react-burger-menu';
 import { CiMedicalCase } from "react-icons/ci";
 import { IoMdPeople } from "react-icons/io";
 import { TbCertificate } from "react-icons/tb";
+import { FaUser } from "react-icons/fa";
+
 
 
 
@@ -39,14 +41,18 @@ const RightHeaderSide = ({ loggedIn }: { loggedIn: boolean }) => {
                 <CiMedicalCase />
                 <span>פריטים</span>
             </span>
-            <span id="technicians" onClick={() => navigateTo('/technicians')}/*href="/technicians"*/>
+            <span id="technicians" onClick={() => navigateTo('/technicians')}>
                 <IoMdPeople />
                 <span>טכנאים</span>
             </span>
-            <span id="certifications" onClick={() => navigateTo('/certifications')} /*href="/certifications"*/>
+            <span id="certifications" onClick={() => navigateTo('/certifications')}>
                 <TbCertificate />
                 <span>הסמכות</span>
             </span>
+            <span id="users" onClick={() => navigateTo('/users')}>
+                <FaUser />
+                <span>משתמשים</span>
+            </span>            
         </Menu>
     )
 
@@ -56,7 +62,8 @@ const RightHeaderSide = ({ loggedIn }: { loggedIn: boolean }) => {
                     {
                         ["/login", "/itemmenu", "/itemmenu/*", "/items/*", "/managesectors", "/sectormenu",
                             "/technicianmenu", "/technicianmenu/*", "/technicians/*",
-                            "/certificationmenu", "/certificationmenu/*", "/certifications/*"
+                            "/certificationmenu", "/certificationmenu/*", "/certifications/*",
+                            "/usermenu", "/usermenu/*", "/users/*",
                         ].map(path => 
                             <Route 
                                 path={path} 

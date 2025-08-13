@@ -19,6 +19,9 @@ import TechnicianMenu from './components/technician-menu/TechnicianMenu';
 import CertificationPage from './components/certification-page/CertificationPage';
 import Certifications from './components/certification-page/Certifications';
 import CertificationMenu from './components/certification-menu/CertificationMenu';
+import UserPage from './components/user-page/UserPage';
+import Users from './components/user-page/Users';
+import UserMenu from './components/user-menu/UserMenu';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -75,6 +78,7 @@ function App() {
           <Route path="/itemnotfound/:itemid" element={<NoItemFound />} />
           <Route path="/managesectors" element={<AdminOnly><SectorManagement /></AdminOnly>} />
           <Route path="/sectormenu" element={<AdminOnly><SectorMenu exit={() => navigate(-1)} /></AdminOnly>} />
+
           <Route path="/technicians" element={<AdminOnly><Technicians /></AdminOnly>} />
           <Route path="/technicians/:technicianid" element={<AdminOnly><TechnicianPage /></AdminOnly>} />
           <Route path="/technicianmenu" element={<AdminOnly><TechnicianMenu /></AdminOnly>} />          
@@ -86,6 +90,12 @@ function App() {
           <Route path="/certificationmenu" element={<AdminOnly><CertificationMenu /></AdminOnly>} />          
           <Route path="/certificationmenu/:certificationid" element={<AdminOnly><CertificationMenu /></AdminOnly>} />
           <Route path="/certificationmenu/newcertification/:newcertificationid" element={<AdminOnly><CertificationMenu /></AdminOnly>} />          
+
+          <Route path="/users" element={<AdminOnly><Users /></AdminOnly>} />
+          <Route path="/users/:userid" element={<AdminOnly><UserPage /></AdminOnly>} />
+          <Route path="/usermenu" element={<AdminOnly><UserMenu /></AdminOnly>} />          
+          <Route path="/usermenu/:userid" element={<AdminOnly><UserMenu /></AdminOnly>} />
+          <Route path="/usermenu/newuser/:newuserid" element={<AdminOnly><UserMenu /></AdminOnly>} />          
         </Routes>
       </div>
       {showWelcome && <div className={classes.welcome} onClick={() => setShowWelcome(false)}>

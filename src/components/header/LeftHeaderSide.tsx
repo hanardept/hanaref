@@ -12,6 +12,7 @@ const LeftHeaderSide = () => {
     const currentCat = useAppSelector(state => state.viewing.itemManagement.currentCat);
     const currentTechnicianId = useAppSelector(state => state.viewing.technicianManagement.currentTechnicianId);
     const currentCertificationId = useAppSelector(state => state.viewing.certificationManagement.currentCertificationId);
+    const currentUserId = useAppSelector(state => state.viewing.userManagement.currentUserId);
     const dispatch = useAppDispatch();
 
     const addItemAndManageSectors = 
@@ -35,6 +36,13 @@ const LeftHeaderSide = () => {
         </span>
     ;
 
+    const addUser = 
+        <span className={classes.toolbarSpan}>
+            <span onClick={() => navigate('/usermenu')} style={{ lineHeight: 0 }}>+</span>
+        </span>
+    ;
+
+
     return (
         <Routes>
             <Route path="/" element={addItemAndManageSectors} />
@@ -52,6 +60,10 @@ const LeftHeaderSide = () => {
             <Route path="certifications/*" element={<AdminOnly><span className={classes.toolbarSpan} onClick={() => navigate(`certificationmenu/${currentCertificationId}`)}>ערוך</span></AdminOnly>} />
             <Route path="certificationmenu" element={<></>} />
             <Route path="certificationmenu/*" element={<></>} />
+            <Route path="users" element={addUser} />
+            <Route path="users/*" element={<AdminOnly><span className={classes.toolbarSpan} onClick={() => navigate(`usermenu/${currentUserId}`)}>ערוך</span></AdminOnly>} />
+            <Route path="usermenu" element={<></>} />
+            <Route path="usermenu/*" element={<></>} />            
         </Routes>
             
     )
