@@ -70,7 +70,8 @@ function App() {
           {/* Public Routes: */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/items/:itemid" element={<ItemPage />} />
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/items" element={<HomePage />} />
           {/* Protected Routes: */}
           <Route path="/itemmenu" element={<AdminOnly><ItemMenu /></AdminOnly>} />
           <Route path="/itemmenu/:itemid" element={<AdminOnly><ItemMenu /></AdminOnly>} />

@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { backendFirebaseUri } from "../../backend-variables/address";
 import { useAppDispatch } from "../../hooks/redux-hooks";
@@ -47,12 +47,16 @@ const LoginPage = () => {
         user, // User profile
     } = useAuth0();
 
-    if (isLoading) return "Loading...";
+    useEffect(() => {
+        if (!isLoading && !isAuthenticated) {
+            login();
+        }
+    }, [ isLoading, isAuthenticated, login ])
 
     return (
         <div className={classes.loginForm}>
-            <p>is loading: {isLoading}</p>
-            <p>is authenticated: {isAuthenticated}</p>
+            <p>is loading: {`${isLoading}`}</p>
+            <p>is authenticated: {`${isAuthenticated}`}</p>
             <h1>כניסה</h1>
             <input type="text" value={usernameInput} placeholder="שם משתמש" onChange={handleChangeUsernameInput} />
             <input type="password" value={passwordInput} placeholder="סיסמה" onChange={handleChangePasswordInput} />
