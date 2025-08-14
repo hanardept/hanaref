@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './store/redux-logic';
+import { Auth0Provider } from '@auth0/auth0-react';
 
 console.log(`backend url: ${process.env.REACT_APP_BACKEND_URL}`);
 console.log(process.env);
@@ -16,7 +17,13 @@ root.render(
     <React.StrictMode>
     <Provider store={store}>
     <BrowserRouter>
-    <App />
+    <Auth0Provider
+      domain={process.env.VITE_AUTH0_DOMAIN!}
+      clientId={process.env.VITE_AUTH0_CLIENT_ID!}
+      authorizationParams={{ redirect_uri: window.location.origin }}
+    >
+      <App />
+    </Auth0Provider>          
     </BrowserRouter>
     </Provider>
     </React.StrictMode>

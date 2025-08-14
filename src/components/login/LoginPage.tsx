@@ -5,6 +5,7 @@ import { useAppDispatch } from "../../hooks/redux-hooks";
 import { authActions } from "../../store/auth-slice";
 import BigButton from "../UI/BigButton";
 import classes from './LoginPage.module.css';
+import { useAuth0 } from "@auth0/auth0-react";
 
 const LoginPage = () => {
     const [usernameInput, setUsernameInput] = useState("");
@@ -37,8 +38,21 @@ const LoginPage = () => {
         navigate('/');
     }
 
+    const {
+        isLoading, // Loading state, the SDK needs to reach Auth0 on load
+        isAuthenticated,
+        error,
+        loginWithRedirect: login, // Starts the login flow
+        logout: auth0Logout, // Starts the logout flow
+        user, // User profile
+    } = useAuth0();
+
+    if (isLoading) return "Loading...";
+
     return (
         <div className={classes.loginForm}>
+            <p>is loading: {isLoading}</p>
+            <p>is authenticated: {isAuthenticated}</p>
             <h1>כניסה</h1>
             <input type="text" value={usernameInput} placeholder="שם משתמש" onChange={handleChangeUsernameInput} />
             <input type="password" value={passwordInput} placeholder="סיסמה" onChange={handleChangePasswordInput} />
