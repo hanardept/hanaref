@@ -11,6 +11,7 @@ import { CiMedicalCase } from "react-icons/ci";
 import { IoMdPeople } from "react-icons/io";
 import { TbCertificate } from "react-icons/tb";
 import { FaUser } from "react-icons/fa";
+import { useAuth0 } from "@auth0/auth0-react";
 
 
 
@@ -21,11 +22,20 @@ const RightHeaderSide = ({ loggedIn }: { loggedIn: boolean }) => {
     const loggedInAs = useAppSelector(state => state.auth.frontEndPrivilege);
     const [areYouSureLogout, setAreYouSureLogout] = useState(false);
     const [ isBurgerOpen, setIsBurgerOpen ] = useState(false);
+
+    const {
+        logout, // Starts the logout flow
+        loginWithRedirect,
+    } = useAuth0();    
+
     
 
     const handleLogout = () => {
-        dispatch(authActions.clearAuthStateUponLogout());
-        navigate(0);
+        logout().then(res => {
+            dispatch(authActions.clearAuthStateUponLogout());
+           //return loginWithRedirect();
+        });
+        //navigate(0);
     };
 
     const navigateTo = (path: string) => {
@@ -33,7 +43,8 @@ const RightHeaderSide = ({ loggedIn }: { loggedIn: boolean }) => {
         navigate(path);
     }
 
-    const signInOut = loggedIn ? <span onClick={() => setAreYouSureLogout(true)}>יציאה</span> : <span onClick={() => navigate('/login')}>כניסה</span>;
+    //const signInOut = loggedIn ? <span onClick={() => setAreYouSureLogout(true)}>יציאה</span> : <span onClick={() => navigate('/login')}>כניסה</span>;
+    const signOut = <span onClick={() => setAreYouSureLogout(true)}>יציאה</span>;
 
     const burger = loggedInAs === "admin" && (
         <Menu right isOpen={isBurgerOpen} onOpen={() => setIsBurgerOpen(true)} onClose={() => setIsBurgerOpen(false)}>
@@ -76,7 +87,7 @@ const RightHeaderSide = ({ loggedIn }: { loggedIn: boolean }) => {
                             />)
                     }
                     <Route path="/itemnotfound/*" element={<span className={classes.rightHeaderSpan}>{burger}<GoBack goHome={true} /></span>} />
-                    <Route path="/" element={<span className={classes.rightHeaderSpan}>{burger}{signInOut}</span>}/>
+                    <Route path="/" element={<span className={classes.rightHeaderSpan}>{burger}{signOut}</span>}/>
             </Routes>
             {areYouSureLogout && <AreYouSure text="לצאת מהמשתמש?" leftText="צא" leftAction={handleLogout} rightText="לא" rightAction={() => setAreYouSureLogout(false)} />}
         </>

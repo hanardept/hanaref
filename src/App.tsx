@@ -22,6 +22,9 @@ import CertificationMenu from './components/certification-menu/CertificationMenu
 import UserPage from './components/user-page/UserPage';
 import Users from './components/user-page/Users';
 import UserMenu from './components/user-menu/UserMenu';
+import { useAuth0 } from '@auth0/auth0-react';
+import { jwtDecode } from 'jwt-decode';
+import { backendFirebaseUri } from './backend-variables/address';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -62,6 +65,57 @@ function App() {
     }
   }, [dispatch]);
 
+    const { isAuthenticated, user, isLoading, loginWithRedirect, getAccessTokenSilently } = useAuth0();
+
+    getAccessTokenSilently({ cacheMode: 'off', authorizationParams: { audience: backendFirebaseUri } }).then(token => {
+      //console.log(`getAccessTokenSilently token: ${token}`);
+      try {
+        const decoded: { exp: number } = jwtDecode(token);
+        console.log(`decoded: ${JSON.stringify(decoded)}`);
+        dispatch(authActions.setAuthStateUponLogin({ jwt: token, frontEndPrivilege: 'admin', jwtExpiryDate: decoded.exp }));
+      } catch (error) {
+        console.log(`error decoding auth0 token: ${error}`);
+      }
+    })
+
+
+    useEffect(() => {
+      console.log(`user: ${JSON.stringify(user)}, isLoading: ${isLoading}`)
+      if (!isLoading && user) {
+        // Check if there's a returnTo URL in the appState
+        const appState = user.appState; 
+        if (appState && appState.returnTo) {
+          navigate(appState.returnTo);
+        }
+      }
+    }, [user, isLoading, navigate]);
+  
+
+    // const {
+    //     isLoading, // Loading state, the SDK needs to reach Auth0 on load
+    //     isAuthenticated,
+    //     error,
+    //     loginWithRedirect: login, // Starts the login flow
+    //     logout: auth0Logout, // Starts the logout flow
+    //     user, // User profile
+    //     getAccessTokenSilently,
+    // } = useAuth0();
+
+    // useEffect(() => {
+    //     console.log(`isLoading: ${isLoading}, isAuthenticated: ${isAuthenticated}, error: ${error}`);
+    //     if (!isLoading && !isAuthenticated) {
+    //         console.log(`logging in...`);
+    //         login().then(() =>
+    //           console.log(`logged in!`)
+    //             // getAccessTokenSilently().then(token => {
+    //             //   const decoded: { exp: number } = jwtDecode(token);
+    //             //   console.log(`decoded: ${JSON.stringify(decoded)}`);
+    //             //   dispatch(authActions.setAuthStateUponLogin({ jwt: token, frontEndPrivilege: 'admin', jwtExpiryDate: decoded.exp }));
+    //             // })
+    //         )
+    //     }
+    // }, [ isLoading, isAuthenticated, login ])
+
   return (
     <div className={classes.App}>
       <Header />
@@ -70,8 +124,8 @@ function App() {
           {/* Public Routes: */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/items/:itemid" element={<ItemPage />} />
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/items" element={<HomePage />} />
+          <Route path="/" element={<HomePage />} />
+          {/* <Route path="/items" element={<HomePage />} /> */}
           {/* Protected Routes: */}
           <Route path="/itemmenu" element={<AdminOnly><ItemMenu /></AdminOnly>} />
           <Route path="/itemmenu/:itemid" element={<AdminOnly><ItemMenu /></AdminOnly>} />

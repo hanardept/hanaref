@@ -6,8 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './store/redux-logic';
-import { Auth0Provider } from '@auth0/auth0-react';
-import { backendFirebaseUri } from './backend-variables/address';
+import AuthProviderWithNavigate from './AuthProviderWithNavigate';
 
 console.log(`backend url: ${process.env.REACT_APP_BACKEND_URL}`);
 console.log(process.env);
@@ -15,20 +14,14 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 console.log(`domain: ${process.env.REACT_APP_AUTH0_DOMAIN}, redirect_uri: ${window.location.origin}`);
+
 root.render(
     <React.StrictMode>
     <Provider store={store}>
     <BrowserRouter>
-    <Auth0Provider
-      domain={process.env.REACT_APP_AUTH0_DOMAIN!}
-      clientId={process.env.REACT_APP_AUTH0_CLIENT_ID!}
-      authorizationParams={{ 
-        redirect_uri: window.location.origin,
-        audience: backendFirebaseUri
-      }}
-    >
+    <AuthProviderWithNavigate>
       <App />
-    </Auth0Provider>          
+    </AuthProviderWithNavigate>        
     </BrowserRouter>
     </Provider>
     </React.StrictMode>

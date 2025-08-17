@@ -3,11 +3,13 @@ import LoadingSpinner from '../UI/LoadingSpinner';
 import ListItem from './ListItem';
 import classes from './Users.module.css';
 import { UIEvent, useEffect } from "react";
-import { backendFirebaseUri } from "../../backend-variables/address";
+import { backendFirebaseUri, fetchBackend } from "../../backend-variables/address";
 import { usersActions } from "../../store/users-slice";
 import { viewingActions } from "../../store/viewing-slice";
 import { useNavigate } from "react-router-dom";
 import SearchMenu from "./SearchMenu";
+import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
+
 
 
 const Users = () => {
@@ -24,6 +26,8 @@ const Users = () => {
         navigate(`/users/${id}`);
     }
 
+    const { loginWithRedirect, handleRedirectCallback } = useAuth0();
+
     const handleScroll = (event: UIEvent<HTMLDivElement>) => {
         console.log("Scroll event triggered");
 
@@ -31,9 +35,11 @@ const Users = () => {
         if (!blockScrollSearch && scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
             scrollThrottler = false;
             
-            fetch(encodeURI(`${backendFirebaseUri}/users?page=${page}`), {
+            console.log(`origin: ${window.location.href}`);
+            fetchBackend(encodeURI(`users?page=${page}`), {
                 headers: { 'auth-token': authToken }
-            })
+            //}, () => loginWithRedirect({ authorizationParams: { redirect_uri: window.location.href } }))
+            },loginWithRedirect)
             .then(res => res.json())
             .then((jsonedRes) => {
                 if (jsonedRes.length > 0) {
@@ -51,9 +57,11 @@ const Users = () => {
     useEffect(() => {
 
         const triggerNewSearch = () => {
-            fetch(encodeURI(`${backendFirebaseUri}/users?search=${searchVal}`), {
+            console.log(`origin: ${window.location.href}`);
+            fetchBackend(encodeURI(`users?search=${searchVal}`), {
                 headers: { 'auth-token': authToken }
-            })
+            //}, () => loginWithRedirect({ authorizationParams: { redirect_uri: window.location.href } }))
+            },() => loginWithRedirect({ appState: { returnTo: window.location.pathname } }))
             .then(res => res.json())
             .then(jsonedRes => {
                 dispatch(usersActions.setUsers(jsonedRes)); 
@@ -82,4 +90,4 @@ const Users = () => {
     )
 }
 
-export default Users;
+export default withAuthenticationRequired(Users);
