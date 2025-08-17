@@ -18,12 +18,14 @@ const UserMenu = () => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
     const userDetails = {
         firstName: firstName,
         lastName: lastName,
-        username: username
+        username: username,
+        email: email,
     };
 
     useEffect(() => {        
@@ -54,9 +56,9 @@ const UserMenu = () => {
     
     const handleSave = () => {
 
-        if (!userDetails.firstName || !userDetails.lastName || !userDetails.username) {
+        if (!userDetails.firstName || !userDetails.lastName || !userDetails.username || !userDetails.email) {
             // if the required fields of the User mongo schema are not filled then don't save
-            console.log("Please make sure to enter an first name, last name and username");
+            console.log("Please make sure to enter a first name, last name, username and email");
             return;
         }
 
@@ -115,6 +117,7 @@ const UserMenu = () => {
             <input type="text" placeholder='שם פרטי' value={firstName} onChange={(e) => handleInput(setFirstName, e)} />
             <input type="text" placeholder='שם משפחה' value={lastName} onChange={(e) => handleInput(setLastName, e)} />
             <input type="text" placeholder='שם משתמש' value={username} onChange={(e) => handleInput(setUsername, e)} />
+            <input type="email" placeholder='דואר אלקטרוני' value={email} onChange={(e) => handleInput(setEmail, e)} />
             <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "2.5rem" }} />
             {params.userid && <BigButton text="מחק טכנאי" action={() => setAreYouSureDelete(true)} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} />}
             {areYouSureDelete && <AreYouSure text="האם באמת למחוק טכנאי?" leftText='מחק' leftAction={handleDelete} rightText='לא' rightAction={() => setAreYouSureDelete(false)} />}

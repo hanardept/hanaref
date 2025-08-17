@@ -34,8 +34,6 @@ const Users = () => {
         let scrollThrottler = true;
         if (!blockScrollSearch && scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
             scrollThrottler = false;
-            
-            console.log(`origin: ${window.location.href}`);
             fetchBackend(encodeURI(`users?page=${page}`), {
                 headers: { 'auth-token': authToken }
             //}, () => loginWithRedirect({ authorizationParams: { redirect_uri: window.location.href } }))
@@ -76,6 +74,8 @@ const Users = () => {
         triggerNewSearch();
 
     }, [dispatch, authToken, searchVal]);
+
+    console.log(`user count: ${users.length}`);
 
     return (
         <>

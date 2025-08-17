@@ -24,7 +24,6 @@ const ListItem = (props: ListItemProps) => {
         style.backgroundColor = "#ffe1bc";
     }
 
-    console.log(`ListItem: ${props.firstName} ${props.lastName}`);
     return (
         <div onClick={handleClick} className={props.className} style={style}>
             <div className={props.textContentClassName}>

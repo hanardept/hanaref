@@ -32,11 +32,8 @@ function App() {
   const [showWelcome, setShowWelcome] = useState(true);
   const firstRender = useRef(true);
 
-  console.log(`firstRender: ${firstRender.current}, showWelcome: ${showWelcome}`);
-
   useEffect(() => {
     if (firstRender.current) {
-      console.log(`App first render, setting showWelcome to true`);
       setTimeout(() => {
         firstRender.current = false;
         setShowWelcome(false);
@@ -67,7 +64,7 @@ function App() {
 
     const { isAuthenticated, user, isLoading, loginWithRedirect, getAccessTokenSilently } = useAuth0();
 
-    getAccessTokenSilently({ cacheMode: 'off', authorizationParams: { audience: backendFirebaseUri } }).then(token => {
+    getAccessTokenSilently({ /*cacheMode: 'off',*/ authorizationParams: { audience: backendFirebaseUri } }).then(token => {
       //console.log(`getAccessTokenSilently token: ${token}`);
       try {
         const decoded: { exp: number } = jwtDecode(token);
@@ -85,36 +82,11 @@ function App() {
         // Check if there's a returnTo URL in the appState
         const appState = user.appState; 
         if (appState && appState.returnTo) {
+          console.log(`navigating to: ${appState.returnTo}`);
           navigate(appState.returnTo);
         }
       }
     }, [user, isLoading, navigate]);
-  
-
-    // const {
-    //     isLoading, // Loading state, the SDK needs to reach Auth0 on load
-    //     isAuthenticated,
-    //     error,
-    //     loginWithRedirect: login, // Starts the login flow
-    //     logout: auth0Logout, // Starts the logout flow
-    //     user, // User profile
-    //     getAccessTokenSilently,
-    // } = useAuth0();
-
-    // useEffect(() => {
-    //     console.log(`isLoading: ${isLoading}, isAuthenticated: ${isAuthenticated}, error: ${error}`);
-    //     if (!isLoading && !isAuthenticated) {
-    //         console.log(`logging in...`);
-    //         login().then(() =>
-    //           console.log(`logged in!`)
-    //             // getAccessTokenSilently().then(token => {
-    //             //   const decoded: { exp: number } = jwtDecode(token);
-    //             //   console.log(`decoded: ${JSON.stringify(decoded)}`);
-    //             //   dispatch(authActions.setAuthStateUponLogin({ jwt: token, frontEndPrivilege: 'admin', jwtExpiryDate: decoded.exp }));
-    //             // })
-    //         )
-    //     }
-    // }, [ isLoading, isAuthenticated, login ])
 
   return (
     <div className={classes.App}>

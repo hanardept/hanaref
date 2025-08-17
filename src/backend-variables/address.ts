@@ -10,7 +10,7 @@ export const fetchBackend = async(path: string, init?: { method?: string, header
             loginWithRedirect?.({ appState: { returnTo } });
         }
         console.log(`received res: ${JSON.stringify(res)}, status: ${res.status}`);
-        return res.json();
+        return res;
     })
     .catch(err => {
         console.log(`err: ${err}`);

@@ -31,7 +31,6 @@ const ListItem = (props: ListItemProps) => {
         style.opacity = 0.7;
     }
 
-    console.log(`ListItem: ${props.firstName} ${props.lastName} (${props.id})`);
     return (
         <div onClick={handleClick} className={props.className} style={style}>
             <div className={props.textContentClassName}>

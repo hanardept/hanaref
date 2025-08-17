@@ -133,27 +133,8 @@ const UserPage = () => {
             {!loading && user && <div className={classes.userPage}>
                 <h1>{user.firstName} {user.lastName}</h1>
                 <p>{`שם משתמש: ${user.username}`}</p>
-                <h2>מכשירים מוסמכים</h2>
-                <div className={classes.itemsWrapper}/* onScroll={handleScroll}*/>
-                    {certifications.map(c => {
-                        const certificationStatus = getCertificationStatus(c);
-                        return <span className={classes.certificationItemContainer} data-status={certificationStatus.status}>
-                            <ItemListItem
-                                className={classes.listItem}
-                                textContentClassName={classes.itemTextContent}
-                                imageClassName={classes.itemImage}
-                                cat={c.item.cat}
-                                name={c.item.name}
-                                imageLink={c.item.imageLink}
-                                shouldBeColored={false}
-                                customElement={certificationStatus.icon}
-                                goToItemPage={() => navigate(`/certifications/${c._id}`)}
-                            />
-                            <h6>{`תאריך הסמכה הבא: ${isoDate(c.plannedCertificationDate)}`}</h6>
-                        </span>
-                    }
-                    )}
-                </div>
+                <p>{`דואר אלקטרוני: ${user.email}`}</p>
+                
             </div>}
         </>
     );
