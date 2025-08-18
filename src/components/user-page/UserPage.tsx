@@ -5,7 +5,7 @@ import classes from './UserPage.module.css';
 import { viewingActions } from "../../store/viewing-slice";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { backendFirebaseUri } from "../../backend-variables/address";
-import { User } from "../../types/user_types";
+import { Role, roleNames, User } from "../../types/user_types";
 import { Certification } from "../../types/certification_types";
 import { default as ItemListItem } from "../item-search/ListItem";
 import { isoDate } from "../../utils";
@@ -15,6 +15,7 @@ import { RxQuestionMark } from "react-icons/rx";
 import { IoCalendarNumberOutline } from "react-icons/io5";
 
 import moment from "moment";
+import BigButton from "../UI/BigButton";
 
 const toggleUserArchiveStatus = async (userId: string, authToken: string) => {
     // The backend route is POST /api/users/:id/toggle-archive
@@ -132,9 +133,43 @@ const UserPage = () => {
             {loading && <LoadingSpinner />}
             {!loading && user && <div className={classes.userPage}>
                 <h1>{user.firstName} {user.lastName}</h1>
+                <p>{`ת.ז.: ${user.id}`}</p>
+                <p>{`שם פרטי: ${user.firstName}`}</p>
+                <p>{`שם משפחה: ${user.lastName}`}</p>
                 <p>{`שם משתמש: ${user.username}`}</p>
                 <p>{`דואר אלקטרוני: ${user.email}`}</p>
-                
+                <p>{`תפקיד: ${roleNames[user.role]}`}</p>
+                <p>{`שיוך: ${roleNames[user.association]}`}</p>
+                {user.role === Role.Technician &&
+                <>
+                <h2>מכשירים מוסמכים</h2>
+                <div className={classes.itemsWrapper}/* onScroll={handleScroll}*/>
+                    {certifications.map(c => {
+                        const certificationStatus = getCertificationStatus(c);
+                        return <span className={classes.certificationItemContainer} data-status={certificationStatus.status}>
+                            <ItemListItem
+                                className={classes.listItem}
+                                textContentClassName={classes.itemTextContent}
+                                imageClassName={classes.itemImage}
+                                cat={c.item.cat}
+                                name={c.item.name}
+                                imageLink={c.item.imageLink}
+                                shouldBeColored={false}
+                                customElement={certificationStatus.icon}
+                                goToItemPage={() => navigate(`/certifications/${c._id}`)}
+                            />
+                            <h6>{`תאריך הסמכה הבא: ${isoDate(c.plannedCertificationDate)}`}</h6>
+                        </span>
+                    }
+                    )}
+                </div>
+                </>}
+                <BigButton
+                    text={isArchiving ? 'מעבד...' : ((technician.archived ?? false) ? 'שחזר מארכיון' : 'שלח לארכיון')}
+                    action={handleArchiveToggle}
+                    disabled={isArchiving}
+                    overrideStyle={{ marginTop: "2rem", backgroundColor: (technician.archived ?? false) ? "#3498db" : "#e67e22" }}
+                />
             </div>}
         </>
     );

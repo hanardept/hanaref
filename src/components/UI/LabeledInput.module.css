@@ -8,3 +8,10 @@
     margin-bottom: 0.2rem;
     color: #555;
 }
+
+/* input:invalid {
+  background-color: ivory;
+  border: none;
+  outline: 2px solid red;
+  border-radius: 5px;
+} */

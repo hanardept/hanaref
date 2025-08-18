@@ -1,3 +1,4 @@
+import { Role, roleNames } from '../../types/user_types';
 import classes from './Users.module.css';
 
 
@@ -6,6 +7,7 @@ interface ListItemProps {
     firstName: string;
     lastName: string;
     username: string;
+    role: Role,
     shouldBeColored: boolean;
     goToUserPage?: (_id: string) => void;
     className?: string;
@@ -28,7 +30,8 @@ const ListItem = (props: ListItemProps) => {
         <div onClick={handleClick} className={props.className} style={style}>
             <div className={props.textContentClassName}>
                 <h2>{props.firstName} {props.lastName}</h2>
-                {props.username && <h6>{props.username}</h6>}
+                {props.username && <h5>{props.username}</h5>}
+                <h6>{roleNames[props.role]}</h6>
             </div>
         </div>
     )

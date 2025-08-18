@@ -3,7 +3,7 @@ import LoadingSpinner from '../UI/LoadingSpinner';
 import ListItem from './ListItem';
 import classes from './Users.module.css';
 import { UIEvent, useEffect } from "react";
-import { backendFirebaseUri, fetchBackend } from "../../backend-variables/address";
+import { fetchBackend } from "../../backend-variables/address";
 import { usersActions } from "../../store/users-slice";
 import { viewingActions } from "../../store/viewing-slice";
 import { useNavigate } from "react-router-dom";
@@ -73,9 +73,7 @@ const Users = () => {
 
         triggerNewSearch();
 
-    }, [dispatch, authToken, searchVal]);
-
-    console.log(`user count: ${users.length}`);
+    }, [dispatch, authToken, searchVal, showArchived]);
 
     return (
         <>
@@ -84,7 +82,7 @@ const Users = () => {
             {!searchComplete && <LoadingSpinner />}
             {searchComplete && users.length === 0 && <p className={classes.noResults}>לא נמצאו משתמשים</p>}
             <div className={classes.itemsWrapper} onScroll={handleScroll}>
-                {users.map(t => <ListItem className={classes.listItem} textContentClassName={classes.itemTextContent} key={t._id} _id={t._id} shouldBeColored={false} firstName={t.firstName} lastName={t.lastName} username={t.username} goToUserPage={goToUserPage} />)}
+                {users.map(u => <ListItem className={classes.listItem} textContentClassName={classes.itemTextContent} key={u._id} _id={u._id} shouldBeColored={false} firstName={u.firstName} lastName={u.lastName} username={u.username} role={u.role} goToUserPage={goToUserPage} />)}
             </div>
         </>
     )

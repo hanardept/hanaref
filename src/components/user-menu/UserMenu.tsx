@@ -6,8 +6,10 @@ import { viewingActions } from '../../store/viewing-slice';
 import AreYouSure from '../UI/AreYouSure';
 import BigButton from '../UI/BigButton';
 import classes from './UserMenu.module.css';
-import { User } from '../../types/user_types';
+import { Role, User } from '../../types/user_types';
 import AssociationSelection, { associationOptions } from './AssociationSelection';
+import RoleSelection from './RoleSelection';
+import LabeledInput from '../UI/LabeledInput';
 
 const UserMenu = () => {
     const params = useParams();
@@ -19,13 +21,18 @@ const UserMenu = () => {
     const [lastName, setLastName] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
+    const [role, setRole] = useState(Role.Technician);
+    const [association, setAssociation] = useState(associationOptions[0]);
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
     const userDetails = {
+        id: id,
         firstName: firstName,
         lastName: lastName,
         username: username,
         email: email,
+        role: role,
+        association: association,
     };
 
     useEffect(() => {        
@@ -44,6 +51,8 @@ const UserMenu = () => {
                 setFirstName(t.firstName);
                 setLastName(t.lastName);
                 setUsername(t.username);
+                setEmail(t.email);
+                setRole(t.role);
             }).catch(e => console.log(`Error fetching user details: ${e}`));
         }
        
@@ -52,6 +61,12 @@ const UserMenu = () => {
     const handleInput = (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => {
         setFunc(event.target.value);
         dispatch(viewingActions.changesAppliedToUser(true));
+    }
+
+    const handleSetRole = (role: Role) => {
+        console.log(`setting role: ${role}`);
+        setRole(role);
+        dispatch(viewingActions.changesAppliedToItem(true));
     }
     
     const handleSave = () => {
@@ -111,16 +126,25 @@ const UserMenu = () => {
             }).catch((err) => console.log(`Error deleting user: ${err}`));
     }
 
+    console.log(`current role: ${role}`);
+
     return (
         <div className={classes.userMenu}>
-            <h1>{params.userid ? "עריכת טכנאי" : "הוספת טכנאי"}</h1>
-            <input type="text" placeholder='שם פרטי' value={firstName} onChange={(e) => handleInput(setFirstName, e)} />
-            <input type="text" placeholder='שם משפחה' value={lastName} onChange={(e) => handleInput(setLastName, e)} />
-            <input type="text" placeholder='שם משתמש' value={username} onChange={(e) => handleInput(setUsername, e)} />
-            <input type="email" placeholder='דואר אלקטרוני' value={email} onChange={(e) => handleInput(setEmail, e)} />
+            <h1>{params.userid ? "עריכת משתמש" : "הוספת משתמש"}</h1>
+            <LabeledInput label="ת.ז." placeholder="ת.ז." value={id} onChange={(e) => handleInput(setId, e)} />
+            <LabeledInput label="שם פרטי" placeholder="שם פרטי" value={firstName} onChange={(e) => handleInput(setFirstName, e)} />
+            <LabeledInput label="שם משפחה" placeholder="שם משפחה" value={lastName} onChange={(e) => handleInput(setLastName, e)} />
+            <LabeledInput label="שם משתמש" placeholder="שם משתמש" value={username} onChange={(e) => handleInput(setUsername, e)} />
+            <LabeledInput type="email" label="דואר אלקטרוני" placeholder="דואר אלקטרוני" value={email} onChange={(e) => handleInput(setEmail, e)} />
+            <LabeledInput 
+                label="תפקיד"
+                placeholder="תפקיד"
+                customInputElement={<RoleSelection selectRole={handleSetRole} currentRole={role} />}
+            />
+            <AssociationSelection priorChosenAssociation={association} selectAssociation={association => setAssociation(association)} />
             <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "2.5rem" }} />
-            {params.userid && <BigButton text="מחק טכנאי" action={() => setAreYouSureDelete(true)} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} />}
-            {areYouSureDelete && <AreYouSure text="האם באמת למחוק טכנאי?" leftText='מחק' leftAction={handleDelete} rightText='לא' rightAction={() => setAreYouSureDelete(false)} />}
+            {params.userid && <BigButton text="מחק משתמש" action={() => setAreYouSureDelete(true)} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} />}
+            {areYouSureDelete && <AreYouSure text="האם באמת למחוק משתמש?" leftText='מחק' leftAction={handleDelete} rightText='לא' rightAction={() => setAreYouSureDelete(false)} />}
         </div>
     )
 };
