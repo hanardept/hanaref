@@ -1,6 +1,6 @@
 export const backendFirebaseUri = process.env.REACT_APP_BACKEND_URL;
 
-export const fetchBackend = async(path: string, init?: { method?: string, headers: HeadersInit }, loginWithRedirect?: (f: any) => any,) =>
+export const fetchBackend = async(path: string, init?: { method?: string, headers: HeadersInit, body?: BodyInit }, loginWithRedirect?: (f: any) => any,) =>
     fetch(`${backendFirebaseUri}/${path}`, init)
     .then(res => {
         console.log(`status type: ${typeof res.status}`);

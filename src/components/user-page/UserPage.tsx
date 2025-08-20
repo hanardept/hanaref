@@ -5,16 +5,7 @@ import classes from './UserPage.module.css';
 import { viewingActions } from "../../store/viewing-slice";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { backendFirebaseUri } from "../../backend-variables/address";
-import { Role, roleNames, User } from "../../types/user_types";
-import { Certification } from "../../types/certification_types";
-import { default as ItemListItem } from "../item-search/ListItem";
-import { isoDate } from "../../utils";
-import { CiWarning } from "react-icons/ci";
-import { FaExclamation } from "react-icons/fa6";
-import { RxQuestionMark } from "react-icons/rx";
-import { IoCalendarNumberOutline } from "react-icons/io5";
-
-import moment from "moment";
+import { roleNames, User } from "../../types/user_types";
 import BigButton from "../UI/BigButton";
 
 const toggleUserArchiveStatus = async (userId: string, authToken: string) => {
@@ -39,7 +30,6 @@ const UserPage = () => {
     const params = useParams();
     const authToken = useAppSelector(state => state.auth.jwt);
     const [user, setUser] = useState<User | null>(null);
-    const [certifications, setCertifications] = useState<Certification[]>([]);
     const [loading, setLoading] = useState(true);
     const frontEndPrivilege = useAppSelector(state => state.auth.frontEndPrivilege);
     const dispatch = useAppDispatch();
@@ -75,58 +65,34 @@ const UserPage = () => {
             navigate(`/itemnotfound/${params.userid}`);
         });
 
-        const getCertifications = async () => {
-            const fetchedCertifications = await fetch(`${backendFirebaseUri}/certifications?user=${params.userid}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'auth-token': authToken
-                }
-            });
-
-            return await fetchedCertifications.json();
-        };   
-        
-        getCertifications().then(c => {
-            if (frontEndPrivilege !== 'admin') {
-                navigate(`/itemnotfound/${params.userid}`);
-                return;
-            }
-            setCertifications(c);
-        }).catch(e => {
-            console.log("Error fetching user certifications:", e);
-        });        
-
         return () => {
-            setCertifications([]);
             setUser(null);
         }
 
     }, [params.userid, authToken, navigate, dispatch, frontEndPrivilege]);
 
-    const getCertificationStatus = (certification: Certification): { status: string, icon?: JSX.Element } => {
-        if (!certification.lastCertificationDate) {
-            return { 
-                status: "unknown",
-                icon: 
-                    <span>
-                        <RxQuestionMark className={classes.certificationStatusIcon}/>
-                        <IoCalendarNumberOutline className={classes.certificationStatusIcon}/>
-                    </span> 
-            };
-        }
-        const today = moment().startOf('day');
-        const lastCertificationExpirationDate = moment(certification.lastCertificationDate).add(certification.item?.certificationPeriodMonths ?? 0, 'months');
+    const handleArchiveToggle = async () => {
+        if (!user) return;
 
-        if (today.isAfter(lastCertificationExpirationDate)) {
-            return { status: "expired", icon: <FaExclamation className={classes.certificationStatusIcon}/> };
+        const isArchived = user.archived ?? false;
+        const actionText = isArchived ? "לשחזר" : "לארכב";
+        if (!window.confirm(`האם אתה בטוח שברצונך ${actionText} את המשתמש "${user.firstName} ${user.lastName}"?`)) {
+            return;
         }
-        if (lastCertificationExpirationDate.diff(today, 'months') < 3){
-            return { status: "expiring", icon: <CiWarning className={classes.certificationStatusIcon}/> };
-        } else {
-            return { status: "valid" };
+
+        setIsArchiving(true);
+        try {
+            const updatedUser = await toggleUserArchiveStatus(user._id, authToken);
+            setUser(updatedUser); // Update the local state with the new item status
+            // Use the state of the item *before* the toggle for the confirmation message
+            alert(`המשתמש ${isArchived ? 'שוחזר' : 'אורכב'} בהצלחה`);
+        } catch (error) {
+            console.error(error);
+            alert('הפעולה נכשלה. נסה שוב.');
+        } finally {
+            setIsArchiving(false);
         }
-    }
+    };    
 
     return (
         <>
@@ -140,35 +106,11 @@ const UserPage = () => {
                 <p>{`דואר אלקטרוני: ${user.email}`}</p>
                 <p>{`תפקיד: ${roleNames[user.role]}`}</p>
                 <p>{`שיוך: ${roleNames[user.association]}`}</p>
-                {user.role === Role.Technician &&
-                <>
-                <h2>מכשירים מוסמכים</h2>
-                <div className={classes.itemsWrapper}/* onScroll={handleScroll}*/>
-                    {certifications.map(c => {
-                        const certificationStatus = getCertificationStatus(c);
-                        return <span className={classes.certificationItemContainer} data-status={certificationStatus.status}>
-                            <ItemListItem
-                                className={classes.listItem}
-                                textContentClassName={classes.itemTextContent}
-                                imageClassName={classes.itemImage}
-                                cat={c.item.cat}
-                                name={c.item.name}
-                                imageLink={c.item.imageLink}
-                                shouldBeColored={false}
-                                customElement={certificationStatus.icon}
-                                goToItemPage={() => navigate(`/certifications/${c._id}`)}
-                            />
-                            <h6>{`תאריך הסמכה הבא: ${isoDate(c.plannedCertificationDate)}`}</h6>
-                        </span>
-                    }
-                    )}
-                </div>
-                </>}
                 <BigButton
-                    text={isArchiving ? 'מעבד...' : ((technician.archived ?? false) ? 'שחזר מארכיון' : 'שלח לארכיון')}
+                    text={isArchiving ? 'מעבד...' : ((user.archived ?? false) ? 'שחזר מארכיון' : 'שלח לארכיון')}
                     action={handleArchiveToggle}
                     disabled={isArchiving}
-                    overrideStyle={{ marginTop: "2rem", backgroundColor: (technician.archived ?? false) ? "#3498db" : "#e67e22" }}
+                    overrideStyle={{ marginTop: "2rem", backgroundColor: (user.archived ?? false) ? "#3498db" : "#e67e22" }}
                 />
             </div>}
         </>

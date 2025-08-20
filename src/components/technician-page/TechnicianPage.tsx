@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import classes from './TechnicianPage.module.css';
 import { viewingActions } from "../../store/viewing-slice";
 import LoadingSpinner from "../UI/LoadingSpinner";
-import { backendFirebaseUri } from "../../backend-variables/address";
+import { backendFirebaseUri, fetchBackend } from "../../backend-variables/address";
 import { Technician } from "../../types/technician_types";
 import BigButton from "../UI/BigButton";
 import { Certification } from "../../types/certification_types";
@@ -19,7 +19,7 @@ import moment from "moment";
 
 const toggleTechnicianArchiveStatus = async (technicianId: string, authToken: string) => {
     // The backend route is POST /api/technicians/:id/toggle-archive
-    const response = await fetch(`${backendFirebaseUri}/technicians/${technicianId}/toggle-archive`, {
+    const response = await fetchBackend(`technicians/${technicianId}/toggle-archive`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ const TechnicianPage = () => {
     useEffect(() => {
         const getTechnician = async () => {
             setLoading(true);
-            const fetchedTechnician = await fetch(`${backendFirebaseUri}/technicians/${params.technicianid}`, {
+            const fetchedTechnician = await fetchBackend(`technicians/${params.technicianid}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
@@ -76,7 +76,7 @@ const TechnicianPage = () => {
         });
 
         const getCertifications = async () => {
-            const fetchedCertifications = await fetch(`${backendFirebaseUri}/certifications?technician=${params.technicianid}`, {
+            const fetchedCertifications = await fetchBackend(`certifications?technician=${params.technicianid}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',

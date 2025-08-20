@@ -12,6 +12,7 @@ import { IoMdPeople } from "react-icons/io";
 import { TbCertificate } from "react-icons/tb";
 import { FaUser } from "react-icons/fa";
 import { useAuth0 } from "@auth0/auth0-react";
+import { Role } from "../../types/user_types";
 
 
 
@@ -46,24 +47,36 @@ const RightHeaderSide = ({ loggedIn }: { loggedIn: boolean }) => {
     //const signInOut = loggedIn ? <span onClick={() => setAreYouSureLogout(true)}>יציאה</span> : <span onClick={() => navigate('/login')}>כניסה</span>;
     const signOut = <span onClick={() => setAreYouSureLogout(true)}>יציאה</span>;
 
-    const burger = loggedInAs === "admin" && (
+    console.log(`loggedInAs: ${loggedInAs}`);
+
+    const menuItems: Record<string, JSX.Element> = {
+        items: <span id="items" onClick={() => navigateTo('/')} /*href="/"*/>
+            <CiMedicalCase />
+            <span>פריטים</span>
+        </span>,
+        technicians: <span id="technicians" onClick={() => navigateTo('/technicians')}>
+            <IoMdPeople />
+            <span>טכנאים</span>
+        </span>,
+        certifications: <span id="certifications" onClick={() => navigateTo('/certifications')}>
+            <TbCertificate />
+            <span>הסמכות</span>
+        </span>,
+        users: <span id="users" onClick={() => navigateTo('/users')}>
+            <FaUser />
+            <span>משתמשים</span>
+        </span> ,
+    };
+    const permissions = {
+        [Role.Admin]: [ 'items', 'technicians', 'certifications', 'users' ],
+        [Role.Technician]: [ 'items', 'technicians', 'certifications' ],
+        [Role.Viewer]: [ 'items' ],
+    }
+    const menuItemsForRole = permissions[loggedInAs as Role]?.map(permission => menuItems[permission]) ?? [];
+
+    const burger = /*loggedInAs === "admin" &&*/ (
         <Menu right isOpen={isBurgerOpen} onOpen={() => setIsBurgerOpen(true)} onClose={() => setIsBurgerOpen(false)}>
-            <span id="items" onClick={() => navigateTo('/')} /*href="/"*/>
-                <CiMedicalCase />
-                <span>פריטים</span>
-            </span>
-            <span id="technicians" onClick={() => navigateTo('/technicians')}>
-                <IoMdPeople />
-                <span>טכנאים</span>
-            </span>
-            <span id="certifications" onClick={() => navigateTo('/certifications')}>
-                <TbCertificate />
-                <span>הסמכות</span>
-            </span>
-            <span id="users" onClick={() => navigateTo('/users')}>
-                <FaUser />
-                <span>משתמשים</span>
-            </span>            
+            {menuItemsForRole}
         </Menu>
     )
 

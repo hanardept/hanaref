@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { backendFirebaseUri } from '../../backend-variables/address';
+import { fetchBackend } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
 import { viewingActions } from '../../store/viewing-slice';
 import AreYouSure from '../UI/AreYouSure';
@@ -38,7 +38,7 @@ const UserMenu = () => {
     useEffect(() => {        
         if (params.userid) {
             const getUser = async () => {
-                const fetchedUser = await fetch(`${backendFirebaseUri}/users/${params.userid}`, {
+                const fetchedUser = await fetchBackend(`users/${params.userid}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
@@ -78,7 +78,7 @@ const UserMenu = () => {
         }
 
         if (!params.userid) {
-            fetch(`${backendFirebaseUri}/users`, {
+            fetchBackend(`users`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ const UserMenu = () => {
             .catch((err) => console.log(`Error saving user: ${err}`));
         }
         if (params.userid) {
-            fetch(encodeURI(`${backendFirebaseUri}/users/${params.userid}`), {
+            fetchBackend(encodeURI(`users/${params.userid}`), {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -112,7 +112,7 @@ const UserMenu = () => {
     }
     // edit mode only:
     const handleDelete = () => {
-        fetch(encodeURI(`${backendFirebaseUri}/users/${params.userid}`), {
+        fetchBackend(encodeURI(`users/${params.userid}`), {
             method: 'DELETE',
             headers: {
                 'auth-token': authToken

@@ -1,5 +1,5 @@
 import classes from './App.module.css';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { get } from 'idb-keyval';
 import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch } from './hooks/redux-hooks';
@@ -25,12 +25,14 @@ import UserMenu from './components/user-menu/UserMenu';
 import { useAuth0 } from '@auth0/auth0-react';
 import { jwtDecode } from 'jwt-decode';
 import { backendFirebaseUri } from './backend-variables/address';
+import LoadingSpinner from './components/UI/LoadingSpinner';
 
 function App() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [showWelcome, setShowWelcome] = useState(true);
   const firstRender = useRef(true);
+  const [params, _] = useSearchParams();
 
   useEffect(() => {
     if (firstRender.current) {
@@ -64,17 +66,53 @@ function App() {
 
     const { isAuthenticated, user, isLoading, loginWithRedirect, getAccessTokenSilently } = useAuth0();
 
-    getAccessTokenSilently({ /*cacheMode: 'off',*/ authorizationParams: { audience: backendFirebaseUri } }).then(token => {
-      //console.log(`getAccessTokenSilently token: ${token}`);
-      try {
-        const decoded: { exp: number } = jwtDecode(token);
-        console.log(`decoded: ${JSON.stringify(decoded)}`);
-        dispatch(authActions.setAuthStateUponLogin({ jwt: token, frontEndPrivilege: 'admin', jwtExpiryDate: decoded.exp }));
-      } catch (error) {
-        console.log(`error decoding auth0 token: ${error}`);
-      }
-    })
+    console.log(`App: isAuthenticated: ${isAuthenticated}, isLoading: ${isLoading}`);
 
+
+    console.log(`params: ${JSON.stringify(params)}`);
+    if (params.get('error')) {
+      console.log(`params error: ${params.get('error')}`);
+      loginWithRedirect({ authorizationParams: { audience: backendFirebaseUri } });
+    }
+
+    useEffect(() => {
+      if (isAuthenticated) {
+        console.log(`isAuthenticated = true, calling getAccessTokenSilently`);
+        getAccessTokenSilently({ /*cacheMode: 'off',*/ authorizationParams: { audience: backendFirebaseUri } })
+        .then(token => {
+            //console.log(`getAccessTokenSilently token: ${token}`);
+            try {
+              const decoded: { exp: number } = jwtDecode(token);
+              console.log(`decoded: ${JSON.stringify(decoded)}`);
+              dispatch(authActions.setAuthStateUponLogin({ jwt: token, frontEndPrivilege: 'admin', jwtExpiryDate: decoded.exp }));
+            } catch (error) {
+              console.log(`error decoding auth0 token: ${error}`);
+            }
+          })
+          .catch(error => {
+            console.log(`getAccessTokenSilently error: ${error?.error}, whole: ${JSON.stringify(error)}`);
+          })
+      } else if (!isLoading) {
+        console.log(`isAuthenticated = false and isLoading = false, calling loginWithRedirect`);
+        loginWithRedirect({ authorizationParams: { audience: backendFirebaseUri } });
+      }
+
+
+
+
+        // This effect runs whenever isLoading or isAuthenticated changes
+        // if (!isLoading) {
+        //   // Auth0 SDK has finished checking authentication state
+        //   if (!isAuthenticated) {
+        //     // User is not authenticated, redirect to login
+        //     loginWithRedirect();
+        //   } else {
+        //     // User is authenticated, proceed with rendering content
+        //     // or navigating to a protected route
+        //     console.log('User is authenticated and isLoading is false.');
+        //   }
+        // }
+      }, [isLoading, isAuthenticated, loginWithRedirect]); // Dependencies for useEffect
 
     useEffect(() => {
       console.log(`user: ${JSON.stringify(user)}, isLoading: ${isLoading}`)
@@ -87,6 +125,10 @@ function App() {
         }
       }
     }, [user, isLoading, navigate]);
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }    
 
   return (
     <div className={classes.App}>

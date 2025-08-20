@@ -1,6 +1,6 @@
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { backendFirebaseUri } from '../../backend-variables/address';
+import { fetchBackend } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
 import { viewingActions } from '../../store/viewing-slice';
 import AreYouSure from '../UI/AreYouSure';
@@ -67,7 +67,7 @@ const CertificationMenu = () => {
     };
 
      const fetchItem = useCallback(async (itemCat: string) => {
-        const res = await fetch(`${backendFirebaseUri}/items/${itemCat}`, {
+        const res = await fetchBackend(`items/${itemCat}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'auth-token': authToken
@@ -80,7 +80,7 @@ const CertificationMenu = () => {
     useEffect(() => {        
         if (params.certificationid) {
             const getCertification = async () => {
-                const fetchedCertification = await fetch(`${backendFirebaseUri}/certifications/${params.certificationid}`, {
+                const fetchedCertification = await fetchBackend(`certifications/${params.certificationid}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
@@ -94,8 +94,8 @@ const CertificationMenu = () => {
                     setId(c._id);
                     setItemSearchText(c.item.cat);
                     setItem(c.item);
-                    setTechnicianSearchText(c.technician.id);
-                    setTechnicians([ c.technician ]);
+                    setTechnicianSearchText(c.user.id);
+                    setTechnicians([ c.user ]);
                     setCertificationDocumentLink(c.certificationDocumentLink ?? "");
                     setFirstCertificationDate(c.firstCertificationDate ?? null);
                     setLastCertificationDate(c.lastCertificationDate ?? null);
@@ -130,7 +130,7 @@ const CertificationMenu = () => {
         const promises = technicians.map((technician) => {
             const body = JSON.stringify({ ...restDetails, technician});
             if (!params.certificationid) {
-                return fetch(`${backendFirebaseUri}/certifications`, {
+                return fetchBackend(`certifications`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -140,7 +140,7 @@ const CertificationMenu = () => {
                     body
                 })
             } else {
-                return fetch(encodeURI(`${backendFirebaseUri}/certifications/${params.certificationid}`), {
+                return fetchBackend(encodeURI(`certifications/${params.certificationid}`), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -161,7 +161,7 @@ const CertificationMenu = () => {
     }
     // edit mode only:
     const handleDelete = () => {
-        fetch(encodeURI(`${backendFirebaseUri}/certifications/${params.certificationid}`), {
+        fetchBackend(encodeURI(`certifications/${params.certificationid}`), {
             method: 'DELETE',
             headers: {
                 'auth-token': authToken
@@ -228,7 +228,7 @@ const CertificationMenu = () => {
                         placeholder='חפש מכשיר (שם, מק"ט)'
                         suggestions={itemSuggestions}
                         onFetchSuggestions={(value: string) => {
-                            fetch(encodeURI(`${backendFirebaseUri}/items?catType=${deviceCat}&search=${value}`), {
+                            fetchBackend(encodeURI(`items?catType=${deviceCat}&search=${value}`), {
                                 method: 'GET',
                                 headers: {
                                     'auth-token': authToken
@@ -287,7 +287,7 @@ const CertificationMenu = () => {
                         placeholder='חפש טכנאי (שם, ת.ז.)'
                         suggestions={technicianSuggestions.filter(ts => technicians.every(t => t?.id !== ts.id))}
                         onFetchSuggestions={(value: string) => {
-                            fetch(encodeURI(`${backendFirebaseUri}/technicians?search=${value}`), {
+                            fetchBackend(encodeURI(`technicians?search=${value}`), {
                                 method: 'GET',
                                 headers: {
                                     'auth-token': authToken

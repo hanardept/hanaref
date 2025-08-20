@@ -23,6 +23,7 @@ const AuthProviderWithNavigate: React.FC<AuthProviderWithNavigateProps> = ({ chi
         redirect_uri: window.location.origin,
         audience: backendFirebaseUri
       }}
+    //   useRefreshTokens={true}
       onRedirectCallback={onRedirectCallback}>
       {children}
     </Auth0Provider>
