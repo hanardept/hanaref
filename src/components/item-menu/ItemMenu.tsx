@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { backendFirebaseUri } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
 import { viewingActions } from '../../store/viewing-slice';
-import { AbbreviatedItem, Item } from '../../types/item_types';
+import { AbbreviatedItem, CatType, Item } from '../../types/item_types';
 import { Sector } from '../../types/sector_types';
 import AreYouSure from '../UI/AreYouSure';
 import BigButton from '../UI/BigButton';
@@ -14,6 +14,7 @@ import AccessoryFields from './AccessoryFields';
 import ConsumableFields from './ConsumableFields';
 import SparePartFields from './SparePartFields';
 import { getFilename } from '../../utils';
+import { Role } from '../../types/user_types';
 
 function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
     const filteredList = itemList.filter(i => i.cat !== "" || i.name !== "");
@@ -26,7 +27,7 @@ function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
 
 const ItemMenu = () => {
     const params = useParams();
-    const authToken = useAppSelector(state => state.auth.jwt);
+    const { jwt: authToken, frontEndPrivilege } = useAppSelector(state => state.auth);
     const [sectorsToChooseFrom, setSectorsToChooseFrom] = useState<Sector[]>([]);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -35,7 +36,7 @@ const ItemMenu = () => {
     const [kitCats, setKitCats] = useState<string[]>([]);
     const [sector, setSector] = useState("");
     const [department, setDepartment] = useState("");
-    const [catType, setCatType] = useState<"מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף">("מכשיר");
+    const [catType, setCatType] = useState<CatType>(CatType.Device);
     const [certificationPeriodMonths, setCertificationPeriodMonths] = useState<number | null>(null);
     const [description, setDescription] = useState("");
     const [imageLink, setImageLink] = useState("" as (string | File));
@@ -61,7 +62,7 @@ const ItemMenu = () => {
 
     useEffect(() => {
         const getSectors = async () => {
-            const fetchedSectors = await fetch(`${backendFirebaseUri}/sectors`, {
+            const fetchedSectors = await fetch(`${backendFirebaseUri}/sectors?isMaintenance=true`, {
                 headers: { 'auth-token': authToken }
             });
             return await fetchedSectors.json();
@@ -129,7 +130,7 @@ const ItemMenu = () => {
         setDepartment(value);
         dispatch(viewingActions.changesAppliedToItem(true));
     }
-    const handleSetCatType = (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף") => {
+    const handleSetCatType = (catType: CatType) => {
         setCatType(catType);
         dispatch(viewingActions.changesAppliedToItem(true));
     }
@@ -298,6 +299,8 @@ const ItemMenu = () => {
             }).catch((err) => console.log(`Error deleting item: ${err}`));
     }
 
+    const catTypesToChooseFrom = frontEndPrivilege === Role.Technician ? [ CatType.SparePart ] : undefined;
+
     return (
         <div className={classes.itemMenu}>
             <h1 className={classes.title}>{params.itemid ? "עריכת פריט" : "הוספת פריט"}</h1>
@@ -312,6 +315,7 @@ const ItemMenu = () => {
                     catType={catType}
                     certificationPeriodMonths={certificationPeriodMonths}
                     sectorsToChooseFrom={sectorsToChooseFrom}
+                    catTypesToChooseFrom={catTypesToChooseFrom}
                     handleInput={handleInput}
                     handleDescription={handleDescription}
                     handleSetSector={handleSetSector}

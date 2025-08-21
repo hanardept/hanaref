@@ -30,7 +30,7 @@ const ListItem = (props: ListItemProps) => {
         <div onClick={handleClick} className={props.className} style={style}>
             <div className={props.textContentClassName}>
                 <h2>{props.firstName} {props.lastName}</h2>
-                {props.username && <h5>{props.username}</h5>}
+                {props.username && <p>{props.username}</p>}
                 <h6>{roleNames[props.role]}</h6>
             </div>
         </div>

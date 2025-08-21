@@ -34,10 +34,10 @@ const CertificationPage = () => {
         };
 
         getCertification().then(c => {
-            if (frontEndPrivilege !== 'admin') {
-                navigate(`/itemnotfound/${params.certificationid}`);
-                return;
-            }
+            // if (frontEndPrivilege !== 'admin') {
+            //     navigate(`/itemnotfound/${params.certificationid}`);
+            //     return;
+            // }
             setCertification(fromJson(c));
             setLoading(false);
             if (frontEndPrivilege === "admin") {

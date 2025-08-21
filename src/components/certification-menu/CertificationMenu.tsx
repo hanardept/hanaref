@@ -16,6 +16,7 @@ import { MdAddCircle, MdRemoveCircle } from "react-icons/md";
 
 import DatePicker from "react-datepicker";
 import moment from 'moment';
+import { Role } from '../../types/user_types';
 
 
 interface ItemSummary {
@@ -35,7 +36,7 @@ interface TechnicianSummary {
 
 const CertificationMenu = () => {
     const params = useParams();
-    const authToken = useAppSelector(state => state.auth.jwt);
+    const { frontEndPrivilege, jwt: authToken, userId }  = useAppSelector(state => state.auth);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [id, setId] = useState("");
@@ -59,7 +60,7 @@ const CertificationMenu = () => {
     const certificationDetails = {
         id: id,
         item,
-        technicians,
+        users: technicians,
         certificationDocumentLink,
         firstCertificationDate,
         lastCertificationDate,
@@ -113,11 +114,28 @@ const CertificationMenu = () => {
         dispatch(viewingActions.changesAppliedToCertification(true));
     }
 
+    useEffect(() => {
+        const fetchTechnician = async () => {
+            const fetchedTechnician = await fetchBackend(`technicians/${userId}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'auth-token': authToken
+                }
+            });
+            return await fetchedTechnician.json();
+        }
+        if (frontEndPrivilege !== Role.Admin) {
+            console.log(`fetching own technician, id: ${userId}`);
+            fetchTechnician().then(technician => setTechnicians([ technician ]))
+        }
+    }, [ userId ])
+
     console.log(`last certification type: ${typeof lastCertificationDate}`);
     
     const handleSave = () => {
-
-        if (!certificationDetails.item || !certificationDetails.technicians?.length ||
+        console.log(`saving with technicians: ${certificationDetails.users}`);
+        if (!certificationDetails.item || !certificationDetails.users?.length ||
             (!certificationDetails.lastCertificationDate && !certificationDetails.plannedCertificationDate)) {
             // if the required fields of the Certification mongo schema are not filled then don't save
             console.log("Please make sure to enter an item name, technician and either last or planned certification date");
@@ -126,9 +144,9 @@ const CertificationMenu = () => {
 
         console.log(`Saving certification with details: ${JSON.stringify(certificationDetails, null, 4)}`);
 
-        const { technicians, ...restDetails } = certificationDetails;
-        const promises = technicians.map((technician) => {
-            const body = JSON.stringify({ ...restDetails, technician});
+        const { users, ...restDetails } = certificationDetails;
+        const promises = users.map((technician) => {
+            const body = JSON.stringify({ ...restDetails, user: technician});
             if (!params.certificationid) {
                 return fetchBackend(`certifications`, {
                     method: 'POST',
@@ -248,6 +266,7 @@ const CertificationMenu = () => {
                     />
                 )}
             </div>
+            { frontEndPrivilege === Role.Admin && 
             <div className={classes.inputGroup}>
                 <label htmlFor="technicianSearch">טכנאי</label>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
@@ -311,7 +330,7 @@ const CertificationMenu = () => {
                         <MdAddCircle onClick={() => setAddTechniciansRequested(true) }/>
                     </span> : <></>}
                 </div>
-            </div>
+            </div>}
             <div className={classes.inputGroup}>
                 <label htmlFor="firstCertificationDate">תאריך הסמכה ראשונה</label>
                 <DatePicker

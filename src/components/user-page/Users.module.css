@@ -71,15 +71,6 @@
     text-align: right;
 }
 
-.listItem h5 {
-    margin: 0.5rem 0;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    width: 100%;
-    white-space: nowrap;
-    text-align: right;
-}
-
 .listItem h6 {
     margin: 0.5rem 0;
     text-overflow: ellipsis;
