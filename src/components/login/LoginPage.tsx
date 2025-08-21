@@ -53,9 +53,13 @@ const LoginPage = () => {
         if (!isLoading && !isAuthenticated) {
             login().then(() => {
                 getAccessTokenSilently().then(token => {
-                    const decoded: { exp: number } = jwtDecode(token);
+                    const rolesTokenField = `${process.env.REACT_APP_AUTH0_NAMESPACE}/roles`;
+                    const userIdField = `${process.env.REACT_APP_AUTH0_NAMESPACE}/user_id`;
+                    const decoded = jwtDecode<any>(token);
+                    console.log(`token field: ${rolesTokenField}`);
                     console.log(`decoded: ${JSON.stringify(decoded)}`);
-                    dispatch(authActions.setAuthStateUponLogin({ jwt: token, frontEndPrivilege: 'admin', jwtExpiryDate: decoded.exp }));
+                    console.log(`role: ${decoded[rolesTokenField]?.[0]}`);
+                    dispatch(authActions.setAuthStateUponLogin({ jwt: token, frontEndPrivilege: decoded[rolesTokenField]?.[0], jwtExpiryDate: decoded.exp, userId: decoded[userIdField] }));
                 })
             })
         }

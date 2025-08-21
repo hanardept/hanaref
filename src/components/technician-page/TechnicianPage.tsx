@@ -42,6 +42,7 @@ const TechnicianPage = () => {
     const [certifications, setCertifications] = useState<Certification[]>([]);
     const [loading, setLoading] = useState(true);
     const frontEndPrivilege = useAppSelector(state => state.auth.frontEndPrivilege);
+    const userId = useAppSelector(state => state.auth.userId);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [isArchiving, setIsArchiving] = useState(false);
@@ -158,6 +159,8 @@ const TechnicianPage = () => {
                 <h1>{technician.firstName} {technician.lastName}</h1>
                 <p>{`ת.ז.: ${technician.id}`}</p>
                 <p>{`שיוך: ${technician.association}`}</p>
+                {userId === technician._id &&
+                <>
                 <h2>מכשירים מוסמכים</h2>
                 <div className={classes.itemsWrapper}/* onScroll={handleScroll}*/>
                     {certifications.map(c => {
@@ -178,7 +181,8 @@ const TechnicianPage = () => {
                         </span>
                     }
                     )}
-                </div>     
+                </div>  
+                </>}   
                 <BigButton
                     text={isArchiving ? 'מעבד...' : ((technician.archived ?? false) ? 'שחזר מארכיון' : 'שלח לארכיון')}
                     action={handleArchiveToggle}

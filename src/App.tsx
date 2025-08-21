@@ -26,6 +26,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { jwtDecode } from 'jwt-decode';
 import { backendFirebaseUri } from './backend-variables/address';
 import LoadingSpinner from './components/UI/LoadingSpinner';
+import { Role } from './types/user_types';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -82,9 +83,14 @@ function App() {
         .then(token => {
             //console.log(`getAccessTokenSilently token: ${token}`);
             try {
-              const decoded: { exp: number } = jwtDecode(token);
+              const rolesTokenField = `${process.env.REACT_APP_AUTH0_NAMESPACE}/roles`;
+              const userIdField = `${process.env.REACT_APP_AUTH0_NAMESPACE}/user_id`;
+              const decoded = jwtDecode<any>(token);
+              console.log(`token field: ${rolesTokenField}`);
               console.log(`decoded: ${JSON.stringify(decoded)}`);
-              dispatch(authActions.setAuthStateUponLogin({ jwt: token, frontEndPrivilege: 'admin', jwtExpiryDate: decoded.exp }));
+              console.log(`role: ${decoded[rolesTokenField]?.[0]}`);
+              dispatch(authActions.setAuthStateUponLogin({ jwt: token, frontEndPrivilege: decoded[rolesTokenField]?.[0], jwtExpiryDate: decoded.exp!, userId: decoded[
+                userIdField] }));
             } catch (error) {
               console.log(`error decoding auth0 token: ${error}`);
             }
