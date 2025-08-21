@@ -1,6 +1,6 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
-import AdminOnly from "../authorization/AdminOnly";
+import AdminOnly from "../authorization/RolesOnly";
 import { exportItemsToCsv } from "../item-search/DownloadItemWorksheet";
 import { exportCertificationsToCsv } from "../certification-page/DownloadCertificationWorksheet";
 import classes from './Header.module.css';

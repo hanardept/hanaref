@@ -1,14 +1,8 @@
 import { ReactNode } from "react";
-import { useAppSelector } from "../../hooks/redux-hooks";
+import { Role } from "../../types/user_types";
+import RolesOnly from "./RolesOnly";
 
-const AdminOnly = ({ children }: { children: ReactNode }) => {
-    const frontEndPrivilege = useAppSelector(state => state.auth.frontEndPrivilege);
-    
-    return (
-        <>
-            {frontEndPrivilege === "admin" ? children : "Page usable only by admin"}
-        </>
-    )
-};
+const AdminOnly = ({ children }: { children: ReactNode }) => 
+    <RolesOnly roles={[ Role.Admin ]} children={children} />
 
 export default AdminOnly;

@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import AdminOnly from "../authorization/AdminOnly";
+import AdminOnly from "../authorization/RolesOnly";
 import BigButton from "../UI/BigButton";
 
 const NoItemFound = () => {
