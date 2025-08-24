@@ -15,7 +15,6 @@ const LeftHeaderSide = () => {
     const currentTechnicianId = useAppSelector(state => state.viewing.technicianManagement.currentTechnicianId);
     const currentCertificationId = useAppSelector(state => state.viewing.certificationManagement.currentCertificationId);
     const currentUserId = useAppSelector(state => state.viewing.userManagement.currentUserId);
-    const loggedInAs = useAppSelector(state => state.auth.frontEndPrivilege);
     const dispatch = useAppDispatch();
 
     const addItemAndManageSectors = 

@@ -129,7 +129,7 @@ const CertificationMenu = () => {
             console.log(`fetching own technician, id: ${userId}`);
             fetchTechnician().then(technician => setTechnicians([ technician ]))
         }
-    }, [ userId ])
+    }, [ userId, authToken, frontEndPrivilege ])
 
     console.log(`last certification type: ${typeof lastCertificationDate}`);
     

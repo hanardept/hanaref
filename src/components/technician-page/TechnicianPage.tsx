@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import classes from './TechnicianPage.module.css';
 import { viewingActions } from "../../store/viewing-slice";
 import LoadingSpinner from "../UI/LoadingSpinner";
-import { backendFirebaseUri, fetchBackend } from "../../backend-variables/address";
+import { fetchBackend } from "../../backend-variables/address";
 import { Technician } from "../../types/technician_types";
 import BigButton from "../UI/BigButton";
 import { Certification } from "../../types/certification_types";
@@ -160,7 +160,7 @@ const TechnicianPage = () => {
                 <h1>{technician.firstName} {technician.lastName}</h1>
                 <p>{`ת.ז.: ${technician.id}`}</p>
                 <p>{`שיוך: ${technician.association}`}</p>
-                {frontEndPrivilege === Role.Admin || userId === technician._id &&
+                {((frontEndPrivilege === Role.Admin) || (userId === technician._id)) &&
                 <>
                 <h2>מכשירים מוסמכים</h2>
                 <div className={classes.itemsWrapper}/* onScroll={handleScroll}*/>

@@ -1,5 +1,4 @@
 import { Role, roleNames } from '../../types/user_types';
-import classes from './Users.module.css';
 
 
 interface ListItemProps {

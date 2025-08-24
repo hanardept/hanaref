@@ -1,5 +1,5 @@
 import classes from './App.module.css';
-import { Routes, Route, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Routes, Route, useNavigate, useSearchParams } from 'react-router-dom';
 import { get } from 'idb-keyval';
 import { useEffect, useRef, useState } from 'react';
 import { useAppDispatch } from './hooks/redux-hooks';
@@ -34,7 +34,7 @@ function App() {
   const navigate = useNavigate();
   const [showWelcome, setShowWelcome] = useState(true);
   const firstRender = useRef(true);
-  const [params, _] = useSearchParams();
+  const [params] = useSearchParams();
 
   useEffect(() => {
     if (firstRender.current) {
@@ -119,7 +119,7 @@ function App() {
         //     console.log('User is authenticated and isLoading is false.');
         //   }
         // }
-      }, [isLoading, isAuthenticated, loginWithRedirect]); // Dependencies for useEffect
+      }, [isLoading, isAuthenticated, loginWithRedirect, dispatch, getAccessTokenSilently]); // Dependencies for useEffect
 
     useEffect(() => {
       console.log(`user: ${JSON.stringify(user)}, isLoading: ${isLoading}`)
