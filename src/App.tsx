@@ -6,7 +6,8 @@ import { useAppDispatch } from './hooks/redux-hooks';
 import { authActions } from './store/auth-slice';
 import Header from './components/header/Header';
 import ItemPage from './components/item-page/ItemPage';
-import RolesOny from './components/authorization/RolesOnly';
+import AdminOnly from './components/authorization/AdminOnly';
+import RolesOnly from './components/authorization/RolesOnly';
 import HomePage from './components/item-search/HomePage';
 import LoginPage from './components/login/LoginPage';
 import ItemMenu from './components/item-menu/ItemMenu';
@@ -27,7 +28,6 @@ import { jwtDecode } from 'jwt-decode';
 import { backendFirebaseUri } from './backend-variables/address';
 import LoadingSpinner from './components/UI/LoadingSpinner';
 import { Role } from './types/user_types';
-import AdminOnly from './components/authorization/AdminOnly';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -135,9 +135,7 @@ function App() {
 
   if (isLoading) {
     return <LoadingSpinner />;
-  }
-
-  const 
+  }    
 
   return (
     <div className={classes.App}>
@@ -147,27 +145,27 @@ function App() {
           {/* Public Routes: */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/items/:itemid" element={<ItemPage />} />
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<RolesOnly roles={Object.values(Role)}><HomePage /></RolesOnly>} />
           {/* <Route path="/items" element={<HomePage />} /> */}
           {/* Protected Routes: */}
-          <Route path="/itemmenu" element={<AdminOnly><ItemMenu /></AdminOnly>} />
+          <Route path="/itemmenu" element={<RolesOnly roles={[ Role.Admin, Role.Technician ]}><ItemMenu /></RolesOnly>} />
           <Route path="/itemmenu/:itemid" element={<AdminOnly><ItemMenu /></AdminOnly>} />
           <Route path="/itemmenu/newitem/:newitemid" element={<AdminOnly><ItemMenu /></AdminOnly>} />
           <Route path="/itemnotfound/:itemid" element={<NoItemFound />} />
           <Route path="/managesectors" element={<AdminOnly><SectorManagement /></AdminOnly>} />
           <Route path="/sectormenu" element={<AdminOnly><SectorMenu exit={() => navigate(-1)} /></AdminOnly>} />
 
-          <Route path="/technicians" element={<AdminOnly><Technicians /></AdminOnly>} />
-          <Route path="/technicians/:technicianid" element={<AdminOnly><TechnicianPage /></AdminOnly>} />
+          <Route path="/technicians" element={<RolesOnly roles={[ Role.Admin, Role.Technician ]}><Technicians /></RolesOnly>} />
+          <Route path="/technicians/:technicianid" element={<RolesOnly roles={[ Role.Admin, Role.Technician ]}><TechnicianPage /></RolesOnly>} />
           <Route path="/technicianmenu" element={<AdminOnly><TechnicianMenu /></AdminOnly>} />          
           <Route path="/technicianmenu/:technicianid" element={<AdminOnly><TechnicianMenu /></AdminOnly>} />
           <Route path="/technicianmenu/newtechnician/:newtechnicianid" element={<AdminOnly><TechnicianMenu /></AdminOnly>} />
 
-          <Route path="/certifications" element={<AdminOnly><Certifications /></AdminOnly>} />
-          <Route path="/certifications/:certificationid" element={<AdminOnly><CertificationPage /></AdminOnly>} />
-          <Route path="/certificationmenu" element={<AdminOnly><CertificationMenu /></AdminOnly>} />          
+          <Route path="/certifications" element={<RolesOnly roles={[ Role.Admin, Role.Technician ]}><Certifications /></RolesOnly>} />
+          <Route path="/certifications/:certificationid" element={<RolesOnly roles={[ Role.Admin, Role.Technician ]}><CertificationPage /></RolesOnly>} />
+          <Route path="/certificationmenu" element={<RolesOnly roles={[ Role.Admin, Role.Technician ]}><CertificationMenu /></RolesOnly>} />          
           <Route path="/certificationmenu/:certificationid" element={<AdminOnly><CertificationMenu /></AdminOnly>} />
-          <Route path="/certificationmenu/newcertification/:newcertificationid" element={<AdminOnly><CertificationMenu /></AdminOnly>} />          
+          <Route path="/certificationmenu/newcertification/:newcertificationid" element={<AdminOnly><CertificationMenu /></AdminOnly>} />
 
           <Route path="/users" element={<AdminOnly><Users /></AdminOnly>} />
           <Route path="/users/:userid" element={<AdminOnly><UserPage /></AdminOnly>} />

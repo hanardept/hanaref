@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import AdminOnly from "../authorization/RolesOnly";
+import AdminOnly from "../authorization/AdminOnly";
 import BigButton from "../UI/BigButton";
 
 const NoItemFound = () => {
@@ -13,7 +13,7 @@ const NoItemFound = () => {
     return (
         <>
             <p>{`לא נמצא ערך עבור ${params.itemid}`}</p>
-            <AdminOnly><BigButton text="צור ערך" action={moveToCreatingItemPage} /></AdminOnly>
+            <AdminOnly hide={true}><BigButton text="צור ערך" action={moveToCreatingItemPage} /></AdminOnly>
         </>
     )
 };

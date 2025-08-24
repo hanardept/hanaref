@@ -16,6 +16,8 @@ import { RxQuestionMark } from "react-icons/rx";
 import { IoCalendarNumberOutline } from "react-icons/io5";
 
 import moment from "moment";
+import { Role } from "../../types/user_types";
+import AdminOnly from "../authorization/AdminOnly";
 
 const toggleTechnicianArchiveStatus = async (technicianId: string, authToken: string) => {
     // The backend route is POST /api/technicians/:id/toggle-archive
@@ -37,12 +39,11 @@ const toggleTechnicianArchiveStatus = async (technicianId: string, authToken: st
 
 const TechnicianPage = () => {
     const params = useParams();
-    const authToken = useAppSelector(state => state.auth.jwt);
+    const { jwt: authToken, userId } = useAppSelector(state => state.auth);
     const [technician, setTechnician] = useState<Technician | null>(null);
     const [certifications, setCertifications] = useState<Certification[]>([]);
     const [loading, setLoading] = useState(true);
     const frontEndPrivilege = useAppSelector(state => state.auth.frontEndPrivilege);
-    const userId = useAppSelector(state => state.auth.userId);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [isArchiving, setIsArchiving] = useState(false);
@@ -62,10 +63,10 @@ const TechnicianPage = () => {
         };
 
         getTechnician().then(i => {
-            if (frontEndPrivilege !== 'admin') {
-                navigate(`/itemnotfound/${params.technicianid}`);
-                return;
-            }
+            // if (frontEndPrivilege !== 'admin') {
+            //     navigate(`/itemnotfound/${params.technicianid}`);
+            //     return;
+            // }
             setTechnician(i);
             setLoading(false);
             if (frontEndPrivilege === "admin") {
@@ -89,10 +90,10 @@ const TechnicianPage = () => {
         };   
         
         getCertifications().then(c => {
-            if (frontEndPrivilege !== 'admin') {
-                navigate(`/itemnotfound/${params.technicianid}`);
-                return;
-            }
+            // if (frontEndPrivilege !== 'admin') {
+            //     navigate(`/itemnotfound/${params.technicianid}`);
+            //     return;
+            // }
             setCertifications(c);
         }).catch(e => {
             console.log("Error fetching technician certifications:", e);
@@ -159,7 +160,7 @@ const TechnicianPage = () => {
                 <h1>{technician.firstName} {technician.lastName}</h1>
                 <p>{`ת.ז.: ${technician.id}`}</p>
                 <p>{`שיוך: ${technician.association}`}</p>
-                {userId === technician._id &&
+                {frontEndPrivilege === Role.Admin || userId === technician._id &&
                 <>
                 <h2>מכשירים מוסמכים</h2>
                 <div className={classes.itemsWrapper}/* onScroll={handleScroll}*/>
@@ -183,12 +184,14 @@ const TechnicianPage = () => {
                     )}
                 </div>  
                 </>}   
+                <AdminOnly hide={true}>
                 <BigButton
                     text={isArchiving ? 'מעבד...' : ((technician.archived ?? false) ? 'שחזר מארכיון' : 'שלח לארכיון')}
                     action={handleArchiveToggle}
                     disabled={isArchiving}
                     overrideStyle={{ marginTop: "2rem", backgroundColor: (technician.archived ?? false) ? "#3498db" : "#e67e22" }}
                 />
+                </AdminOnly>
             </div>}
         </>
     );
