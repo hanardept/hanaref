@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { useAppDispatch } from "../../hooks/redux-hooks";
 import { authActions } from "../../store/auth-slice";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -12,7 +11,6 @@ const LoginPage = () => {
         isLoading, // Loading state, the SDK needs to reach Auth0 on load
         isAuthenticated,
         loginWithRedirect: login, // Starts the login flow
-        logout: auth0Logout, // Starts the logout flow
         getAccessTokenSilently
     } = useAuth0();
 
@@ -30,7 +28,7 @@ const LoginPage = () => {
                 })
             })
         }
-    }, [ isLoading, isAuthenticated, login ])
+    }, [ isLoading, isAuthenticated, login, dispatch, getAccessTokenSilently ])
 
     return <></>
 };
