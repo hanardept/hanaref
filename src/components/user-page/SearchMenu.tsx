@@ -1,14 +1,6 @@
 import classes from './Users.module.css';
-import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
-import { viewingActions } from "../../store/viewing-slice";
 
-const SearchMenu = ({ hideArchive = false }: { hideArchive?: boolean }) => {
-    const dispatch = useAppDispatch();
-    const showArchived = useAppSelector(state => state.viewing.searching.showArchived);
-
-    const handleShowArchived = (value: boolean) => {
-        dispatch(viewingActions.changeSearchCriteria({ showArchived: value }));
-    }
+const SearchMenu = () => {
     
     return (
         <div className={classes.searchMenu}> 

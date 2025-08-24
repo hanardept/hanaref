@@ -9,7 +9,7 @@ import LoadingSpinner from "../UI/LoadingSpinner";
 import { UIEvent, useEffect, useState } from "react";
 import { viewingActions } from "../../store/viewing-slice";
 import { itemsActions } from "../../store/item-slice";
-import { backendFirebaseUri, fetchBackend } from "../../backend-variables/address";
+import { fetchBackend } from "../../backend-variables/address";
 
 const HomePage = () => {
     const navigate = useNavigate();

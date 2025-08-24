@@ -26,7 +26,6 @@ const RightHeaderSide = ({ loggedIn }: { loggedIn: boolean }) => {
 
     const {
         logout, // Starts the logout flow
-        loginWithRedirect,
     } = useAuth0();    
 
     

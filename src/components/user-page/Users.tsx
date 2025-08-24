@@ -26,7 +26,7 @@ const Users = () => {
         navigate(`/users/${id}`);
     }
 
-    const { loginWithRedirect, handleRedirectCallback } = useAuth0();
+    const { loginWithRedirect } = useAuth0();
 
     const handleScroll = (event: UIEvent<HTMLDivElement>) => {
         console.log("Scroll event triggered");
@@ -73,7 +73,7 @@ const Users = () => {
 
         triggerNewSearch();
 
-    }, [dispatch, authToken, searchVal, showArchived]);
+    }, [dispatch, authToken, searchVal, showArchived, loginWithRedirect]);
 
     return (
         <>
