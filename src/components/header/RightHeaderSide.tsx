@@ -33,8 +33,10 @@ const RightHeaderSide = ({ loggedIn }: { loggedIn: boolean }) => {
     const handleLogout = () => {
         logout({
             logoutParams: { 
-                returnTo: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/authorize?response_type=token&client_id=${process.env.REACT_APP_AUTH0_CLIENT_ID}&redirect_uri=${window.location.origin}` } 
-            }).then(res => {
+                //returnTo: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/authorize?response_type=token&client_id=${process.env.REACT_APP_AUTH0_CLIENT_ID}&redirect_uri=${window.location.origin}` } 
+                returnTo: `${window.location.origin}/login`,
+            }
+        }).then(res => {
             dispatch(authActions.clearAuthStateUponLogout());
            //return loginWithRedirect();
         });
