@@ -47,12 +47,13 @@ const UserMenu = () => {
                 });
                 return await fetchedUser.json();
             };
-            getUser().then((t: User) => {
-                setFirstName(t.firstName);
-                setLastName(t.lastName);
-                setUsername(t.username);
-                setEmail(t.email);
-                setRole(t.role);
+            getUser().then((u: User) => {
+                setId(u.id)
+                setFirstName(u.firstName);
+                setLastName(u.lastName);
+                setUsername(u.username);
+                setEmail(u.email);
+                setRole(u.role);
             }).catch(e => console.log(`Error fetching user details: ${e}`));
         }
        
@@ -141,7 +142,11 @@ const UserMenu = () => {
                 placeholder="תפקיד"
                 customInputElement={<RoleSelection selectRole={handleSetRole} currentRole={role} />}
             />
-            <AssociationSelection priorChosenAssociation={association} selectAssociation={association => setAssociation(association)} />
+            <LabeledInput 
+                label="שיוך"
+                placeholder="שיוך"            
+                customInputElement={<AssociationSelection priorChosenAssociation={association} selectAssociation={association => setAssociation(association)} />}
+            />
             <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "2.5rem" }} />
             {params.userid && <BigButton text="מחק משתמש" action={() => setAreYouSureDelete(true)} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} />}
             {areYouSureDelete && <AreYouSure text="האם באמת למחוק משתמש?" leftText='מחק' leftAction={handleDelete} rightText='לא' rightAction={() => setAreYouSureDelete(false)} />}
