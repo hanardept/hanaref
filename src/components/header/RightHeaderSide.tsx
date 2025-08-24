@@ -31,7 +31,10 @@ const RightHeaderSide = ({ loggedIn }: { loggedIn: boolean }) => {
     
 
     const handleLogout = () => {
-        logout().then(res => {
+        logout({
+            logoutParams: { 
+                returnTo: `https://${process.env.REACT_APP_AUTH0_DOMAIN}/authorize?prompt=login&client_id=${process.env.REACT_APP_AUTH0_CLIENT_ID}` } 
+            }).then(res => {
             dispatch(authActions.clearAuthStateUponLogout());
            //return loginWithRedirect();
         });
