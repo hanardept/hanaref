@@ -105,7 +105,7 @@ const UserPage = () => {
                 <p>{`שם משתמש: ${user.username}`}</p>
                 <p>{`דואר אלקטרוני: ${user.email}`}</p>
                 <p>{`תפקיד: ${roleNames[user.role]}`}</p>
-                <p>{`שיוך: ${roleNames[user.association]}`}</p>
+                <p>{`שיוך: ${user.association}`}</p>
                 <BigButton
                     text={isArchiving ? 'מעבד...' : ((user.archived ?? false) ? 'שחזר מארכיון' : 'שלח לארכיון')}
                     action={handleArchiveToggle}
