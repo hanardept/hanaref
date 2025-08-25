@@ -143,7 +143,7 @@ const UserPage = () => {
                 <p>{`שם משתמש: ${user.username}`}</p>
                 <p>{`דואר אלקטרוני: ${user.email}`}</p>
                 <p>{`תפקיד: ${roleNames[user.role]}`}</p>
-                <p>{`שיוך: ${user.association}`}</p>
+                <p>{`שיוך: ${user.association ?? ''}`}</p>
                 {user.status !== "active" && <BigButton
                     text="אשר משתמש"
                     action={handleConfirmUser}
