@@ -4,6 +4,11 @@ export enum Role {
     Viewer = 'viewer',
 }
 
+export enum UserStatus {
+    Registered = 'registered',
+    Active = 'active',
+}
+
 export const roleNames: Record<string, string> = {
     admin: "מנהל",
     technician: "טכנאי",
@@ -19,5 +24,6 @@ export type User = {
     role: Role,
     association: string,
     archived?: boolean,
+    status?: UserStatus,
     _id: string
 };

@@ -23,7 +23,6 @@ const UserMenu = () => {
     const [email, setEmail] = useState("");
     const [role, setRole] = useState(Role.Technician);
     const [association, setAssociation] = useState(associationOptions[0]);
-    const [status, setStatus] = useState("active"); 
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
     const userDetails = {
@@ -71,12 +70,6 @@ const UserMenu = () => {
         dispatch(viewingActions.changesAppliedToItem(true));
     }
 
-    const handleSetStatus = (active: boolean) => {
-        console.log(`setting status as active: ${active}`);
-        setRole(role);
-        dispatch(viewingActions.changesAppliedToItem(true));
-    }
-    
     const handleSave = () => {
 
         if (!userDetails.firstName || !userDetails.lastName || !userDetails.username || !userDetails.email) {
@@ -154,14 +147,14 @@ const UserMenu = () => {
                 placeholder="שיוך"            
                 customInputElement={<AssociationSelection priorChosenAssociation={association} selectAssociation={association => setAssociation(association)} />}
             />
-            <label>
+            {/* {status !== "active" && <label>
                 <input
                     type="checkbox"
-                    checked={status === "active"}
-                    onChange={(e) => handleShowArchived(e.target.checked)}
+                    checked={false}
+                    onChange={(e) => handleSetStatus(e.target.checked)}
                 />
-                הצג פריטים בארכיון
-            </label>
+                אשר משתמש
+            </label>} */}
             <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "2.5rem" }} />
             {params.userid && <BigButton text="מחק משתמש" action={() => setAreYouSureDelete(true)} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} />}
             {areYouSureDelete && <AreYouSure text="האם באמת למחוק משתמש?" leftText='מחק' leftAction={handleDelete} rightText='לא' rightAction={() => setAreYouSureDelete(false)} />}

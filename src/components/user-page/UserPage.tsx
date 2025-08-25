@@ -25,6 +25,23 @@ const toggleUserArchiveStatus = async (userId: string, authToken: string) => {
     return response.json();
 };
 
+const confirmUser = async (userId: string, authToken: string) => {
+    // The backend route is POST /api/users/:id/confirm
+    const response = await fetch(`${backendFirebaseUri}/users/${userId}/confirm`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'auth-token': authToken,
+        },
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to confirm user: ${errorText}`);
+    }
+    return response.json();    
+}
+
 
 const UserPage = () => {
     const params = useParams();
@@ -34,7 +51,7 @@ const UserPage = () => {
     const frontEndPrivilege = useAppSelector(state => state.auth.frontEndPrivilege);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const [isArchiving, setIsArchiving] = useState(false);
+    const [isUpdatingUser, setIsUpdatingUser] = useState(false);
 
     useEffect(() => {
         const getUser = async () => {
@@ -80,7 +97,7 @@ const UserPage = () => {
             return;
         }
 
-        setIsArchiving(true);
+        setIsUpdatingUser(true);
         try {
             const updatedUser = await toggleUserArchiveStatus(user._id, authToken);
             setUser(updatedUser); // Update the local state with the new item status
@@ -90,9 +107,30 @@ const UserPage = () => {
             console.error(error);
             alert('הפעולה נכשלה. נסה שוב.');
         } finally {
-            setIsArchiving(false);
+            setIsUpdatingUser(false);
         }
-    };    
+    }; 
+    
+    const handleConfirmUser = async () => {
+        if (!user) return;
+
+        if (!window.confirm("האם אתה בטוח שברצונך לאשר את המשתמש?")) {
+            return;
+        }
+
+        setIsUpdatingUser(true);
+        try {
+            const updatedUser = await confirmUser(user._id, authToken);
+            setUser(updatedUser); // Update the local state with the new item status
+            // Use the state of the item *before* the toggle for the confirmation message
+            alert('המשתמש אושר בהצלחה');
+        } catch (error) {
+            console.error(error);
+            alert('הפעולה נכשלה. נסה שוב.');
+        } finally {
+            setIsUpdatingUser(false);
+        }
+    }; 
 
     return (
         <>
@@ -106,10 +144,16 @@ const UserPage = () => {
                 <p>{`דואר אלקטרוני: ${user.email}`}</p>
                 <p>{`תפקיד: ${roleNames[user.role]}`}</p>
                 <p>{`שיוך: ${user.association}`}</p>
+                {user.status !== "active" && <BigButton
+                    text="אשר משתמש"
+                    action={handleConfirmUser}
+                    disabled={isUpdatingUser}
+                    overrideStyle={{ marginTop: "2rem", backgroundColor: "#3498db" }}
+                />}
                 <BigButton
-                    text={isArchiving ? 'מעבד...' : ((user.archived ?? false) ? 'שחזר מארכיון' : 'שלח לארכיון')}
+                    text={isUpdatingUser ? 'מעבד...' : ((user.archived ?? false) ? 'שחזר מארכיון' : 'שלח לארכיון')}
                     action={handleArchiveToggle}
-                    disabled={isArchiving}
+                    disabled={isUpdatingUser}
                     overrideStyle={{ marginTop: "2rem", backgroundColor: (user.archived ?? false) ? "#3498db" : "#e67e22" }}
                 />
             </div>}
