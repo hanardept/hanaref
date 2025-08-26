@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import classes from './TechnicianPage.module.css';
 import { viewingActions } from "../../store/viewing-slice";
 import LoadingSpinner from "../UI/LoadingSpinner";
-import { backendFirebaseUri } from "../../backend-variables/address";
+import { fetchBackend } from "../../backend-variables/address";
 import { Technician } from "../../types/technician_types";
 import BigButton from "../UI/BigButton";
 import { Certification } from "../../types/certification_types";
@@ -16,10 +16,12 @@ import { RxQuestionMark } from "react-icons/rx";
 import { IoCalendarNumberOutline } from "react-icons/io5";
 
 import moment from "moment";
+import { Role } from "../../types/user_types";
+import AdminOnly from "../authorization/AdminOnly";
 
 const toggleTechnicianArchiveStatus = async (technicianId: string, authToken: string) => {
     // The backend route is POST /api/technicians/:id/toggle-archive
-    const response = await fetch(`${backendFirebaseUri}/technicians/${technicianId}/toggle-archive`, {
+    const response = await fetchBackend(`technicians/${technicianId}/toggle-archive`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -37,7 +39,7 @@ const toggleTechnicianArchiveStatus = async (technicianId: string, authToken: st
 
 const TechnicianPage = () => {
     const params = useParams();
-    const authToken = useAppSelector(state => state.auth.jwt);
+    const { jwt: authToken, userId } = useAppSelector(state => state.auth);
     const [technician, setTechnician] = useState<Technician | null>(null);
     const [certifications, setCertifications] = useState<Certification[]>([]);
     const [loading, setLoading] = useState(true);
@@ -49,7 +51,7 @@ const TechnicianPage = () => {
     useEffect(() => {
         const getTechnician = async () => {
             setLoading(true);
-            const fetchedTechnician = await fetch(`${backendFirebaseUri}/technicians/${params.technicianid}`, {
+            const fetchedTechnician = await fetchBackend(`technicians/${params.technicianid}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
@@ -61,10 +63,10 @@ const TechnicianPage = () => {
         };
 
         getTechnician().then(i => {
-            if (frontEndPrivilege !== 'admin') {
-                navigate(`/itemnotfound/${params.technicianid}`);
-                return;
-            }
+            // if (frontEndPrivilege !== 'admin') {
+            //     navigate(`/itemnotfound/${params.technicianid}`);
+            //     return;
+            // }
             setTechnician(i);
             setLoading(false);
             if (frontEndPrivilege === "admin") {
@@ -76,7 +78,7 @@ const TechnicianPage = () => {
         });
 
         const getCertifications = async () => {
-            const fetchedCertifications = await fetch(`${backendFirebaseUri}/certifications?technician=${params.technicianid}`, {
+            const fetchedCertifications = await fetchBackend(`certifications?technician=${params.technicianid}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
@@ -88,10 +90,10 @@ const TechnicianPage = () => {
         };   
         
         getCertifications().then(c => {
-            if (frontEndPrivilege !== 'admin') {
-                navigate(`/itemnotfound/${params.technicianid}`);
-                return;
-            }
+            // if (frontEndPrivilege !== 'admin') {
+            //     navigate(`/itemnotfound/${params.technicianid}`);
+            //     return;
+            // }
             setCertifications(c);
         }).catch(e => {
             console.log("Error fetching technician certifications:", e);
@@ -158,6 +160,8 @@ const TechnicianPage = () => {
                 <h1>{technician.firstName} {technician.lastName}</h1>
                 <p>{`ת.ז.: ${technician.id}`}</p>
                 <p>{`שיוך: ${technician.association}`}</p>
+                {((frontEndPrivilege === Role.Admin) || (userId === technician._id)) &&
+                <>
                 <h2>מכשירים מוסמכים</h2>
                 <div className={classes.itemsWrapper}/* onScroll={handleScroll}*/>
                     {certifications.map(c => {
@@ -178,13 +182,16 @@ const TechnicianPage = () => {
                         </span>
                     }
                     )}
-                </div>     
+                </div>  
+                </>}   
+                <AdminOnly hide={true}>
                 <BigButton
                     text={isArchiving ? 'מעבד...' : ((technician.archived ?? false) ? 'שחזר מארכיון' : 'שלח לארכיון')}
                     action={handleArchiveToggle}
                     disabled={isArchiving}
                     overrideStyle={{ marginTop: "2rem", backgroundColor: (technician.archived ?? false) ? "#3498db" : "#e67e22" }}
                 />
+                </AdminOnly>
             </div>}
         </>
     );

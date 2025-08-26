@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import classes from './CertificationPage.module.css';
 import { viewingActions } from "../../store/viewing-slice";
 import LoadingSpinner from "../UI/LoadingSpinner";
-import { backendFirebaseUri } from "../../backend-variables/address";
+import { fetchBackend } from "../../backend-variables/address";
 import { Certification, fromJson } from "../../types/certification_types";
 import moment from "moment";
 import { isoDate } from "../../utils";
@@ -22,7 +22,7 @@ const CertificationPage = () => {
     useEffect(() => {
         const getCertification = async () => {
             setLoading(true);
-            const fetchedCertifications = await fetch(`${backendFirebaseUri}/certifications/${params.certificationid}`, {
+            const fetchedCertifications = await fetchBackend(`certifications/${params.certificationid}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
@@ -34,10 +34,10 @@ const CertificationPage = () => {
         };
 
         getCertification().then(c => {
-            if (frontEndPrivilege !== 'admin') {
-                navigate(`/itemnotfound/${params.certificationid}`);
-                return;
-            }
+            // if (frontEndPrivilege !== 'admin') {
+            //     navigate(`/itemnotfound/${params.certificationid}`);
+            //     return;
+            // }
             setCertification(fromJson(c));
             setLoading(false);
             if (frontEndPrivilege === "admin") {
@@ -61,7 +61,7 @@ const CertificationPage = () => {
             {loading && <LoadingSpinner />}
             {!loading && certification && <div className={classes.certificationPage}>
                 <h1>{certification.item.name}</h1>
-                <h1>{certification.technician.firstName} {certification.technician.lastName}</h1>
+                <h1>{certification.user.firstName} {certification.user.lastName}</h1>
                 <p>{`תאריך הסמכה ראשונה: ${isoDate(certification.firstCertificationDate)}`}</p>
                 <p>{`תאריך הסמכה אחרונה: ${isoDate(certification.lastCertificationDate)}`}</p>
                 <p>{`תוקף הסמכה אחרונה בחודשים: ${certification.item?.certificationPeriodMonths ?? ''}`}</p>

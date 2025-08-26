@@ -1,14 +1,13 @@
-const CatTypeSelection = ({ selectCatType, currentCatType }: { selectCatType: (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף") => void, currentCatType: "מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף" }) => {
+import { CatType } from "../../types/item_types";
+
+const CatTypeSelection = ({ catTypes, selectCatType, currentCatType }: { catTypes?: CatType[], selectCatType: (catType: CatType) => void, currentCatType: "מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף" }) => {
     const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        selectCatType(event.target.value as "מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף");
+        selectCatType(event.target.value as CatType);
     }
 
     return (
         <select name="cattype" id="cattype" onChange={handleSelect} value={currentCatType}>
-            <option>מכשיר</option>
-            <option>אביזר</option>
-            <option>מתכלה</option>
-            <option>חלק חילוף</option>
+            {(catTypes ?? Object.values(CatType)).map(ct => <option>{ct}</option>)}
         </select>
     )
 };

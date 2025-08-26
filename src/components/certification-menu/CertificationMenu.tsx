@@ -1,6 +1,6 @@
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { backendFirebaseUri } from '../../backend-variables/address';
+import { fetchBackend } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
 import { viewingActions } from '../../store/viewing-slice';
 import AreYouSure from '../UI/AreYouSure';
@@ -16,6 +16,7 @@ import { MdAddCircle, MdRemoveCircle } from "react-icons/md";
 
 import DatePicker from "react-datepicker";
 import moment from 'moment';
+import { Role } from '../../types/user_types';
 
 
 interface ItemSummary {
@@ -35,7 +36,7 @@ interface TechnicianSummary {
 
 const CertificationMenu = () => {
     const params = useParams();
-    const authToken = useAppSelector(state => state.auth.jwt);
+    const { frontEndPrivilege, jwt: authToken, userId }  = useAppSelector(state => state.auth);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [id, setId] = useState("");
@@ -59,7 +60,7 @@ const CertificationMenu = () => {
     const certificationDetails = {
         id: id,
         item,
-        technicians,
+        users: technicians,
         certificationDocumentLink,
         firstCertificationDate,
         lastCertificationDate,
@@ -67,7 +68,7 @@ const CertificationMenu = () => {
     };
 
      const fetchItem = useCallback(async (itemCat: string) => {
-        const res = await fetch(`${backendFirebaseUri}/items/${itemCat}`, {
+        const res = await fetchBackend(`items/${itemCat}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'auth-token': authToken
@@ -80,7 +81,7 @@ const CertificationMenu = () => {
     useEffect(() => {        
         if (params.certificationid) {
             const getCertification = async () => {
-                const fetchedCertification = await fetch(`${backendFirebaseUri}/certifications/${params.certificationid}`, {
+                const fetchedCertification = await fetchBackend(`certifications/${params.certificationid}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
@@ -94,8 +95,8 @@ const CertificationMenu = () => {
                     setId(c._id);
                     setItemSearchText(c.item.cat);
                     setItem(c.item);
-                    setTechnicianSearchText(c.technician.id);
-                    setTechnicians([ c.technician ]);
+                    setTechnicianSearchText(c.user.id);
+                    setTechnicians([ c.user ]);
                     setCertificationDocumentLink(c.certificationDocumentLink ?? "");
                     setFirstCertificationDate(c.firstCertificationDate ?? null);
                     setLastCertificationDate(c.lastCertificationDate ?? null);
@@ -113,11 +114,28 @@ const CertificationMenu = () => {
         dispatch(viewingActions.changesAppliedToCertification(true));
     }
 
+    useEffect(() => {
+        const fetchTechnician = async () => {
+            const fetchedTechnician = await fetchBackend(`technicians/${userId}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'auth-token': authToken
+                }
+            });
+            return await fetchedTechnician.json();
+        }
+        if (frontEndPrivilege !== Role.Admin) {
+            console.log(`fetching own technician, id: ${userId}`);
+            fetchTechnician().then(technician => setTechnicians([ technician ]))
+        }
+    }, [ userId, authToken, frontEndPrivilege ])
+
     console.log(`last certification type: ${typeof lastCertificationDate}`);
     
     const handleSave = () => {
-
-        if (!certificationDetails.item || !certificationDetails.technicians?.length ||
+        console.log(`saving with technicians: ${certificationDetails.users}`);
+        if (!certificationDetails.item || !certificationDetails.users?.length ||
             (!certificationDetails.lastCertificationDate && !certificationDetails.plannedCertificationDate)) {
             // if the required fields of the Certification mongo schema are not filled then don't save
             console.log("Please make sure to enter an item name, technician and either last or planned certification date");
@@ -126,11 +144,11 @@ const CertificationMenu = () => {
 
         console.log(`Saving certification with details: ${JSON.stringify(certificationDetails, null, 4)}`);
 
-        const { technicians, ...restDetails } = certificationDetails;
-        const promises = technicians.map((technician) => {
-            const body = JSON.stringify({ ...restDetails, technician});
+        const { users, ...restDetails } = certificationDetails;
+        const promises = users.map((technician) => {
+            const body = JSON.stringify({ ...restDetails, user: technician});
             if (!params.certificationid) {
-                return fetch(`${backendFirebaseUri}/certifications`, {
+                return fetchBackend(`certifications`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -140,7 +158,7 @@ const CertificationMenu = () => {
                     body
                 })
             } else {
-                return fetch(encodeURI(`${backendFirebaseUri}/certifications/${params.certificationid}`), {
+                return fetchBackend(encodeURI(`certifications/${params.certificationid}`), {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -161,7 +179,7 @@ const CertificationMenu = () => {
     }
     // edit mode only:
     const handleDelete = () => {
-        fetch(encodeURI(`${backendFirebaseUri}/certifications/${params.certificationid}`), {
+        fetchBackend(encodeURI(`certifications/${params.certificationid}`), {
             method: 'DELETE',
             headers: {
                 'auth-token': authToken
@@ -228,7 +246,7 @@ const CertificationMenu = () => {
                         placeholder='חפש מכשיר (שם, מק"ט)'
                         suggestions={itemSuggestions}
                         onFetchSuggestions={(value: string) => {
-                            fetch(encodeURI(`${backendFirebaseUri}/items?catType=${deviceCat}&search=${value}`), {
+                            fetchBackend(encodeURI(`items?catType=${deviceCat}&search=${value}`), {
                                 method: 'GET',
                                 headers: {
                                     'auth-token': authToken
@@ -248,6 +266,7 @@ const CertificationMenu = () => {
                     />
                 )}
             </div>
+            { frontEndPrivilege === Role.Admin && 
             <div className={classes.inputGroup}>
                 <label htmlFor="technicianSearch">טכנאי</label>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
@@ -287,7 +306,7 @@ const CertificationMenu = () => {
                         placeholder='חפש טכנאי (שם, ת.ז.)'
                         suggestions={technicianSuggestions.filter(ts => technicians.every(t => t?.id !== ts.id))}
                         onFetchSuggestions={(value: string) => {
-                            fetch(encodeURI(`${backendFirebaseUri}/technicians?search=${value}`), {
+                            fetchBackend(encodeURI(`technicians?search=${value}`), {
                                 method: 'GET',
                                 headers: {
                                     'auth-token': authToken
@@ -311,7 +330,7 @@ const CertificationMenu = () => {
                         <MdAddCircle onClick={() => setAddTechniciansRequested(true) }/>
                     </span> : <></>}
                 </div>
-            </div>
+            </div>}
             <div className={classes.inputGroup}>
                 <label htmlFor="firstCertificationDate">תאריך הסמכה ראשונה</label>
                 <DatePicker

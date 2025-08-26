@@ -10,6 +10,7 @@ import { viewingActions } from "../../store/viewing-slice";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { backendFirebaseUri } from "../../backend-variables/address";
 import BigButton from "../UI/BigButton"; // Importing your existing button component
+import { withAuthenticationRequired } from "@auth0/auth0-react";
 
 
 // A new helper function to call our backend archive endpoint
@@ -152,5 +153,5 @@ const ItemPage = () => {
     );
 };
 
-export default ItemPage;
+export default withAuthenticationRequired(ItemPage);
 

@@ -6,17 +6,22 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './store/redux-logic';
+import AuthProviderWithNavigate from './AuthProviderWithNavigate';
 
 console.log(`backend url: ${process.env.REACT_APP_BACKEND_URL}`);
 console.log(process.env);
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+console.log(`domain: ${process.env.REACT_APP_AUTH0_DOMAIN}, redirect_uri: ${window.location.origin}`);
+
 root.render(
     <React.StrictMode>
     <Provider store={store}>
     <BrowserRouter>
-    <App />
+    <AuthProviderWithNavigate>
+      <App />
+    </AuthProviderWithNavigate>        
     </BrowserRouter>
     </Provider>
     </React.StrictMode>

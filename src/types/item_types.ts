@@ -1,3 +1,10 @@
+export enum CatType {
+    Device = 'מכשיר',
+    Accessory = 'אביזר',
+    Consumable = 'מתכלה',
+    SparePart = 'חלק חילוף',
+}
+
 export type AbbreviatedItem = { _id?: string, name: string, cat: string, imageLink?: string, manufacturer?: string, archived?: boolean };
 export type Item = {
     _id: string,
@@ -6,7 +13,7 @@ export type Item = {
     kitCats?: string[],
     sector: string,
     department: string,
-    catType: "מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף",
+    catType: CatType,
     certificationPeriodMonths?: number,
     description: string,
     imageLink?: string,

@@ -7,6 +7,7 @@ import classes from './HomePage.module.css';
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { viewingActions } from "../../store/viewing-slice";
 import { backendFirebaseUri } from "../../backend-variables/address";
+import { Role } from "../../types/user_types";
 
 const SearchMenu = ({ hideArchive = false }: { hideArchive?: boolean }) => {
     const dispatch = useAppDispatch();
@@ -14,18 +15,24 @@ const SearchMenu = ({ hideArchive = false }: { hideArchive?: boolean }) => {
     const showArchived = useAppSelector(state => state.viewing.searching.showArchived);
     const selectedSector = useAppSelector(state => state.viewing.searching.sector);
     const selectedDepartment = useAppSelector(state => state.viewing.searching.department);
-    const authToken = useAppSelector(state => state.auth.jwt);
+    const { jwt: authToken, frontEndPrivilege } = useAppSelector(state => state.auth);
 
     useEffect(() => {
         // FETCH SECTORS FROM API + use setSectors on them.
-        fetch(`${backendFirebaseUri}/sectors`, {
+        const params: any = {};
+        if (frontEndPrivilege === Role.Viewer) {
+            params.isMaintenance = false;
+        }
+        const searchParams = new URLSearchParams(params);
+
+        fetch(`${backendFirebaseUri}/sectors?` + searchParams, {
             headers: authToken ? {
                 'auth-token': authToken
             } : {}
         }).then((res) => res.json()).then((res) => {
             setSectors(res);
         });
-    }, [authToken]);
+    }, [authToken, frontEndPrivilege]);
 
     const handleSetSector = (value: string) => {
         dispatch(viewingActions.changeSearchCriteria({ sector: value, department: "" }));

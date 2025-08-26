@@ -1,50 +1,36 @@
-import { ChangeEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { backendFirebaseUri } from "../../backend-variables/address";
+import { useEffect } from "react";
 import { useAppDispatch } from "../../hooks/redux-hooks";
 import { authActions } from "../../store/auth-slice";
-import BigButton from "../UI/BigButton";
-import classes from './LoginPage.module.css';
+import { useAuth0 } from "@auth0/auth0-react";
+import { jwtDecode } from "jwt-decode";
 
 const LoginPage = () => {
-    const [usernameInput, setUsernameInput] = useState("");
-    const [passwordInput, setPasswordInput] = useState("");
-    const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
-    const handleChangeUsernameInput = (event: ChangeEvent<HTMLInputElement>) => {
-        setUsernameInput(event.target.value);
-    }
-    const handleChangePasswordInput = (event: ChangeEvent<HTMLInputElement>) => {
-        setPasswordInput(event.target.value);
-    }
-    const handleLogin = () => {
-        fetch(`${backendFirebaseUri}/login`,
-            {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                method: 'POST',
-                body: JSON.stringify({ username: usernameInput, password: passwordInput })
-            }).then((res) => res.json()).then((res) => {
-                const { authToken, frontEndPrivilege, jwtExpiryDate } = res;
-                dispatch(authActions.setAuthStateUponLogin({ jwt: authToken, frontEndPrivilege: frontEndPrivilege, jwtExpiryDate: jwtExpiryDate }));
-                setTimeout(() => {
-                    dispatch(authActions.clearAuthStateUponLogout());
-                  }, jwtExpiryDate - new Date().getTime());
-            }).catch((err) => console.log(`Error logging in: ${err}`));
-        navigate('/');
-    }
+    const {
+        isLoading, // Loading state, the SDK needs to reach Auth0 on load
+        isAuthenticated,
+        loginWithRedirect: login, // Starts the login flow
+        getAccessTokenSilently
+    } = useAuth0();
 
-    return (
-        <div className={classes.loginForm}>
-            <h1>כניסה</h1>
-            <input type="text" value={usernameInput} placeholder="שם משתמש" onChange={handleChangeUsernameInput} />
-            <input type="password" value={passwordInput} placeholder="סיסמה" onChange={handleChangePasswordInput} />
-            <BigButton text="כניסה" action={handleLogin} />
-        </div>
-    )
+    useEffect(() => {
+        if (!isLoading && !isAuthenticated) {
+            login().then(() => {
+                getAccessTokenSilently().then(token => {
+                    const rolesTokenField = `${process.env.REACT_APP_AUTH0_NAMESPACE}/roles`;
+                    const userIdField = `${process.env.REACT_APP_AUTH0_NAMESPACE}/user_id`;
+                    const decoded = jwtDecode<any>(token);
+                    console.log(`token field: ${rolesTokenField}`);
+                    console.log(`decoded: ${JSON.stringify(decoded)}`);
+                    console.log(`role: ${decoded[rolesTokenField]?.[0]}`);
+                    dispatch(authActions.setAuthStateUponLogin({ jwt: token, frontEndPrivilege: decoded[rolesTokenField]?.[0], jwtExpiryDate: decoded.exp, userId: decoded[userIdField] }));
+                })
+            })
+        }
+    }, [ isLoading, isAuthenticated, login, dispatch, getAccessTokenSilently ])
+
+    return <></>
 };
 
 export default LoginPage;
