@@ -1,0 +1,49 @@
+@import '../../css-variables/constants.css';
+
+.supplierPage {
+    text-align: right;
+    padding: 0 var(--gutterHorizontal);
+    padding-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+}
+.supplierPage header {
+    display: flex;
+    justify-content: space-between;
+    padding-inline: 0.5rem;
+}
+.supplierPage header h6 {
+    margin-bottom: 0;
+}
+.supplierPage h1 {
+    font-size: 1.4rem;
+    margin-top: 0.5rem;
+}
+.supplierPage h2 {
+    font-size: 1.3rem;
+}
+.supplierPage h2:first-of-type {
+    margin-top: 1rem;
+}
+.supplierPage p, a {
+    text-indent: 1rem;
+    text-align: right;
+}
+.supplierPage a {
+    margin-block: 0.5rem;
+}
+
+.supplierPage * {
+    margin-top: 0;
+}
+
+.clickable {
+    background-color: #f1f2ff;
+    border-radius: 3rem;
+    padding: 3px;
+    padding-left: 1rem;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+    align-self: self-start;
+    font-weight: bold;
+}
