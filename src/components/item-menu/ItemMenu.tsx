@@ -61,8 +61,13 @@ const ItemMenu = () => {
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
     useEffect(() => {
-        const getSectors = async () => {
-            const fetchedSectors = await fetch(`${backendFirebaseUri}/sectors?isMaintenance=true`, {
+            const getSectors = async () => {
+            const params: any = {};
+            if (frontEndPrivilege === Role.Technician) {
+                params.isMaintenance = true;
+            }
+            const searchParams = new URLSearchParams(params);
+            const fetchedSectors = await fetch(`${backendFirebaseUri}/sectors?` + searchParams, {
                 headers: { 'auth-token': authToken }
             });
             return await fetchedSectors.json();
