@@ -15,6 +15,7 @@ export type Item = {
     userManualLink?: string,
     serviceManualLink?: string,
     hebrewManualLink?: string,
+    emergency?: boolean,
     supplier?: string,
     lifeSpan?: string,
     models?: AbbreviatedItem[],

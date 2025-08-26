@@ -115,6 +115,7 @@ const ItemPage = () => {
                 {item.catType === "מכשיר" && <p>{`מק"ט ערכה: ${item.kitCats?.[0] ?? ''}`}</p>}
                 {item.catType === "מכשיר" && <p>{`תוקף הסמכה בחודשים: ${item.certificationPeriodMonths ?? ''}`}</p>}
                 {item.catType === "מתכלה" && <p>{`אורך חיים בחודשים: ${item.lifeSpan ?? ''}`}</p>}
+                {item.catType === "מכשיר" && <p>{`חירום: ${item.emergency ? "כן" : "לא"}`}</p>}
                 <p>{`ספק בארץ: ${item.supplier ?? ''}`}</p>
                 {item.description && <p>{item.description}</p>}
                 {item.imageLink && <img src={item.imageLink} alt={item.name} />}

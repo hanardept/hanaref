@@ -4,6 +4,7 @@ import DepartmentSelection from "../item-search/DepartmentSelection";
 import SectorSelection from "../item-search/SectorSelection";
 import CatTypeSelection from "./CatTypeSelection";
 import LabeledInput from "../UI/LabeledInput";
+import classes from './ItemMenu.module.css';
 
 interface ItemDetailsProps {
     name: string;
@@ -13,6 +14,7 @@ interface ItemDetailsProps {
     department: string;
     description: string;
     catType: "מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף";
+    emergency: boolean;
     certificationPeriodMonths?: number | null;
     sectorsToChooseFrom: Sector[];
     handleInput: (setFunc: (value: string) => void, event: ChangeEvent<HTMLInputElement>) => void;
@@ -22,12 +24,13 @@ interface ItemDetailsProps {
     handleSetCatType: (catType: "מכשיר" | "אביזר" | "מתכלה" | "חלק חילוף") => void;
     setName: React.Dispatch<React.SetStateAction<string>>;
     setCat: React.Dispatch<React.SetStateAction<string>>;
+    setEmergency: React.Dispatch<React.SetStateAction<boolean>>;
     setCertificationPeriodMonths: (value: number | null) => void;
     setKitCats: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const ItemDetails = (props: ItemDetailsProps) => {
-    const { name, cat, kitCats, sector, department, description, catType, certificationPeriodMonths, sectorsToChooseFrom, handleInput, handleDescription, handleSetSector, handleSetDepartment, handleSetCatType, setCertificationPeriodMonths, setName, setCat, setKitCats } = props;
+    const { name, cat, kitCats, sector, department, description, emergency, catType, certificationPeriodMonths, sectorsToChooseFrom, handleInput, handleDescription, handleSetSector, handleSetDepartment, handleSetCatType, setCertificationPeriodMonths, setName, setEmergency, setCat, setKitCats } = props;
     const sectorNames = sectorsToChooseFrom.map(s => s.sectorName);
     const departmentsToChooseFrom = (sector && sectorsToChooseFrom.length > 0) ? sectorsToChooseFrom.filter(s => s.sectorName === sector)[0].departments : [];
 
@@ -48,6 +51,16 @@ const ItemDetails = (props: ItemDetailsProps) => {
             <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} priorChosenDepartment={department} />
             <CatTypeSelection selectCatType={handleSetCatType} currentCatType={catType} />
             <textarea value={description} onChange={handleDescription} placeholder="תיאור" />
+            {catType === "מכשיר" && <div className={classes.emergencyToggle}>
+                <label>
+                    <input
+                        type="checkbox"
+                        checked={emergency}
+                        onChange={(e) => setEmergency(e.target.checked)}
+                    />
+                    חירום
+                </label>
+            </div>}
         </>
     )
 }

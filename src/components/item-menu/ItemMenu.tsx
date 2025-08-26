@@ -50,6 +50,7 @@ const ItemMenu = () => {
     const [isServiceManualUploading, setServiceManualUploading] = useState(false);
     const [hebrewManualLink, setHebrewManualLink] = useState("" as (string | File));
     const [isHebrewManualUploading, setIsHebrewManualUploading] = useState(false);
+    const [emergency, setEmergency] = useState(false);
     const [supplier, setSupplier] = useState("");
     const [lifeSpan, setLifeSpan] = useState("");
     const [models, setModels] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
@@ -95,6 +96,7 @@ const ItemMenu = () => {
                 if (i.userManualLink) setUserManualLink(i.userManualLink);
                 if (i.serviceManualLink) setServiceManualLink(i.serviceManualLink);
                 if (i.hebrewManualLink) setHebrewManualLink(i.hebrewManualLink);
+                if (i.emergency) setEmergency(i.emergency);
                 if (i.supplier) setSupplier(i.supplier);
                 if (i.lifeSpan) setLifeSpan(i.lifeSpan);
                 if (i.models && i.models.length > 0) setModels(i.models);
@@ -153,6 +155,7 @@ const ItemMenu = () => {
             userManualLink: saveLinks ? newLinks.userManualLink ?? userManualLink : undefined,
             serviceManualLink: saveLinks ? newLinks.serviceManualLink ?? serviceManualLink : undefined,
             hebrewManualLink: saveLinks ? newLinks.hebrewManualLink ?? hebrewManualLink : undefined,
+            emergency: emergency,
             supplier: supplier,
             lifeSpan: lifeSpan,
             models: vacateItemListIfEmptyAndRemoveSpaces(models),
@@ -310,6 +313,7 @@ const ItemMenu = () => {
                     department={department}
                     description={description}
                     catType={catType}
+                    emergency={emergency}
                     certificationPeriodMonths={certificationPeriodMonths}
                     sectorsToChooseFrom={sectorsToChooseFrom}
                     handleInput={handleInput}
@@ -319,6 +323,7 @@ const ItemMenu = () => {
                     handleSetCatType={handleSetCatType}
                     setCertificationPeriodMonths={setCertificationPeriodMonths}
                     setName={setName}
+                    setEmergency={setEmergency}
                     setCat={setCat}
                     setKitCats={setKitCats}
                 />
