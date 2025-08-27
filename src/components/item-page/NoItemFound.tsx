@@ -13,7 +13,7 @@ const NoItemFound = () => {
     return (
         <>
             <p>{`לא נמצא ערך עבור ${params.itemid}`}</p>
-            <AdminOnly><BigButton text="צור ערך" action={moveToCreatingItemPage} /></AdminOnly>
+            <AdminOnly hide={true}><BigButton text="צור ערך" action={moveToCreatingItemPage} /></AdminOnly>
         </>
     )
 };

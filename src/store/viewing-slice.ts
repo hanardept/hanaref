@@ -13,6 +13,10 @@ const initialViewState = {
         currentTechnicianId: "",
         changesApplied: false
     },
+    userManagement: {
+        currentUserId: "",
+        changesApplied: false
+    },    
     certificationManagement: {
         currentCertificationId: "",
         changesApplied: false
@@ -43,6 +47,12 @@ const viewingSlice = createSlice({
         changesAppliedToTechnician(state, action: PayloadAction<boolean>) {
             state.technicianManagement.changesApplied = action.payload;
         },
+        manageUserId(state, action: PayloadAction<string>) {
+            state.userManagement.currentUserId = action.payload;
+        },
+        changesAppliedToUser(state, action: PayloadAction<boolean>) {
+            state.userManagement.changesApplied = action.payload;
+        },        
         manageCertificationId(state, action: PayloadAction<string>) {
             state.certificationManagement.currentCertificationId = action.payload;
         },

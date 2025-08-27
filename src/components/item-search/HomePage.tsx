@@ -9,7 +9,7 @@ import LoadingSpinner from "../UI/LoadingSpinner";
 import { UIEvent, useEffect, useState } from "react";
 import { viewingActions } from "../../store/viewing-slice";
 import { itemsActions } from "../../store/item-slice";
-import { backendFirebaseUri } from "../../backend-variables/address";
+import { fetchBackend } from "../../backend-variables/address";
 
 const HomePage = () => {
     const navigate = useNavigate();
@@ -40,7 +40,7 @@ const HomePage = () => {
         // This function will be called to start a new search
         const triggerNewSearch = () => {
             const archiveStatus = showArchived ? 'all' : 'active';
-            fetch(encodeURI(`${backendFirebaseUri}/items?search=${searchVal}&sector=${sector}&department=${department}&page=0&status=${archiveStatus}`), {
+            fetchBackend(encodeURI(`items?search=${searchVal}&sector=${sector}&department=${department}&page=0&status=${archiveStatus}`), {
                 headers: { 'auth-token': authToken }
             })
             .then(res => res.json())
@@ -104,7 +104,7 @@ const HomePage = () => {
             scrollThrottler = false;
             // 2. Ensure the infinite scroll also respects the archive status
             const archiveStatus = showArchived ? 'all' : 'active';
-            fetch(encodeURI(`${backendFirebaseUri}/items?search=${searchVal}&sector=${sector}&department=${department}&page=${page}&status=${archiveStatus}`), {
+            fetchBackend(encodeURI(`items?search=${searchVal}&sector=${sector}&department=${department}&page=${page}&status=${archiveStatus}`), {
                 headers: { 'auth-token': authToken }
             })
             .then((res) => res.json())

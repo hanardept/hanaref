@@ -6,7 +6,7 @@ export type Certification = {
         certificationPeriodMonths?: number;
         imageLink?: string;
     };
-    technician: {
+    user: {
         _id: string;
         id: string;
         firstName: string;

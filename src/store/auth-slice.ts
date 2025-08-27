@@ -1,17 +1,18 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { set } from 'idb-keyval';
 
-const initialAuthState = { jwt: "", frontEndPrivilege: "public", jwtExpiryDate: 0 };
+const initialAuthState = { jwt: "", frontEndPrivilege: "public", jwtExpiryDate: 0, userId: "" };
 
 const authSlice = createSlice({
     name: 'auth',
     initialState: initialAuthState,
     reducers: {
-        setAuthStateUponLogin(state, action: PayloadAction<{ jwt: string, frontEndPrivilege: string, jwtExpiryDate: number }>) {
-            const { jwt, frontEndPrivilege, jwtExpiryDate } = action.payload;
+        setAuthStateUponLogin(state, action: PayloadAction<{ jwt: string, frontEndPrivilege: string, jwtExpiryDate: number, userId: string }>) {
+            const { jwt, frontEndPrivilege, jwtExpiryDate, userId } = action.payload;
             state.jwt = jwt;
             state.frontEndPrivilege = frontEndPrivilege;
             state.jwtExpiryDate = jwtExpiryDate;
+            state.userId = userId;
             Promise.all([set('hanaref-jwt', state.jwt), set('hanaref-front-end-privilege', state.frontEndPrivilege), set('hanaref-jwt-expiry-date', state.jwtExpiryDate)])
                 .then((values) => console.log('Saved auth state in localStorage'))
                 .catch((err) => console.log(`Error saving auth state in localStorage: ${err}`));

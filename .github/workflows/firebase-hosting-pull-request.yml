@@ -16,6 +16,9 @@ jobs:
       - run: npm ci && npm run build
         env:
           REACT_APP_BACKEND_URL: ${{ vars.REACT_APP_BACKEND_URL_PREVIEW }}
+          REACT_APP_AUTH0_CLIENT_ID: ${{secrets.REACT_APP_AUTH0_CLIENT_ID_DEV}}
+          REACT_APP_AUTH0_DOMAIN: ${{secrets.REACT_APP_AUTH0_DOMAIN_DEV}}
+          REACT_APP_AUTH0_NAMESPACE: ${{secrets.REACT_APP_AUTH0_NAMESPACE_DEV}}
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
