@@ -78,7 +78,7 @@ const TechnicianPage = () => {
         });
 
         const getCertifications = async () => {
-            const fetchedCertifications = await fetchBackend(`certifications?technician=${params.technicianid}`, {
+            const fetchedCertifications = await fetchBackend(`certifications?user=${params.technicianid}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
