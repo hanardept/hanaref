@@ -116,7 +116,7 @@ const ItemMenu = () => {
                 setSectorsToChooseFrom(s);
             }).catch(err => console.log(`Error fetching sectors: ${err}`));
         }
-    }, [params.itemid, authToken]);
+    }, [params.itemid, authToken, frontEndPrivilege]);
 
     const handleInput = (setFunc: (val: string) => any, event: ChangeEvent<HTMLInputElement>) => {
         setFunc(event.target.value);
