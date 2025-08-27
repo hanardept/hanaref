@@ -16,7 +16,6 @@ const UserMenu = () => {
     const authToken = useAppSelector(state => state.auth.jwt);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const [id, setId] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [username, setUsername] = useState("");
@@ -26,7 +25,6 @@ const UserMenu = () => {
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
     const userDetails = {
-        id: id,
         firstName: firstName,
         lastName: lastName,
         username: username,
@@ -48,7 +46,6 @@ const UserMenu = () => {
                 return await fetchedUser.json();
             };
             getUser().then((u: User) => {
-                setId(u.id)
                 setFirstName(u.firstName);
                 setLastName(u.lastName);
                 setUsername(u.username);
@@ -72,9 +69,9 @@ const UserMenu = () => {
 
     const handleSave = () => {
 
-        if (!userDetails.firstName || !userDetails.lastName || !userDetails.username || !userDetails.email) {
+        if (!userDetails.username || !userDetails.email) {
             // if the required fields of the User mongo schema are not filled then don't save
-            console.log("Please make sure to enter a first name, last name, username and email");
+            console.log("Please make sure to enter a username and email");
             return;
         }
 
@@ -132,7 +129,6 @@ const UserMenu = () => {
     return (
         <div className={classes.userMenu}>
             <h1>{params.userid ? "עריכת משתמש" : "הוספת משתמש"}</h1>
-            <LabeledInput label="ת.ז." placeholder="ת.ז." value={id} onChange={(e) => handleInput(setId, e)} />
             <LabeledInput label="שם פרטי" placeholder="שם פרטי" value={firstName} onChange={(e) => handleInput(setFirstName, e)} />
             <LabeledInput label="שם משפחה" placeholder="שם משפחה" value={lastName} onChange={(e) => handleInput(setLastName, e)} />
             <LabeledInput label="שם משתמש" placeholder="שם משתמש" value={username} onChange={(e) => handleInput(setUsername, e)} />
