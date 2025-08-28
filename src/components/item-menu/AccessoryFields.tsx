@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState } from "react";
-import { AbbreviatedItem } from "../../types/item_types";
+import { AbbreviatedItem, SupplierSummary } from "../../types/item_types";
 import InfoSectionMenu from "./InfoSectionMenu";
 import { useAppSelector } from "../../hooks/redux-hooks";
 import { backendFirebaseUri } from "../../backend-variables/address";
@@ -11,13 +11,13 @@ interface AccessoryFieldsProps {
     isImageUploading?: boolean;
     userManualLink: string;
     isUserManualUploading?: boolean;
-    supplier: string;
+    supplier?: Supplier | null;
     models: AbbreviatedItem[];
     belongsToDevices: AbbreviatedItem[];
     handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => void;
     setImageLink: React.Dispatch<React.SetStateAction<string | File>>;
     setUserManualLink: React.Dispatch<React.SetStateAction<string | File>>;
-    setSupplier: React.Dispatch<React.SetStateAction<string>>;
+    setSupplier: React.Dispatch<React.SetStateAction<SupplierSummary | null>>;
     setModels: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setBelongsToDevices: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
 }

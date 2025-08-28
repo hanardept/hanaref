@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { backendFirebaseUri } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
 import { viewingActions } from '../../store/viewing-slice';
-import { AbbreviatedItem, CatType, Item } from '../../types/item_types';
+import { AbbreviatedItem, CatType, Item, SupplierSummary } from '../../types/item_types';
 import { Sector } from '../../types/sector_types';
 import AreYouSure from '../UI/AreYouSure';
 import BigButton from '../UI/BigButton';
@@ -51,7 +51,7 @@ const ItemMenu = () => {
     const [isServiceManualUploading, setServiceManualUploading] = useState(false);
     const [hebrewManualLink, setHebrewManualLink] = useState("" as (string | File));
     const [isHebrewManualUploading, setIsHebrewManualUploading] = useState(false);
-    const [supplier, setSupplier] = useState("");
+    const [supplier, setSupplier] =  useState(null as SupplierSummary | null);
     const [lifeSpan, setLifeSpan] = useState("");
     const [models, setModels] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [accessories, setAccessories] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);

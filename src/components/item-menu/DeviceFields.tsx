@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useState } from "react";
-import { AbbreviatedItem } from "../../types/item_types";
+import { AbbreviatedItem, SupplierSummary } from "../../types/item_types";
 import InfoSectionMenu from "./InfoSectionMenu";
 import LabeledInput from "../UI/LabeledInput";
 import UploadFile from "../UI/UploadFile";
@@ -19,7 +19,7 @@ interface DeviceFieldsProps {
     isServiceManualUploading?: boolean;
     hebrewManualLink: string;
     isHebrewManualUploading?: boolean;
-    supplier: string;
+    supplier: SupplierSummary | null;
     models: AbbreviatedItem[];
     accessories: AbbreviatedItem[];
     consumables: AbbreviatedItem[];
@@ -31,7 +31,7 @@ interface DeviceFieldsProps {
     setUserManualLink: React.Dispatch<React.SetStateAction<string | File>>;
     setServiceManualLink: React.Dispatch<React.SetStateAction<string | File>>;
     setHebrewManualLink: React.Dispatch<React.SetStateAction<string | File>>;
-    setSupplier: React.Dispatch<React.SetStateAction<string>>;
+    setSupplier: React.Dispatch<React.SetStateAction<SupplierSummary | null>>;
     setModels: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setAccessories: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setConsumables: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
@@ -48,6 +48,8 @@ const DeviceFields = (props: DeviceFieldsProps) => {
     const authToken = useAppSelector(state => state.auth.jwt);
     const [ itemSuggestions, setItemSuggestions ] = useState([]);
 
+    const [ supplierSuggestions, setSupplierSuggestions ] = useState([]);
+
     return (
         <>
             <LabeledInput type="file" label="קישור לתמונה" value={imageLink}  placeholder="קישור לתמונה" 
@@ -63,6 +65,43 @@ const DeviceFields = (props: DeviceFieldsProps) => {
             <LabeledInput type="file" label="Service Manual" value={serviceManualLink} placeholder="Service Manual" 
                 customInputElement={<UploadFile placeholder="Service Manual" url={serviceManualLink} isUploading={isServiceManualUploading} onChange={(e) => setServiceManualLink(e.target.files?.[0] ?? '')}  onClear={() => setServiceManualLink("")}/>}/>
             <LabeledInput label="ספק בארץ" value={supplier} onChange={(e) => handleInput(setSupplier, e)} placeholder="ספק בארץ" />
+            
+            <DebouncingInput
+                id="supplierSearch"
+                className={classes.itemCat}
+                inputValue={technicianSearchText}
+                onValueChanged={(val: any) => {
+                    setTechnicianSearchText(val);
+                }}
+                onSuggestionSelected={(t: any) => {
+                    setTechnicians([...technicians, t ])
+                    setAddTechniciansRequested(false)
+                    setTechnicianSearchText("");
+                }}
+                getSuggestionValue={s => s.id}
+                placeholder='חפש טכנאי (שם, ת.ז.)'
+                suggestions={technicianSuggestions.filter(ts => technicians.every(t => t?.id !== ts.id))}
+                onFetchSuggestions={(value: string) => {
+                    fetchBackend(encodeURI(`technicians?search=${value}`), {
+                        method: 'GET',
+                        headers: {
+                            'auth-token': authToken
+                        }
+                    })
+                    .then((res) => res.json())
+                    .then(jsonRes => setTechnicianSuggestions(jsonRes))
+                    .catch((err) => console.log(`Error getting technician suggestions: ${err}`));
+                }}
+                renderSuggestion={t => <span>{t.id} {t.firstName} {t.lastName}</span>}
+                onClearSuggestions={() => setTechnicianSuggestions([])}
+                onBlur={() => {
+                    if (!technicianSuggestions.find((t: any) => t.id === technicianSearchText || t.firstName === technicianSearchText || t.lastName === technicianSearchText)) {
+                        setTechnicianSearchText("");
+                    }
+                }}
+            />
+            
+            
             <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />
             <InfoSectionMenu 
                 title="אביזרים"

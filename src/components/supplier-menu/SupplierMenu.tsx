@@ -130,10 +130,11 @@ const SupplierMenu = () => {
             }
         })
         .then((res) => {
-            console.log("Successfully deleted supplier!");
+            console.log(`Delete supplier response status: ${res.status}`);
             if (res.status === 409) {
                 alert("לא ניתן למחוק ספק שמקושר למכשירים במערכת");
             } else {
+                console.log("Successfully deleted supplier!");
                 dispatch(viewingActions.changesAppliedToSupplier(false));
                 navigate("/suppliers");
             }

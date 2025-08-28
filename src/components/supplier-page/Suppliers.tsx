@@ -73,7 +73,7 @@ const Suppliers = () => {
     return (
             <>
                 {!searchComplete && <LoadingSpinner />}
-                {searchComplete && suppliers.length === 0 && <p className={classes.noResults}>לא נמצאו הסמכות</p>}
+                {searchComplete && suppliers.length === 0 && <p className={classes.noResults}>לא נמצאו ספקים</p>}
                 <div className={classes.itemsWrapper} onScroll={handleScroll}>
                     {suppliers.map(c => {
                         return (
