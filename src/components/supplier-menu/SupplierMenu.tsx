@@ -9,19 +9,6 @@ import classes from './SupplierMenu.module.css';
 import { Supplier } from '../../types/supplier_types';
 import LabeledInput from '../UI/LabeledInput';
 
-
-interface SupplierSummary {
-    _id: string;
-    id: string;
-    name: string;
-    street: string;
-    city: string;
-    officePhone: string;
-    contact: string;
-    contactCell: string;
-    contactEmail: string;
-}
-
 const SupplierMenu = () => {
     const params = useParams();
     const { jwt: authToken }  = useAppSelector(state => state.auth);

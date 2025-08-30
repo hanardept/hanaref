@@ -49,7 +49,7 @@ const ConsumableFields = (props: ConsumableFieldsProps) => {
         });
         const supplierDetails = await res.json();
         setSupplier(supplierDetails);
-    }, [ authToken ]);         
+    }, [ authToken, setSupplier ]);         
 
     return (
         <>                   

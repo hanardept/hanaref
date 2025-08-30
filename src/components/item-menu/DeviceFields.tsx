@@ -45,7 +45,7 @@ interface DeviceFieldsProps {
 const DeviceFields = (props: DeviceFieldsProps) => {
     const {
         imageLink, isImageUploading, qaStandardLink, isQaStandardUploading, medicalEngineeringManualLink, isMedicalEngineeringManualUploading, userManualLink, isUserManualUploading, serviceManualLink, isServiceManualUploading,
-        hebrewManualLink, isHebrewManualUploading, supplier, models, accessories, consumables, spareParts, handleInput, setImageLink, setQaStandardLink, setMedicalEngineeringManualLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier, setModels,
+        hebrewManualLink, isHebrewManualUploading, supplier, models, accessories, consumables, spareParts, setImageLink, setQaStandardLink, setMedicalEngineeringManualLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier, setModels,
         setAccessories, setConsumables, setSpareParts
     } = props;
 
@@ -67,7 +67,7 @@ const DeviceFields = (props: DeviceFieldsProps) => {
         });
         const supplierDetails = await res.json();
         setSupplier(supplierDetails);
-    }, [ authToken ]);    
+    }, [ authToken, setSupplier ]);    
 
     return (
         <>

@@ -27,7 +27,7 @@ interface SparePartFieldsProps {
 }
 
 const SparePartFields = (props: SparePartFieldsProps) => {
-    const { imageLink, isImageUploading, userManualLink, isUserManualUploading, supplier, models, belongsToDevices, handleInput, setImageLink, setUserManualLink, setSupplier, setModels, setBelongsToDevices } = props;
+    const { imageLink, isImageUploading, userManualLink, isUserManualUploading, supplier, models, belongsToDevices, setImageLink, setUserManualLink, setSupplier, setModels, setBelongsToDevices } = props;
 
     const authToken = useAppSelector(state => state.auth.jwt);
     const [ itemSuggestions, setItemSuggestions ] = useState([]);
@@ -47,7 +47,7 @@ const SparePartFields = (props: SparePartFieldsProps) => {
         });
         const supplierDetails = await res.json();
         setSupplier(supplierDetails);
-    }, [ authToken ]);       
+    }, [ authToken, setSupplier ]);       
 
     return (
         <>
