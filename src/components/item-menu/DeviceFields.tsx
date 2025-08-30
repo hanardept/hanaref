@@ -1,10 +1,14 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useCallback, useState } from "react";
 import { AbbreviatedItem, SupplierSummary } from "../../types/item_types";
 import InfoSectionMenu from "./InfoSectionMenu";
 import LabeledInput from "../UI/LabeledInput";
 import UploadFile from "../UI/UploadFile";
-import { backendFirebaseUri } from "../../backend-variables/address";
+import { backendFirebaseUri, fetchBackend } from "../../backend-variables/address";
 import { useAppSelector } from "../../hooks/redux-hooks";
+import DebouncingInput from "../UI/DebouncingInput";
+import classes from './ItemMenu.module.css';
+import { MdEdit } from "react-icons/md";
+import { default as SupplierListItem } from "../supplier-page/ListItem"
 
 interface DeviceFieldsProps {
     imageLink: string;
@@ -49,6 +53,21 @@ const DeviceFields = (props: DeviceFieldsProps) => {
     const [ itemSuggestions, setItemSuggestions ] = useState([]);
 
     const [ supplierSuggestions, setSupplierSuggestions ] = useState([]);
+    const [ supplierSearchText, setSupplierSearchText ] = useState("");
+    const [ showSupplierInput, setShowSupplierInput] = useState(false);
+
+    const showSupplierListItem = !showSupplierInput && supplier;
+    
+    const fetchSupplier = useCallback(async (supplierId: string) => {
+        const res = await fetchBackend(`suppliers/${supplierId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'auth-token': authToken
+            }
+        });
+        const supplierDetails = await res.json();
+        setSupplier(supplierDetails);
+    }, [ authToken ]);    
 
     return (
         <>
@@ -64,42 +83,61 @@ const DeviceFields = (props: DeviceFieldsProps) => {
                 customInputElement={<UploadFile placeholder="תקן בחינה" url={qaStandardLink} isUploading={isQaStandardUploading} onChange={(e) => setQaStandardLink(e.target.files?.[0] ?? '')}  onClear={() => setQaStandardLink("")}/>}/>
             <LabeledInput type="file" label="Service Manual" value={serviceManualLink} placeholder="Service Manual" 
                 customInputElement={<UploadFile placeholder="Service Manual" url={serviceManualLink} isUploading={isServiceManualUploading} onChange={(e) => setServiceManualLink(e.target.files?.[0] ?? '')}  onClear={() => setServiceManualLink("")}/>}/>
-            <LabeledInput label="ספק בארץ" value={supplier} onChange={(e) => handleInput(setSupplier, e)} placeholder="ספק בארץ" />
             
-            <DebouncingInput
-                id="supplierSearch"
-                className={classes.itemCat}
-                inputValue={technicianSearchText}
-                onValueChanged={(val: any) => {
-                    setTechnicianSearchText(val);
-                }}
-                onSuggestionSelected={(t: any) => {
-                    setTechnicians([...technicians, t ])
-                    setAddTechniciansRequested(false)
-                    setTechnicianSearchText("");
-                }}
-                getSuggestionValue={s => s.id}
-                placeholder='חפש טכנאי (שם, ת.ז.)'
-                suggestions={technicianSuggestions.filter(ts => technicians.every(t => t?.id !== ts.id))}
-                onFetchSuggestions={(value: string) => {
-                    fetchBackend(encodeURI(`technicians?search=${value}`), {
-                        method: 'GET',
-                        headers: {
-                            'auth-token': authToken
-                        }
-                    })
-                    .then((res) => res.json())
-                    .then(jsonRes => setTechnicianSuggestions(jsonRes))
-                    .catch((err) => console.log(`Error getting technician suggestions: ${err}`));
-                }}
-                renderSuggestion={t => <span>{t.id} {t.firstName} {t.lastName}</span>}
-                onClearSuggestions={() => setTechnicianSuggestions([])}
-                onBlur={() => {
-                    if (!technicianSuggestions.find((t: any) => t.id === technicianSearchText || t.firstName === technicianSearchText || t.lastName === technicianSearchText)) {
-                        setTechnicianSearchText("");
-                    }
-                }}
-            />
+            <div className={classes.inputGroup}>
+                <label htmlFor="supplierSearch">ספק בארץ</label>                
+                {showSupplierListItem ? (
+                    <span className={classes.listItemContainer}>
+                        <SupplierListItem
+                            className={classes.supplierListItem}
+                            textContentClassName={classes.itemTextContent}
+                            _id={supplier?._id ?? ""}
+                            supplier={supplier}
+                            goToSupplierPage={() => setShowSupplierInput(true)}
+                        />
+                        <MdEdit
+                            onClick={() => {
+                                setShowSupplierInput(true);
+                                setSupplierSearchText(supplier.name);
+                            }}
+                        />
+                    </span>
+                ) : (
+                    <DebouncingInput
+                        id="supplierSearch"
+                        className={classes.itemCat}
+                        inputValue={supplierSearchText}
+                        onValueChanged={(val: any) => setSupplierSearchText(val)}
+                        onValueErased={() => setSupplier(null)}
+                        onSuggestionSelected={(s: any) => {
+                            setSupplier(s);
+                            fetchSupplier(s._id);
+                            setShowSupplierInput(false)
+                        }}
+                        getSuggestionValue={s => s.name}
+                        placeholder='חפש ספק (שם, מזהה במשדד הביטחון)'
+                        suggestions={supplierSuggestions}
+                        onFetchSuggestions={(value: string) => {
+                            fetchBackend(encodeURI(`suppliers?search=${value}`), {
+                                method: 'GET',
+                                headers: {
+                                    'auth-token': authToken
+                                }
+                            })
+                            .then((res) => res.json())
+                            .then(jsonRes => setSupplierSuggestions(jsonRes))
+                            .catch((err) => console.log(`Error getting item suggestions: ${err}`));
+                        }}
+                        renderSuggestion={s => <span>{s.id} {s.name}</span>}
+                        onClearSuggestions={() => { console.log(`clearing suggestions`); setSupplierSuggestions([]); }}
+                        onBlur={() => {
+                            if (!supplierSuggestions.find((s: any) => s.id === supplierSearchText || s.name === supplierSearchText)) {
+                                setSupplierSearchText("");
+                            }
+                        }}
+                    />
+                )}
+            </div>
             
             
             <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />
