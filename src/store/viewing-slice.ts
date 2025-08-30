@@ -20,7 +20,11 @@ const initialViewState = {
     certificationManagement: {
         currentCertificationId: "",
         changesApplied: false
-    },    
+    },
+    supplierManagement: {
+        currentSupplierId: "",
+        changesApplied: false
+    },
     searching: {
         searchVal: "",
         sector: "",
@@ -52,7 +56,7 @@ const viewingSlice = createSlice({
         },
         changesAppliedToUser(state, action: PayloadAction<boolean>) {
             state.userManagement.changesApplied = action.payload;
-        },        
+        },
         manageCertificationId(state, action: PayloadAction<string>) {
             state.certificationManagement.currentCertificationId = action.payload;
         },
@@ -65,6 +69,12 @@ const viewingSlice = createSlice({
         changesAppliedToItem(state, action: PayloadAction<boolean>) {
             state.itemManagement.changesApplied = action.payload;
         },
+        manageSupplierId(state, action: PayloadAction<string>) {
+            state.supplierManagement.currentSupplierId = action.payload;
+        },
+        changesAppliedToSupplier(state, action: PayloadAction<boolean>) {
+            state.supplierManagement.changesApplied = action.payload;
+        },        
         changeSearchCriteria(state, action: PayloadAction<{ searchVal?: string, sector?: string, department?: string, showArchived?: boolean, page?: number }>) {
             if (typeof action.payload.searchVal === "string") state.searching.searchVal = action.payload.searchVal;
             if (typeof action.payload.sector === "string") state.searching.sector = action.payload.sector;

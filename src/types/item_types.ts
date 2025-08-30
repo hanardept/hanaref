@@ -5,6 +5,11 @@ export enum CatType {
     SparePart = 'חלק חילוף',
 }
 
+export interface SupplierSummary {
+    _id: string;
+    name: string;
+}
+
 export type AbbreviatedItem = { _id?: string, name: string, cat: string, imageLink?: string, manufacturer?: string, archived?: boolean };
 export type Item = {
     _id: string,
@@ -23,7 +28,7 @@ export type Item = {
     serviceManualLink?: string,
     hebrewManualLink?: string,
     emergency?: boolean,
-    supplier?: string,
+    supplier?: SupplierSummary,
     lifeSpan?: string,
     models?: AbbreviatedItem[],
     accessories?: AbbreviatedItem[],

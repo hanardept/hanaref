@@ -7,6 +7,7 @@ import classes from './Header.module.css';
 import { CiExport } from "react-icons/ci";
 import { Role } from "../../types/user_types";
 import RolesOnly from "../authorization/RolesOnly";
+import { exportSuppliersToCsv } from "../supplier-page/DownloadSupplierWorksheet";
 
 
 const LeftHeaderSide = () => {
@@ -15,6 +16,7 @@ const LeftHeaderSide = () => {
     const currentTechnicianId = useAppSelector(state => state.viewing.technicianManagement.currentTechnicianId);
     const currentCertificationId = useAppSelector(state => state.viewing.certificationManagement.currentCertificationId);
     const currentUserId = useAppSelector(state => state.viewing.userManagement.currentUserId);
+    const currentSupplierId = useAppSelector(state => state.viewing.supplierManagement.currentSupplierId);
     const dispatch = useAppDispatch();
 
     const addItemAndManageSectors = 
@@ -45,6 +47,13 @@ const LeftHeaderSide = () => {
         </span>
     ;
 
+    const addSupplier = 
+        <span className={classes.toolbarSpan}>
+            <AdminOnly hide={true}><span onClick={() => dispatch(exportSuppliersToCsv())} style={{ lineHeight: 0 }}><CiExport/></span></AdminOnly>
+            <span onClick={() => navigate('/suppliermenu')} style={{ lineHeight: 0 }}>+</span>
+        </span>
+    ;    
+
 
     return (
         <Routes>
@@ -66,7 +75,11 @@ const LeftHeaderSide = () => {
             <Route path="users" element={addUser} />
             <Route path="users/*" element={<AdminOnly hide={true}><span className={classes.toolbarSpan} onClick={() => navigate(`usermenu/${currentUserId}`)}>ערוך</span></AdminOnly>} />
             <Route path="usermenu" element={<></>} />
-            <Route path="usermenu/*" element={<></>} />            
+            <Route path="usermenu/*" element={<></>} />
+            <Route path="suppliers" element={addSupplier} />
+            <Route path="suppliers/*" element={<AdminOnly hide={true}><span className={classes.toolbarSpan} onClick={() => navigate(`suppliermenu/${currentSupplierId}`)}>ערוך</span></AdminOnly>} />
+            <Route path="suppliermenu" element={<></>} />
+            <Route path="suppliermenu/*" element={<></>} />                
         </Routes>
             
     )

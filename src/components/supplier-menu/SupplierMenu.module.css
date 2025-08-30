@@ -1,0 +1,273 @@
+/* SupplierMenu.module.css */
+
+/* GLOBAL BOX-SIZING RESET: This is good practice and should be kept. */
+/* It acts as a fallback if other, more specific rules don't define box-sizing. */
+html {
+  box-sizing: border-box;
+}
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+/* END GLOBAL BOX-SIZING RESET */
+
+
+@import '../../css-variables/constants.css';
+
+.supplierMenu {
+    display: grid;
+    padding: 1rem; /* Padding for all sides from screen edges (16px by default) */
+    box-sizing: border-box; /* Explicitly set here too */
+    overflow-x: hidden; /* Crucial to prevent horizontal scrollbar if content still overflows */
+
+    /* Max-width and margin:auto for centering on wider screens */
+    margin: 0 auto; /* Centers the component horizontally on the screen */
+    gap: 0;
+    min-width: 0;
+
+    /* The `width` property here ensures it expands on smaller screens, respecting its own padding */
+    width: 100%; /* Take 100% of available parent width (e.g., body), within max-width */
+}
+
+.supplierMenu > * {
+    margin-bottom: 1rem;
+}
+
+.supplierMenu h1 {
+    margin-top: 0.5rem;
+    font-size: 1.4rem;
+    text-align: right;
+}
+
+/* Force box-sizing: border-box on ALL form controls and key layout elements that are children */
+/* This specific rule with multiple selectors has higher specificity than a general * rule */
+/* Using !important as a last resort if standard specificity fails to override */
+.supplierMenu input,
+.supplierMenu select,
+.supplierMenu textarea,
+.supplierMenu .react-autosuggest__container, /* Wrapper for DebouncingInput */
+.supplierMenu .react-datepicker-wrapper, /* Wrapper for DatePicker */
+.supplierMenu .listItemContainer, /* Wrapper for ItemListItem/MdEdit */
+/* .supplierMenu .itemListItem,
+.supplierMenu .technicianListItem, */
+.supplierMenu .bigButton, /* The BigButton component */
+.supplierMenu > span { /* Any direct child span of supplierMenu, including your example */
+    box-sizing: border-box !important; /* THIS IS THE KEY FIX */
+    min-width: 0 !important;
+    width: 100% !important;
+    margin: 0 !important; /* Force margin to 0 */
+    padding: 0 !important; 
+    display: flex;
+    text-align: start;
+}
+
+
+.supplierMenu input {
+    font-size: 1.3rem;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%; /* Should now correctly resolve to 368px */
+    display: block;
+    /* box-sizing is handled by the group selector above */
+}
+
+/* Specific input types (like number/search) might have fixed widths. */
+.supplierMenu input[type="number"],
+.supplierMenu input[type="search"] {
+    width: 25ch;
+    margin-left: auto; /* Pushes the input to the right within its 100% width parent */
+}
+
+.supplierMenu select {
+    font-size: 1.1rem;
+    padding: 5px;
+    width: 100%;
+    display: block;
+    /* box-sizing is handled by the group selector above */
+}
+.supplierMenu textarea {
+    font-size: 1.1rem;
+    padding: 5px;
+    width: 100%;
+    display: block;
+    /* box-sizing is handled by the group selector above */
+}
+.supplierMenu h3 {
+    margin-top: 2rem;
+    text-align: right;
+}
+
+/* --- Input Group Styling --- */
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+    width: 100%; /* Should now correctly resolve to 368px */
+    box-sizing: border-box; /* Explicitly set here too, though covered by group selector */
+    min-width: 0;
+}
+
+.inputGroup label {
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    text-align: right;
+    width: 100%;
+    box-sizing: border-box; /* Explicitly set here too, though covered by group selector */
+}
+
+/* Ensures common input-like elements fill their container */
+.inputGroup input:not([type="number"]):not([type="search"]),
+.inputGroup .react-autosuggest__container,
+.inputGroup .react-datepicker-wrapper {
+    width: 100%; /* Should now correctly resolve to 368px */
+    display: block;
+    /* box-sizing is handled by the group selector above */
+}
+
+
+/* --- ItemListItem specific styles (already mostly fine, just ensuring box-sizing) --- */
+
+.listItemContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px; /* Your desired gap */
+    width: 100%; /* Important: This means 100% of the parent's content area (368px) */
+    max-width: 100%;
+    min-width: 0; /* Ensures the container itself can shrink */
+    overflow: hidden; /* Hides any visual overflow */
+    box-sizing: border-box; /* Proper box model */
+    flex-shrink: 1; /* Allows this container to shrink */
+    /* flex-basis: auto; // Keep or remove, default is fine */
+}
+
+.itemListItem,
+.technicianListItem {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px; /* Your desired gap */
+    height: 80px;
+    padding: 0 1rem; /* 16px horizontal padding each side */
+    border: 1px solid #ccc; /* 1px border each side */
+    border-radius: 8px;
+    box-sizing: border-box;
+
+    flex-grow: 1; /* Allows it to grow to fill space within listItemContainer */
+    flex-shrink: 1; /* Allows it to shrink */
+    flex-basis: 0; /* Ensures it starts shrinking from 0 for available space calculation */
+    min-width: 0; /* Crucial for text truncation */
+    overflow-x: hidden; /* Hides horizontal overflow within this element */
+}
+
+/* Ensure text content inside also respects borders/padding if any were added */
+.itemTextContent,
+.technicianTextContent {
+    flex-grow: 1; /* Allows text to grow */
+    flex-shrink: 1; /* Allows text to shrink */
+    flex-basis: 0; /* Ensures text starts shrinking from 0 for available space calculation */
+
+    display: flex;
+    flex-direction: column;
+    width: 0; 
+
+    /* ***** THE MOST CRITICAL PART ***** */
+    /* Explicitly setting min-width to 0 is key, but sometimes a browser's
+       internal min-content calculation can interfere.
+       Using 'initial' can sometimes help reset it more forcefully. */
+    min-width: 0 !important; /* Force min-width to 0, ensuring it can always collapse */
+    /* Or, if the above doesn't work, try a non-zero, very small pixel value,
+       like min-width: 1px; for edge cases, but 0 is preferred. */
+    
+    overflow: hidden; /* Essential for ellipsis */
+    text-overflow: ellipsis; /* Essential for ellipsis */
+    white-space: nowrap; /* Keeps text on one line */
+    text-align: right; /* Your original alignment */
+    box-sizing: border-box;
+}
+
+.itemTextContent p {
+    flex-shrink: 1;
+    display: flex;
+    min-width: 0;
+}
+
+.itemListItemImage {
+    height: 90%;
+    width: auto;
+    object-fit: contain;
+    max-width: 80px; /* Explicitly limits the image's max size */
+    flex-shrink: 0; /* Prevents image from shrinking */
+    flex-basis: auto; /* Allows it to take its natural size up to max-width */
+}
+
+.itemListItem h2,
+.technicianListItem h2 {
+    font-size: 1.1rem;
+    margin: 0.5rem 0;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    box-sizing: border-box; /* Explicitly set here too */
+}
+
+
+.itemListItem,
+.technicianListItem {
+    /* ... existing styles like display, flex-direction, gap, height, padding, border, border-radius, box-sizing ... */
+    display: flex;
+    box-sizing: border-box !important; /* THIS IS THE KEY FIX */
+    min-width: 0 !important;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0; /* ADD or ensure this line is present */
+    overflow-x: hidden;
+}
+
+    /* box-sizing: border-box !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    
+    margin: 0 !important; 
+    padding: 0 !important; 
+    display: flex; */
+
+.listItemContainer svg { /* The MdEdit icon */
+    flex-shrink: 0; /* Prevents SVG from shrinking */
+    flex-basis: auto; /* Allows it to take its natural size (24px) */
+    width: 24px; /* Ensure its fixed width */
+    height: 24px;
+    color: var(--primary-color);
+}
+
+.datepicker,
+.react-datepicker-wrapper,
+.react-datepicker__input-container,
+.react-datepicker__input-container input {
+    width: 100%;
+    display: block;
+    /* box-sizing is handled by the group selector above */
+}
+
+.supplierMenu .bigButton {
+    width: 100%;
+    display: block;
+    /* box-sizing is handled by the group selector above */
+}
+
+/* The specific span containing "תאריך תפוגת הסמכה אחרונה" */
+.supplierMenu > span {
+    width: 100%;
+    display: block;
+    /* box-sizing is handled by the group selector above */
+}
+
+.addButtonContainer {
+    display: flex;
+    justify-content: center;
+    font-size: 30px;
+}
