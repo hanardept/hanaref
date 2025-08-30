@@ -248,3 +248,19 @@
     height: 24px;
     color: var(--primary-color);
 }
+.emergencyToggle {
+    text-align: start;
+    flex: 0 0 auto;
+    margin-left: 0.5rem;
+}
+
+.emergencyToggle label {
+    font-weight: 500;
+    margin-right: 0;
+    cursor: pointer;
+}
+
+.emergencyToggle input {
+    width: auto;
+    margin-left: 8px; /* Space between checkbox and text */
+}

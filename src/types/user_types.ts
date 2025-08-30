@@ -16,7 +16,6 @@ export const roleNames: Record<string, string> = {
 }
 
 export type User = {
-    id: string,
     firstName: string,
     lastName: string,
     username: string,

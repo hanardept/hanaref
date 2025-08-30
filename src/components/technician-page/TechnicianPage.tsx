@@ -78,7 +78,7 @@ const TechnicianPage = () => {
         });
 
         const getCertifications = async () => {
-            const fetchedCertifications = await fetchBackend(`certifications?technician=${params.technicianid}`, {
+            const fetchedCertifications = await fetchBackend(`certifications?user=${params.technicianid}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
@@ -158,7 +158,6 @@ const TechnicianPage = () => {
             {loading && <LoadingSpinner />}
             {!loading && technician && <div className={classes.technicianPage}>
                 <h1>{technician.firstName} {technician.lastName}</h1>
-                <p>{`ת.ז.: ${technician.id}`}</p>
                 <p>{`שיוך: ${technician.association}`}</p>
                 {((frontEndPrivilege === Role.Admin) || (userId === technician._id)) &&
                 <>

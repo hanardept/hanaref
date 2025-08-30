@@ -137,7 +137,6 @@ const UserPage = () => {
             {loading && <LoadingSpinner />}
             {!loading && user && <div className={classes.userPage}>
                 <h1>{user.firstName} {user.lastName}</h1>
-                <p>{`ת.ז.: ${user.id}`}</p>
                 <p>{`שם פרטי: ${user.firstName}`}</p>
                 <p>{`שם משפחה: ${user.lastName}`}</p>
                 <p>{`שם משתמש: ${user.username}`}</p>

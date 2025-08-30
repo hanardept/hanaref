@@ -14,14 +14,12 @@ const TechnicianMenu = () => {
     const authToken = useAppSelector(state => state.auth.jwt);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const [id, setId] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [association, setAssociation] = useState(associationOptions[0]);
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
     const technicianDetails = {
-        id: id,
         firstName: firstName,
         lastName: lastName,
         association: association
@@ -40,7 +38,6 @@ const TechnicianMenu = () => {
                 return await fetchedTechnician.json();
             };
             getTechnician().then((t: Technician) => {
-                setId(t.id);
                 setFirstName(t.firstName);
                 setLastName(t.lastName);
                 setAssociation(t.association);
@@ -56,9 +53,9 @@ const TechnicianMenu = () => {
     
     const handleSave = () => {
 
-        if (!technicianDetails.id || !technicianDetails.firstName || !technicianDetails.lastName || !technicianDetails.association) {
+        if (!technicianDetails.firstName || !technicianDetails.lastName || !technicianDetails.association) {
             // if the required fields of the Technician mongo schema are not filled then don't save
-            console.log("Please make sure to enter an id, first name, last name and association");
+            console.log("Please make sure to enter a first name, last name and association");
             return;
         }
 
@@ -114,7 +111,6 @@ const TechnicianMenu = () => {
     return (
         <div className={classes.technicianMenu}>
             <h1>{params.technicianid ? "עריכת טכנאי" : "הוספת טכנאי"}</h1>
-            <input type="text" placeholder='ת.ז.' value={id} onChange={(e) => handleInput(setId, e)} />
             <input type="text" placeholder='שם פרטי' value={firstName} onChange={(e) => handleInput(setFirstName, e)} />
             <input type="text" placeholder='שם משפחה' value={lastName} onChange={(e) => handleInput(setLastName, e)} />
             <AssociationSelection priorChosenAssociation={association} selectAssociation={association => setAssociation(association)} />

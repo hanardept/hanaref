@@ -11,6 +11,7 @@ import LoadingSpinner from "../UI/LoadingSpinner";
 import { backendFirebaseUri } from "../../backend-variables/address";
 import BigButton from "../UI/BigButton"; // Importing your existing button component
 import { withAuthenticationRequired } from "@auth0/auth0-react";
+import { Role } from "../../types/user_types";
 
 
 // A new helper function to call our backend archive endpoint
@@ -34,10 +35,9 @@ const toggleItemArchiveStatus = async (itemCat: string, authToken: string) => {
 
 const ItemPage = () => {
     const params = useParams();
-    const authToken = useAppSelector(state => state.auth.jwt);
+    const { jwt: authToken, frontEndPrivilege } = useAppSelector(state => state.auth);
     const [item, setItem] = useState<Item | null>(null);
     const [loading, setLoading] = useState(true);
-    const frontEndPrivilege = useAppSelector(state => state.auth.frontEndPrivilege);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [isArchiving, setIsArchiving] = useState(false); // State to handle button disabling
@@ -56,13 +56,13 @@ const ItemPage = () => {
         };
         getItem().then(i => {
             // If the item is archived and the user is not an admin, they shouldn't see it.
-            if (i.archived && frontEndPrivilege !== 'admin') {
+            if (i.archived && frontEndPrivilege !== Role.Admin) {
                 navigate(`/itemnotfound/${params.itemid}`);
                 return;
             }
             setItem(i);
             setLoading(false);
-            if (frontEndPrivilege === "admin") {
+            if (frontEndPrivilege === Role.Admin) {
                 dispatch(viewingActions.manageItem(params.itemid as string));
             }
         }).catch(e => {
@@ -114,8 +114,9 @@ const ItemPage = () => {
                 <h1>{item.name}</h1>
                 <p>{`מק"ט: ${item.cat}`}</p>
                 {item.catType === "מכשיר" && <p>{`מק"ט ערכה: ${item.kitCats?.[0] ?? ''}`}</p>}
-                {item.catType === "מכשיר" && <p>{`תוקף הסמכה בחודשים: ${item.certificationPeriodMonths ?? ''}`}</p>}
+                {[ Role.Admin, Role.Technician].includes(frontEndPrivilege as Role) && item.catType === "מכשיר" && <p>{`תוקף הסמכה בחודשים: ${item.certificationPeriodMonths ?? ''}`}</p>}
                 {item.catType === "מתכלה" && <p>{`אורך חיים בחודשים: ${item.lifeSpan ?? ''}`}</p>}
+                {item.catType === "מכשיר" && <p>{`חירום: ${item.emergency ? "כן" : "לא"}`}</p>}
                 <p>{`ספק בארץ: ${item.supplier?.name ?? ''}`}</p>
                 {item.description && <p>{item.description}</p>}
                 {item.imageLink && <img src={item.imageLink} alt={item.name} />}
