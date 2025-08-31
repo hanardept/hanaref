@@ -87,7 +87,7 @@ const SparePartFields = (props: SparePartFieldsProps) => {
                             setShowSupplierInput(false)
                         }}
                         getSuggestionValue={s => s.name}
-                        placeholder='חפש ספק (שם, מזהה במשדד הביטחון)'
+                        placeholder='חפש ספק (שם, מזהה במשרד הביטחון)'
                         suggestions={supplierSuggestions}
                         onFetchSuggestions={(value: string) => {
                             fetchBackend(encodeURI(`suppliers?search=${value}`), {
