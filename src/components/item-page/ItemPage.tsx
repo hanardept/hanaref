@@ -1,7 +1,7 @@
 // src/components/item-page/ItemPage.tsx
 
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { Item } from "../../types/item_types";
 import InfoSection from "./InfoSection";
@@ -117,7 +117,14 @@ const ItemPage = () => {
                 {[ Role.Admin, Role.Technician].includes(frontEndPrivilege as Role) && item.catType === "מכשיר" && <p>{`תוקף הסמכה בחודשים: ${item.certificationPeriodMonths ?? ''}`}</p>}
                 {item.catType === "מתכלה" && <p>{`אורך חיים בחודשים: ${item.lifeSpan ?? ''}`}</p>}
                 {item.catType === "מכשיר" && <p>{`חירום: ${item.emergency ? "כן" : "לא"}`}</p>}
-                <p>{`ספק בארץ: ${item.supplier?.name ?? ''}`}</p>
+                <p>{'ספק בארץ: '}
+                {item.supplier && 
+                    <Link
+                        to={`/suppliers/${item.supplier?._id}`} 
+                        onClick={() => navigate(`/suppliers/${item.supplier?._id}`)}>{item.supplier.name}
+                    </Link>
+                }
+                </p>
                 {item.description && <p>{item.description}</p>}
                 {item.imageLink && <img src={item.imageLink} alt={item.name} />}
                 {
