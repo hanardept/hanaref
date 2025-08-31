@@ -141,7 +141,7 @@ const SupplierMenu = () => {
             <LabeledInput label="נייד של איש קשר" placeholder="נייד של איש קשר" value={contactCell} onChange={(e) => handleInput(setContactCell, e)} />
             <LabeledInput label="מייל של איש קשר" placeholder="מייל של איש קשר" value={contactEmail} onChange={(e) => handleInput(setContactEmail, e)} />
             <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "2.5rem" }} />
-            {params.technicianid && <BigButton text="מחק ספק" action={() => setAreYouSureDelete(true)} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} />}
+            {params.supplierid && <BigButton text="מחק ספק" action={() => setAreYouSureDelete(true)} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} />}
             {areYouSureDelete && <AreYouSure text="האם באמת למחוק ספק?" leftText='מחק' leftAction={handleDelete} rightText='לא' rightAction={() => setAreYouSureDelete(false)} />}
         </div>
     )
