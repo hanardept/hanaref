@@ -45,8 +45,7 @@ const AccessoryFields = (props: AccessoryFieldsProps) => {
     } else {
         actualSupplier.supplier = belongsToDevices?.sort((d1, d2) => new Date(d1.createdAt!).getTime() - new Date(d2.createdAt!).getTime()).find(d => d.supplier)?.supplier;
         actualSupplier.isParent = true;
-    }       
-    console.log(`actual supplier: ${JSON.stringify(actualSupplier)}, item supplier: ${JSON.stringify(supplier)}`);
+    }
 
     const showSupplierListItem = actualSupplier.supplier && !showSupplierInput;
     
@@ -60,12 +59,6 @@ const AccessoryFields = (props: AccessoryFieldsProps) => {
         const supplierDetails = await res.json();
         setSupplier(supplierDetails);
     }, [ authToken, setSupplier ]);  
-    
-
-    // if (actualSupplier) {
-    //     setSupplier(actualSupplier.supplier ?? null);
-    //     setIsSupplierFromParent(actualSupplier.isParent);
-    // }
 
     return (
         <>
@@ -97,6 +90,7 @@ const AccessoryFields = (props: AccessoryFieldsProps) => {
                     ) : (
                         <DebouncingInput
                             id="supplierSearch"
+                            disabled={supplier === undefined}
                             className={classes.itemCat}
                             inputValue={supplierSearchText}
                             onValueChanged={(val: any) => setSupplierSearchText(val)}
@@ -137,7 +131,6 @@ const AccessoryFields = (props: AccessoryFieldsProps) => {
                             setSupplier(v.target.checked ? undefined : null);
                             setSupplierSearchText("");
                         }}/>
-                    {/* <BigButton className={classes.supplierInheritButton} text="ממכשיר" action={() => setSupplier(undefined)}/> */}
                 </div>
             </div>
 
