@@ -1,4 +1,5 @@
 import { Supplier } from '../../types/supplier_types';
+import classes from './ListItem.module.css';
 
 interface ListItemProps {
     _id: string;
@@ -6,6 +7,7 @@ interface ListItemProps {
     goToSupplierPage: (_id: string) => void;
     className?: string;
     textContentClassName?: string;
+    customElement?: React.ReactElement;
 }
 
 
@@ -22,7 +24,10 @@ const ListItem = (props: ListItemProps) => {
             <div className={props.textContentClassName}>
                 <h2>{props.supplier.name}</h2>
                 <h2>{props.supplier.id}</h2>
-            </div>       
+            </div>  
+            <div className={classes.customElementContainer} data-custom-element={props.customElement}>
+                {props.customElement}
+            </div>                     
         </div>
     )
 };

@@ -15,19 +15,20 @@ interface AccessoryFieldsProps {
     isImageUploading?: boolean;
     userManualLink: string;
     isUserManualUploading?: boolean;
-    supplier: SupplierSummary | null;
+    supplier: SupplierSummary | null | undefined;
+    isSupplierFromParent: boolean;
     models: AbbreviatedItem[];
     belongsToDevices: AbbreviatedItem[];
     handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => void;
     setImageLink: React.Dispatch<React.SetStateAction<string | File>>;
     setUserManualLink: React.Dispatch<React.SetStateAction<string | File>>;
-    setSupplier: React.Dispatch<React.SetStateAction<SupplierSummary | null>>;
+    setSupplier: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
     setModels: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setBelongsToDevices: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
 }
 
 const AccessoryFields = (props: AccessoryFieldsProps) => {
-    const { imageLink, isImageUploading, userManualLink, isUserManualUploading, supplier, models, belongsToDevices, setImageLink, setUserManualLink, setSupplier, setModels, setBelongsToDevices } = props;
+    const { imageLink, isImageUploading, userManualLink, isUserManualUploading, supplier, isSupplierFromParent, models, belongsToDevices, setImageLink, setUserManualLink, setSupplier, setModels, setBelongsToDevices } = props;
 
     const authToken = useAppSelector(state => state.auth.jwt);
     const [ itemSuggestions, setItemSuggestions ] = useState([]);    
@@ -66,6 +67,7 @@ const AccessoryFields = (props: AccessoryFieldsProps) => {
                             _id={supplier?._id ?? ""}
                             supplier={supplier}
                             goToSupplierPage={() => setShowSupplierInput(true)}
+                            customElement={isSupplierFromParent ? <span className={classes.parentSupplierBadge}>עפ"י מכשיר מקושר</span> : undefined}
                         />
                         <MdEdit
                             onClick={() => {
@@ -73,8 +75,10 @@ const AccessoryFields = (props: AccessoryFieldsProps) => {
                                 setSupplierSearchText(supplier.name);
                             }}
                         />
+                        <button onClick={() => setSupplier(undefined)}>ממכשיר</button>
                     </span>
                 ) : (
+                    <span>
                     <DebouncingInput
                         id="supplierSearch"
                         className={classes.itemCat}
@@ -108,6 +112,8 @@ const AccessoryFields = (props: AccessoryFieldsProps) => {
                             }
                         }}
                     />
+                    <button onClick={() => setSupplier(undefined)}>ממכשיר</button>
+                    </span>
                 )}
             </div>
 

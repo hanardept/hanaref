@@ -52,7 +52,8 @@ const ItemMenu = () => {
     const [hebrewManualLink, setHebrewManualLink] = useState("" as (string | File));
     const [isHebrewManualUploading, setIsHebrewManualUploading] = useState(false);
     const [emergency, setEmergency] = useState(false);
-    const [supplier, setSupplier] =  useState(null as SupplierSummary | null);
+    const [supplier, setSupplier] =  useState(undefined as SupplierSummary | null | undefined);
+    const [isSupplierFromParent, setIsSupplierFromParent] =  useState(false);
     const [lifeSpan, setLifeSpan] = useState("");
     const [models, setModels] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [accessories, setAccessories] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
@@ -89,6 +90,8 @@ const ItemMenu = () => {
                 setSectorsToChooseFrom(s);
                 return getItem();
             }).then((i: Item) => {
+
+
                 setName(i.name);
                 setCat(i.cat);
                 setSector(i.sector);
@@ -103,7 +106,22 @@ const ItemMenu = () => {
                 if (i.serviceManualLink) setServiceManualLink(i.serviceManualLink);
                 if (i.hebrewManualLink) setHebrewManualLink(i.hebrewManualLink);
                 if (i.emergency) setEmergency(i.emergency);
-                if (i.supplier) setSupplier(i.supplier);
+
+                const actualSupplier = {
+                    supplier: undefined as SupplierSummary | undefined,
+                    isParent: false,
+                };
+                if (i.supplier !== undefined) {
+                    actualSupplier.supplier = i.supplier;
+                } else {
+                    actualSupplier.supplier = i.belongsToDevices?.sort((d1, d2) => new Date(d1.createdAt!).getTime() - new Date(d2.createdAt!).getTime()).find(d => d.supplier)?.supplier;
+                    actualSupplier.isParent = true;
+                }       
+                console.log(`actual supplier: ${JSON.stringify(actualSupplier)}`);
+                if (actualSupplier) {
+                    setSupplier(actualSupplier.supplier ?? null);
+                    setIsSupplierFromParent(actualSupplier.isParent);
+                }
                 if (i.lifeSpan) setLifeSpan(i.lifeSpan);
                 if (i.models && i.models.length > 0) setModels(i.models);
                 if (i.accessories && i.accessories.length > 0) setAccessories(i.accessories);
@@ -375,6 +393,7 @@ const ItemMenu = () => {
                     userManualLink={getFilename(userManualLink)}
                     isUserManualUploading={isUserManualUploading}
                     supplier={supplier}
+                    isSupplierFromParent={isSupplierFromParent}
                     models={models}
                     belongsToDevices={belongsToDevices}
                     handleInput={handleInput}

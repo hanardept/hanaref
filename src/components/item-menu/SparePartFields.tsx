@@ -15,13 +15,13 @@ interface SparePartFieldsProps {
     isImageUploading?: boolean;
     userManualLink: string;
     isUserManualUploading?: boolean;
-    supplier: SupplierSummary | null;
+    supplier: SupplierSummary | null | undefined;
     models: AbbreviatedItem[];
     belongsToDevices: AbbreviatedItem[];
     handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => void;
     setImageLink: React.Dispatch<React.SetStateAction<string | File>>;
     setUserManualLink: React.Dispatch<React.SetStateAction<string | File>>;
-    setSupplier: React.Dispatch<React.SetStateAction<SupplierSummary | null>>;
+    setSupplier: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
     setModels: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setBelongsToDevices: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
 }

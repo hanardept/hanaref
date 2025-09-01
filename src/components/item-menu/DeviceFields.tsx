@@ -23,7 +23,7 @@ interface DeviceFieldsProps {
     isServiceManualUploading?: boolean;
     hebrewManualLink: string;
     isHebrewManualUploading?: boolean;
-    supplier: SupplierSummary | null;
+    supplier: SupplierSummary | null | undefined;
     models: AbbreviatedItem[];
     accessories: AbbreviatedItem[];
     consumables: AbbreviatedItem[];
@@ -35,7 +35,7 @@ interface DeviceFieldsProps {
     setUserManualLink: React.Dispatch<React.SetStateAction<string | File>>;
     setServiceManualLink: React.Dispatch<React.SetStateAction<string | File>>;
     setHebrewManualLink: React.Dispatch<React.SetStateAction<string | File>>;
-    setSupplier: React.Dispatch<React.SetStateAction<SupplierSummary | null>>;
+    setSupplier: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
     setModels: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setAccessories: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setConsumables: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;

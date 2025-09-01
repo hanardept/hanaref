@@ -10,7 +10,7 @@ export interface SupplierSummary {
     name: string;
 }
 
-export type AbbreviatedItem = { _id?: string, name: string, cat: string, imageLink?: string, manufacturer?: string, archived?: boolean };
+export type AbbreviatedItem = { _id?: string, name: string, cat: string, imageLink?: string, manufacturer?: string, archived?: boolean, createdAt?: string, supplier?: SupplierSummary };
 export type Item = {
     _id: string,
     name: string,
