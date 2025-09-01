@@ -56,10 +56,10 @@ const SupplierPage = () => {
                 <p>{`מספר ספק במשרד הביטחון: ${supplier.id}`}</p>
                 <p>{`רחוב: ${supplier.street}`}</p>
                 <p>{`עיר: ${supplier.city}`}</p>
-                <p>{`מספר טלפון משרדי: ${supplier.officePhone}`}</p>
+                <p>מספר טלפון משרדי: <a href={`tel:${supplier.officePhone}`}>{supplier.officePhone}</a></p>
                 <p>{`איש קשר: ${supplier.contact}`}</p>
-                <p>{`נייד של איש הקשר: ${supplier.contactCell}`}</p>
-                <p>{`מייל של איש הקשר: ${supplier.contactEmail}`}</p>
+                <p>נייד של איש הקשר: <a href={`tel:${supplier.contactCell}`}>{supplier.contactCell}</a></p>
+                <p>מייל של איש הקשר: <a href={`mailto:${supplier.contactEmail}`}>{supplier.contactEmail}</a></p>
             </div>}
         </>
     );
