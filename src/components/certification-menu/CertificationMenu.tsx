@@ -22,6 +22,7 @@ import { Role } from '../../types/user_types';
 interface ItemSummary {
     _id: string;
     cat: string;
+    kitCats?: string[];
     name: string;
     certificationPeriodMonths?: number;
     imageLink?: string;
@@ -222,6 +223,7 @@ const CertificationMenu = () => {
                             textContentClassName={classes.itemTextContent}
                             imageClassName={classes.itemListItemImage}
                             cat={item.cat}
+                            kitCat={item.kitCats?.[0]}
                             name={item.name}
                             imageLink={item.imageLink}
                             shouldBeColored={false}
