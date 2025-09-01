@@ -16,7 +16,6 @@ interface AccessoryFieldsProps {
     userManualLink: string;
     isUserManualUploading?: boolean;
     supplier: SupplierSummary | null | undefined;
-    isSupplierFromParent: boolean;
     models: AbbreviatedItem[];
     belongsToDevices: AbbreviatedItem[];
     handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => void;
@@ -28,7 +27,7 @@ interface AccessoryFieldsProps {
 }
 
 const AccessoryFields = (props: AccessoryFieldsProps) => {
-    const { imageLink, isImageUploading, userManualLink, isUserManualUploading, supplier, isSupplierFromParent, models, belongsToDevices, setImageLink, setUserManualLink, setSupplier, setModels, setBelongsToDevices } = props;
+    const { imageLink, isImageUploading, userManualLink, isUserManualUploading, supplier, models, belongsToDevices, setImageLink, setUserManualLink, setSupplier, setModels, setBelongsToDevices } = props;
 
     const authToken = useAppSelector(state => state.auth.jwt);
     const [ itemSuggestions, setItemSuggestions ] = useState([]);    
@@ -37,7 +36,19 @@ const AccessoryFields = (props: AccessoryFieldsProps) => {
     const [ supplierSearchText, setSupplierSearchText ] = useState("");
     const [ showSupplierInput, setShowSupplierInput] = useState(false);
 
-    const showSupplierListItem = !showSupplierInput && supplier;
+    const actualSupplier = {
+        supplier: undefined as SupplierSummary | null | undefined,
+        isParent: false,
+    };
+    if (supplier !== undefined) {
+        actualSupplier.supplier = supplier;
+    } else {
+        actualSupplier.supplier = belongsToDevices?.sort((d1, d2) => new Date(d1.createdAt!).getTime() - new Date(d2.createdAt!).getTime()).find(d => d.supplier)?.supplier;
+        actualSupplier.isParent = true;
+    }       
+    console.log(`actual supplier: ${JSON.stringify(actualSupplier)}, item supplier: ${JSON.stringify(supplier)}`);
+
+    const showSupplierListItem = actualSupplier.supplier && !showSupplierInput;
     
      const fetchSupplier = useCallback(async (supplierId: string) => {
         const res = await fetchBackend(`suppliers/${supplierId}`, {
@@ -48,7 +59,13 @@ const AccessoryFields = (props: AccessoryFieldsProps) => {
         });
         const supplierDetails = await res.json();
         setSupplier(supplierDetails);
-    }, [ authToken, setSupplier ]);        
+    }, [ authToken, setSupplier ]);  
+    
+
+    // if (actualSupplier) {
+    //     setSupplier(actualSupplier.supplier ?? null);
+    //     setIsSupplierFromParent(actualSupplier.isParent);
+    // }
 
     return (
         <>
@@ -58,63 +75,70 @@ const AccessoryFields = (props: AccessoryFieldsProps) => {
                 customInputElement={<UploadFile placeholder="מדריך למשתמש" url={userManualLink} isUploading={isUserManualUploading} onChange={(e) => setUserManualLink(e.target.files?.[0] ?? '')} onClear={() => setUserManualLink("")}/>}/>
 
             <div className={classes.inputGroup}>
-                <label htmlFor="supplierSearch">ספק בארץ</label>                
-                {showSupplierListItem ? (
-                    <span className={classes.listItemContainer}>
-                        <SupplierListItem
-                            className={classes.supplierListItem}
-                            textContentClassName={classes.itemTextContent}
-                            _id={supplier?._id ?? ""}
-                            supplier={supplier}
-                            goToSupplierPage={() => setShowSupplierInput(true)}
-                            customElement={isSupplierFromParent ? <span className={classes.parentSupplierBadge}>עפ"י מכשיר מקושר</span> : undefined}
-                        />
-                        <MdEdit
-                            onClick={() => {
-                                setShowSupplierInput(true);
-                                setSupplierSearchText(supplier.name);
+                <label htmlFor="supplierSearch">ספק בארץ</label>      
+                <div className={classes.supplierRow}>         
+                    {showSupplierListItem ? (
+                        <span className={classes.listItemContainer}>
+                            <SupplierListItem
+                                className={classes.supplierListItem}
+                                textContentClassName={classes.itemTextContent}
+                                _id={actualSupplier.supplier?._id ?? ""}
+                                supplier={actualSupplier.supplier!}
+                                goToSupplierPage={() => setShowSupplierInput(true)}
+                                customElement={actualSupplier.isParent ? <span className={classes.parentSupplierBadge}>עפ"י מכשיר מקושר</span> : undefined}
+                            />
+                            {supplier !== undefined && <MdEdit
+                                onClick={() => {
+                                    setShowSupplierInput(true);
+                                    setSupplierSearchText(actualSupplier.supplier!.name);
+                                }}
+                            />}
+                        </span>
+                    ) : (
+                        <DebouncingInput
+                            id="supplierSearch"
+                            className={classes.itemCat}
+                            inputValue={supplierSearchText}
+                            onValueChanged={(val: any) => setSupplierSearchText(val)}
+                            onValueErased={() => setSupplier(null)}
+                            onSuggestionSelected={(s: any) => {
+                                setSupplier(s);
+                                fetchSupplier(s._id);
+                                setShowSupplierInput(false)
+                            }}
+                            getSuggestionValue={s => s.name}
+                            placeholder='חפש ספק (שם, מזהה במשרד הביטחון)'
+                            suggestions={supplierSuggestions}
+                            onFetchSuggestions={(value: string) => {
+                                fetchBackend(encodeURI(`suppliers?search=${value}`), {
+                                    method: 'GET',
+                                    headers: {
+                                        'auth-token': authToken
+                                    }
+                                })
+                                .then((res) => res.json())
+                                .then(jsonRes => setSupplierSuggestions(jsonRes))
+                                .catch((err) => console.log(`Error getting item suggestions: ${err}`));
+                            }}
+                            renderSuggestion={s => <span>{s.id} {s.name}</span>}
+                            onClearSuggestions={() => { console.log(`clearing suggestions`); setSupplierSuggestions([]); }}
+                            onBlur={() => {
+                                if (!supplierSuggestions.find((s: any) => s.id === supplierSearchText || s.name === supplierSearchText)) {
+                                    setSupplierSearchText("");
+                                }
                             }}
                         />
-                        <button onClick={() => setSupplier(undefined)}>ממכשיר</button>
-                    </span>
-                ) : (
-                    <span>
-                    <DebouncingInput
-                        id="supplierSearch"
-                        className={classes.itemCat}
-                        inputValue={supplierSearchText}
-                        onValueChanged={(val: any) => setSupplierSearchText(val)}
-                        onValueErased={() => setSupplier(null)}
-                        onSuggestionSelected={(s: any) => {
-                            setSupplier(s);
-                            fetchSupplier(s._id);
-                            setShowSupplierInput(false)
-                        }}
-                        getSuggestionValue={s => s.name}
-                        placeholder='חפש ספק (שם, מזהה במשרד הביטחון)'
-                        suggestions={supplierSuggestions}
-                        onFetchSuggestions={(value: string) => {
-                            fetchBackend(encodeURI(`suppliers?search=${value}`), {
-                                method: 'GET',
-                                headers: {
-                                    'auth-token': authToken
-                                }
-                            })
-                            .then((res) => res.json())
-                            .then(jsonRes => setSupplierSuggestions(jsonRes))
-                            .catch((err) => console.log(`Error getting item suggestions: ${err}`));
-                        }}
-                        renderSuggestion={s => <span>{s.id} {s.name}</span>}
-                        onClearSuggestions={() => { console.log(`clearing suggestions`); setSupplierSuggestions([]); }}
-                        onBlur={() => {
-                            if (!supplierSuggestions.find((s: any) => s.id === supplierSearchText || s.name === supplierSearchText)) {
-                                setSupplierSearchText("");
-                            }
-                        }}
-                    />
-                    <button onClick={() => setSupplier(undefined)}>ממכשיר</button>
-                    </span>
-                )}
+                    )}
+                    <LabeledInput 
+                        label="ממכשיר"
+                        type="checkbox"
+                        checked={supplier === undefined}
+                        onChange={v => {
+                            setSupplier(v.target.checked ? undefined : null);
+                            setSupplierSearchText("");
+                        }}/>
+                    {/* <BigButton className={classes.supplierInheritButton} text="ממכשיר" action={() => setSupplier(undefined)}/> */}
+                </div>
             </div>
 
             <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />

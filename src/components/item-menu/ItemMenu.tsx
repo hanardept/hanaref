@@ -106,22 +106,7 @@ const ItemMenu = () => {
                 if (i.serviceManualLink) setServiceManualLink(i.serviceManualLink);
                 if (i.hebrewManualLink) setHebrewManualLink(i.hebrewManualLink);
                 if (i.emergency) setEmergency(i.emergency);
-
-                const actualSupplier = {
-                    supplier: undefined as SupplierSummary | undefined,
-                    isParent: false,
-                };
-                if (i.supplier !== undefined) {
-                    actualSupplier.supplier = i.supplier;
-                } else {
-                    actualSupplier.supplier = i.belongsToDevices?.sort((d1, d2) => new Date(d1.createdAt!).getTime() - new Date(d2.createdAt!).getTime()).find(d => d.supplier)?.supplier;
-                    actualSupplier.isParent = true;
-                }       
-                console.log(`actual supplier: ${JSON.stringify(actualSupplier)}`);
-                if (actualSupplier) {
-                    setSupplier(actualSupplier.supplier ?? null);
-                    setIsSupplierFromParent(actualSupplier.isParent);
-                }
+                setSupplier(i.supplier);
                 if (i.lifeSpan) setLifeSpan(i.lifeSpan);
                 if (i.models && i.models.length > 0) setModels(i.models);
                 if (i.accessories && i.accessories.length > 0) setAccessories(i.accessories);
@@ -393,7 +378,6 @@ const ItemMenu = () => {
                     userManualLink={getFilename(userManualLink)}
                     isUserManualUploading={isUserManualUploading}
                     supplier={supplier}
-                    isSupplierFromParent={isSupplierFromParent}
                     models={models}
                     belongsToDevices={belongsToDevices}
                     handleInput={handleInput}

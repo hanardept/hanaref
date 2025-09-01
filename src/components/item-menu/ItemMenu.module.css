@@ -141,6 +141,7 @@
 .listItemContainer {
     display: flex;
     flex-direction: row;
+    flex-grow: 1;
     align-items: center;
     gap: 10px; /* Your desired gap */
     width: 100%; /* Important: This means 100% of the parent's content area (368px) */
@@ -276,4 +277,29 @@
     border-radius: 10px;
     font-weight: bold;
     text-transform: uppercase;
+}
+
+.supplierRow {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.supplierInheritButton {
+    width: auto;
+    margin: auto 0;
+}
+
+.supplierRow label {
+    margin: 0;
+}
+
+.supplierRow:first-child {
+    flex-grow: 1;
+}
+
+.itemCat {
+    flex-grow: 1;
 }

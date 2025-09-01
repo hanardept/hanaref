@@ -56,6 +56,8 @@ const DeviceFields = (props: DeviceFieldsProps) => {
     const [ supplierSearchText, setSupplierSearchText ] = useState("");
     const [ showSupplierInput, setShowSupplierInput] = useState(false);
 
+    console.log(`device supplier: ${JSON.stringify(supplier)}`)
+
     const showSupplierListItem = !showSupplierInput && supplier;
     
     const fetchSupplier = useCallback(async (supplierId: string) => {
