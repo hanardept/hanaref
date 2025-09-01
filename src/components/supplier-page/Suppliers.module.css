@@ -1,0 +1,157 @@
+@import '../../css-variables/constants.css';
+
+.searchMenu {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    position: fixed;
+    z-index: 2;
+    top: var(--navbarHeight);
+    width: calc(100vw - 1rem);
+    background-color: white;
+    border-bottom: 1px solid #e4e4e4;
+}
+.searchMenu select {
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+    padding: var(--searchPadding);
+    height: var(--searchSelectHeight);
+}
+
+.listItemPusher {
+    width: 100%;
+    height: calc(var(--searchInputHeight) + 2*var(--searchSelectHeight) + 6*var(--searchPadding) + 2*0.5rem);
+}
+
+.listItem {
+    border-top: 1px solid #e4e4e4;
+    display: flex;
+    padding-right: 0.5rem;
+    position: relative; /* This is needed for the badge positioning */
+
+    flex-direction: row; /* Arrange children in a row (default, but explicit for clarity) */
+    align-items: center; /* Vertically align items (text and image) in the center */
+    justify-content: flex-start;
+    /* padding-left: 1rem; */
+    gap: 5px; /* Space between the text content and the image */
+    height: 80px; /* Define a fixed height for the list item, adjust as needed */
+    box-sizing: border-box; /* Include padding and border in the total height */
+}
+
+.listItem h2 {
+    font-size: 0.9rem;
+    margin: 0.2rem 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.listItem p {
+    font-size: 0.6rem;
+    margin-top: 0.1rem;
+    margin-bottom: 0.4rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.listItem h6 {
+    margin: 0.5rem 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.listItem p {
+    margin: 0;
+    text-align: right;
+}
+
+.itemTextContent {
+    display: flex; /* Make this a flex container too, for column layout of name/cat */
+    flex-direction: column; /* Stack name and cat number */
+    justify-content: flex-end; /* Center them vertically within their own container */
+    width: 100%;
+    flex-grow: 1;
+    /* No margin-right here because gap on .listItem handles spacing */
+}
+
+.itemTextContent[data-custom-element] {
+    width: 80%;
+}
+
+.itemsWrapper {
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--navbarHeight) - var(--searchInputHeight) - 2*var(--searchSelectHeight) - 6*var(--searchPadding) - 2*0.5rem);
+}
+
+.searchRow {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.searchBarWrapper {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+.searchBarWrapper input {
+    font-size: 1.6rem;
+    padding: var(--searchPadding);
+    height: var(--searchInputHeight);
+    border: 1px solid #999;
+    grid-area: container;
+    width: 100%;
+}
+.xButton {
+    grid-area: container;
+    width: 2.5rem;
+    font-size: 2rem;
+    color: #888;
+    justify-self: end;
+}
+
+.noResults {
+  text-align: center;
+  margin-top: 3rem;
+  color: #888;
+}
+
+.supplierItemContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.supplierItemContainer[data-status="unknown"] {
+    background-color: purple;
+}
+
+.supplierItemContainer[data-status="expiring"] {
+    background-color: orange;
+}
+
+.supplierItemContainer[data-status="expired"] {
+    background-color: red;
+}
+
+.supplierItemContainer h6 {
+    padding-right: 1rem;
+}
+
+.supplierStatusIcon {
+    justify-self: flex-end;
+    font-size: 25px;
+}

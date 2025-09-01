@@ -5,10 +5,11 @@ import './AutoSuggest.css';
 
 const DEBOUNCE_LAG = 800;
 
-const DebouncingInput = ({ inputValue, onValueErased, onValueChanged, onSuggestionSelected, suggestions, placeholder, getSuggestionValue, renderSuggestion, onFetchSuggestions, onClearSuggestions, onBlur, ...props }: {
+const DebouncingInput = ({ inputValue, onValueErased, onValueChanged, onSuggestionSelected, suggestions, placeholder, disabled, getSuggestionValue, renderSuggestion, onFetchSuggestions, onClearSuggestions, onBlur, ...props }: {
     inputValue: string,
     suggestions?: any[],
     placeholder: string,
+    disabled?: boolean,
     getSuggestionValue: (suggestion: any) => string,
     renderSuggestion: (suggestion: any) => JSX.Element,
     onFetchSuggestions?: (value: string) => any,
@@ -49,6 +50,7 @@ const DebouncingInput = ({ inputValue, onValueErased, onValueChanged, onSuggesti
             onBlur: onBlur,
             type: "search",
             placeholder,
+            disabled,
     };
 
     return (
@@ -56,6 +58,7 @@ const DebouncingInput = ({ inputValue, onValueErased, onValueChanged, onSuggesti
            <Autosuggest
                 ref={autosuggest}
                 suggestions={suggestions ?? []}
+                containerProps={{ disabled: true }}
                 onSuggestionsFetchRequested={({ value }) => {
                     if (debouncer.current) {
                         clearTimeout(debouncer.current);

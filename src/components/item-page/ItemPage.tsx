@@ -1,9 +1,9 @@
 // src/components/item-page/ItemPage.tsx
 
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
-import { Item } from "../../types/item_types";
+import { Item, SupplierSummary } from "../../types/item_types";
 import InfoSection from "./InfoSection";
 import classes from './ItemPage.module.css';
 import { viewingActions } from "../../store/viewing-slice";
@@ -100,6 +100,19 @@ const ItemPage = () => {
         }
     };
 
+    console.log(`belongsToDevices: ${JSON.stringify(item?.belongsToDevices?.sort((d1, d2) => new Date(d1.createdAt!).getTime() - new Date(d2.createdAt!).getTime()))}`)
+    console.log(`parent supplier: ${JSON.stringify(item?.belongsToDevices?.sort((d1, d2) => new Date(d1.createdAt!).getTime() - new Date(d2.createdAt!).getTime()).find(d => d.supplier)?.supplier)}`)
+
+    const actualSupplier = {
+        supplier: undefined as SupplierSummary | undefined,
+        isParent: false,
+    };
+    if (item?.supplier !== undefined) {
+        actualSupplier.supplier = item.supplier;
+    } else {
+        actualSupplier.supplier = item?.belongsToDevices?.sort((d1, d2) => new Date(d1.createdAt!).getTime() - new Date(d2.createdAt!).getTime()).find(d => d.supplier)?.supplier;
+        actualSupplier.isParent = true;
+    }
 
     return (
         <>
@@ -117,7 +130,17 @@ const ItemPage = () => {
                 {[ Role.Admin, Role.Technician].includes(frontEndPrivilege as Role) && item.catType === "מכשיר" && <p>{`תוקף הסמכה בחודשים: ${item.certificationPeriodMonths ?? ''}`}</p>}
                 {item.catType === "מתכלה" && <p>{`אורך חיים בחודשים: ${item.lifeSpan ?? ''}`}</p>}
                 {item.catType === "מכשיר" && <p>{`חירום: ${item.emergency ? "כן" : "לא"}`}</p>}
-                <p>{`ספק בארץ: ${item.supplier ?? ''}`}</p>
+                <p>{'ספק בארץ: '}
+                {actualSupplier.supplier && 
+                <>
+                    <Link
+                        to={`/suppliers/${actualSupplier?.supplier?._id}`} 
+                        onClick={() => navigate(`/suppliers/${actualSupplier?.supplier?._id}`)}>{actualSupplier?.supplier?.name}
+                    </Link>
+                    {actualSupplier.isParent && <span className={classes.parentSupplierBadge}>עפ"י מכשיר מקושר</span>}
+                    </>
+                }
+                </p>
                 {item.description && <p>{item.description}</p>}
                 {item.imageLink && <img src={item.imageLink} alt={item.name} />}
                 {

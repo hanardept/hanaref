@@ -28,6 +28,9 @@ import { jwtDecode } from 'jwt-decode';
 import { backendFirebaseUri } from './backend-variables/address';
 import LoadingSpinner from './components/UI/LoadingSpinner';
 import { Role } from './types/user_types';
+import SupplierPage from './components/supplier-page/SupplierPage';
+import Suppliers from './components/supplier-page/Suppliers';
+import SupplierMenu from './components/supplier-menu/SupplierMenu';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -171,7 +174,13 @@ function App() {
           <Route path="/users/:userid" element={<AdminOnly><UserPage /></AdminOnly>} />
           <Route path="/usermenu" element={<AdminOnly><UserMenu /></AdminOnly>} />          
           <Route path="/usermenu/:userid" element={<AdminOnly><UserMenu /></AdminOnly>} />
-          <Route path="/usermenu/newuser/:newuserid" element={<AdminOnly><UserMenu /></AdminOnly>} />          
+          <Route path="/usermenu/newuser/:newuserid" element={<AdminOnly><UserMenu /></AdminOnly>} />
+
+          <Route path="/suppliers" element={<AdminOnly><Suppliers /></AdminOnly>} />
+          <Route path="/suppliers/:supplierid" element={<AdminOnly><SupplierPage /></AdminOnly>} />
+          <Route path="/suppliermenu" element={<AdminOnly><SupplierMenu /></AdminOnly>} />          
+          <Route path="/suppliermenu/:supplierid" element={<AdminOnly><SupplierMenu /></AdminOnly>} />
+          <Route path="/suppliermenu/newsupplier/:newsupplierid" element={<AdminOnly><SupplierMenu /></AdminOnly>} />                   
         </Routes>
       </div>
       {showWelcome && <div className={classes.welcome} onClick={() => setShowWelcome(false)}>

@@ -13,6 +13,7 @@ import { TbCertificate } from "react-icons/tb";
 import { FaUser } from "react-icons/fa";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Role } from "../../types/user_types";
+import { GiHandTruck } from "react-icons/gi";
 
 
 
@@ -70,11 +71,15 @@ const RightHeaderSide = ({ loggedIn }: { loggedIn: boolean }) => {
             <FaUser />
             <span>משתמשים</span>
         </span> ,
+        suppliers: <span id="suppliers" onClick={() => navigateTo('/suppliers')}>
+            <GiHandTruck />
+            <span>ספקים</span>
+        </span> ,        
     };
     const permissions = {
-        [Role.Admin]: [ 'items', 'technicians', 'certifications', 'users' ],
-        [Role.Technician]: [ 'items', 'technicians', 'certifications' ],
-        [Role.Viewer]: [ 'items' ],
+        [Role.Admin]: [ 'items', 'technicians', 'certifications', 'users', 'suppliers' ],
+        [Role.Technician]: [ 'items', 'technicians', 'certifications', 'suppliers' ],
+        [Role.Viewer]: [ 'items', 'suppliers' ],
     }
     const menuItemsForRole = permissions[loggedInAs as Role]?.map(permission => menuItems[permission]) ?? [];
 
@@ -92,6 +97,7 @@ const RightHeaderSide = ({ loggedIn }: { loggedIn: boolean }) => {
                             "/technicianmenu", "/technicianmenu/*", "/technicians/*",
                             "/certificationmenu", "/certificationmenu/*", "/certifications/*",
                             "/usermenu", "/usermenu/*", "/users/*",
+                            "/suppliermenu", "/suppliermenu/*", "/suppliers/*",
                         ].map(path => 
                             <Route 
                                 path={path} 

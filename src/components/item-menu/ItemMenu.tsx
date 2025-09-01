@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { backendFirebaseUri } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
 import { viewingActions } from '../../store/viewing-slice';
-import { AbbreviatedItem, CatType, Item } from '../../types/item_types';
+import { AbbreviatedItem, CatType, Item, SupplierSummary } from '../../types/item_types';
 import { Sector } from '../../types/sector_types';
 import AreYouSure from '../UI/AreYouSure';
 import BigButton from '../UI/BigButton';
@@ -52,7 +52,7 @@ const ItemMenu = () => {
     const [hebrewManualLink, setHebrewManualLink] = useState("" as (string | File));
     const [isHebrewManualUploading, setIsHebrewManualUploading] = useState(false);
     const [emergency, setEmergency] = useState(false);
-    const [supplier, setSupplier] = useState("");
+    const [supplier, setSupplier] =  useState(undefined as SupplierSummary | null | undefined);
     const [lifeSpan, setLifeSpan] = useState("");
     const [models, setModels] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [accessories, setAccessories] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
@@ -89,6 +89,8 @@ const ItemMenu = () => {
                 setSectorsToChooseFrom(s);
                 return getItem();
             }).then((i: Item) => {
+
+
                 setName(i.name);
                 setCat(i.cat);
                 setSector(i.sector);
@@ -103,7 +105,7 @@ const ItemMenu = () => {
                 if (i.serviceManualLink) setServiceManualLink(i.serviceManualLink);
                 if (i.hebrewManualLink) setHebrewManualLink(i.hebrewManualLink);
                 if (i.emergency) setEmergency(i.emergency);
-                if (i.supplier) setSupplier(i.supplier);
+                setSupplier(i.supplier);
                 if (i.lifeSpan) setLifeSpan(i.lifeSpan);
                 if (i.models && i.models.length > 0) setModels(i.models);
                 if (i.accessories && i.accessories.length > 0) setAccessories(i.accessories);
