@@ -5,6 +5,7 @@ import classes from './HomePage.module.css'; // Uses the same CSS file as HomePa
 interface ListItemProps {
     name: string;
     cat: string;
+    kitCat?: string;
     imageLink?: string;
     shouldBeColored: boolean;
     goToItemPage?: (cat: string) => void;
@@ -31,11 +32,18 @@ const ListItem = (props: ListItemProps) => {
         style.opacity = 0.7;
     }
 
+    const catText = [
+        { label: 'מק"ט', value: props.cat },
+        { label: 'מק"ט ערכה', value: props.kitCat },
+    ].filter(part => part.value?.length)
+    .map(part => `${part.label}: ${part.value}`)
+    .join(' | ');
+
     return (
         <div onClick={handleClick} className={props.className} style={style}>
             <div className={props.textContentClassName} data-custom-element={props.customElement}>
                 <h2>{props.name}</h2>
-                <p>{props.cat}</p>
+                <p>{catText}</p>
             </div>
             <div className={classes.customElementContainer} data-custom-element={props.customElement}>
                 {props.customElement}
