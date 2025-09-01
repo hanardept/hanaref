@@ -53,7 +53,6 @@ const ItemMenu = () => {
     const [isHebrewManualUploading, setIsHebrewManualUploading] = useState(false);
     const [emergency, setEmergency] = useState(false);
     const [supplier, setSupplier] =  useState(undefined as SupplierSummary | null | undefined);
-    const [isSupplierFromParent, setIsSupplierFromParent] =  useState(false);
     const [lifeSpan, setLifeSpan] = useState("");
     const [models, setModels] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [accessories, setAccessories] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
