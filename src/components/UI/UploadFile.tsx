@@ -2,9 +2,9 @@ import { IoCloudUploadOutline } from "react-icons/io5";
 import "./UploadFile.css";
 import { ChangeEventHandler } from "react";
 
-const UploadFile = <T extends HTMLInputElement>({ placeholder, url, accept, isUploading, onChange, onClear }
-    : { placeholder: string, url?: string, accept?: string, isUploading?: boolean, onChange: ChangeEventHandler<T> | undefined, onClear?: () => void }) => {
-    return <div className="file-upload">
+const UploadFile = <T extends HTMLInputElement>({ id, placeholder, url, accept, isUploading, disabled, onChange, onClear }
+    : { id?: string, placeholder: string, url?: string, accept?: string, isUploading?: boolean, disabled?: boolean, onChange: ChangeEventHandler<T> | undefined, onClear?: () => void }) => {
+    return <div className="file-upload" id={id}>
         <span>
         {isUploading ? (
                     <progress className="upload-progress" />
@@ -28,7 +28,7 @@ const UploadFile = <T extends HTMLInputElement>({ placeholder, url, accept, isUp
                 )}
             <span className="upload-button">
                 <IoCloudUploadOutline/>
-                <input type="file" accept={accept} onChange={e => onChange?.(e as any)} />
+                <input type="file" disabled={disabled} accept={accept} onChange={e => onChange?.(e as any)} />
             </span>
         </span>
     </div>
