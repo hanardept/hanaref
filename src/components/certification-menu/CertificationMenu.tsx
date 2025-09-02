@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchBackend } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
@@ -17,6 +17,8 @@ import { MdAddCircle, MdRemoveCircle } from "react-icons/md";
 import DatePicker from "react-datepicker";
 import moment from 'moment';
 import { Role } from '../../types/user_types';
+import UploadFile from '../UI/UploadFile';
+import { getFilename } from '../../utils';
 
 
 interface ItemSummary {
@@ -45,7 +47,7 @@ const CertificationMenu = () => {
     const [item, setItem] = useState(null as ItemSummary | null);
     const [technicianSearchText, setTechnicianSearchText] = useState("");
     const [technicians, setTechnicians] = useState<(TechnicianSummary | null)[]>([]);
-    const [certificationDocumentLink, setCertificationDocumentLink] = useState("");
+    const [certificationDocumentLink, setCertificationDocumentLink] = useState("" as (string | File));
     const [firstCertificationDate, setFirstCertificationDate] = useState(null as Date | null);
     const [lastCertificationDate, setLastCertificationDate] = useState(null as Date | null);
     const [plannedCertificationDate, setPlannedCertificationDate] = useState(null as Date | null);
@@ -58,15 +60,7 @@ const CertificationMenu = () => {
     //const [showTechnicianInput, setShowTechnicianInput] = useState(false);
     const [addTechniciansRequested, setAddTechniciansRequested] = useState(false);
 
-    const certificationDetails = {
-        id: id,
-        item,
-        users: technicians,
-        certificationDocumentLink,
-        firstCertificationDate,
-        lastCertificationDate,
-        plannedCertificationDate,
-    };
+    const [isCertificationDocumentUploading, setIsCertificationDocumentUploading] = useState(false);
 
      const fetchItem = useCallback(async (itemCat: string) => {
         const res = await fetchBackend(`items/${itemCat}`, {
@@ -110,11 +104,6 @@ const CertificationMenu = () => {
         
     }, [params.certificationid, fetchItem, authToken]);
 
-    const handleInput = (setFunc: (val: string) => any, event: ChangeEvent<HTMLInputElement>) => {
-        setFunc(event.target.value);
-        dispatch(viewingActions.changesAppliedToCertification(true));
-    }
-
     useEffect(() => {
         const fetchTechnician = async () => {
             const fetchedTechnician = await fetchBackend(`technicians/${userId}`, {
@@ -133,22 +122,85 @@ const CertificationMenu = () => {
     }, [ userId, authToken, frontEndPrivilege ])
 
     console.log(`last certification type: ${typeof lastCertificationDate}`);
+
+    const saveLinks = (certificationId: string): Promise<Record<string, string>> => {
+        console.log(`saving links....`);
+        const getIfFile = (obj : { value: string | File, setter: React.Dispatch<React.SetStateAction<string | File>>, contentType: string, isUploadingSetter?: React.Dispatch<React.SetStateAction<boolean>> })
+            : { value: string | File, setter: React.Dispatch<React.SetStateAction<string | File>>, contentType: string, isUploadingSetter?: React.Dispatch<React.SetStateAction<boolean>> } | undefined => 
+                (obj.value && typeof obj.value !== 'string') ? obj : undefined ;
+        const newFileFields: Record<string, { value: string | File, setter: React.Dispatch<React.SetStateAction<string | File>>, contentType: string, isUploadingSetter?: React.Dispatch<React.SetStateAction<boolean>> } | undefined> = {//: Array<keyof typeof itemDetails> = [ 
+            certificationDocumentLink: getIfFile({ value: certificationDocumentLink, setter: setCertificationDocumentLink, contentType: 'application/pdf', isUploadingSetter: setIsCertificationDocumentUploading }),
+        };
+
+        const newLinks: Record<string, string> = {};
+        return Promise.all(Object.keys(newFileFields).map(key => {
+            if (!newFileFields[key]) {
+                return undefined;
+            }
+            const { value, setter, isUploadingSetter } = newFileFields[key]!;
+            console.log(`file type: ${(value as File).type}`)
+            return fetchBackend(encodeURI(`certifications/${certificationId}/url`), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'auth-token': authToken
+                },
+                body: JSON.stringify({ 
+                    filename: (value as File).name,
+                    contentType: (value as File).type
+                })
+            })
+            .then(res => res.json())
+            .then(json => {
+                const urlObj = new URL(json.url);
+                urlObj.search = '';
+                const objectUrl = urlObj.toString();
+                setter(objectUrl);
+                isUploadingSetter?.(true);
+                return fetch(json.url, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': (value as File).type },
+                    body: value
+                }).then(res => { 
+                    newLinks[key] = objectUrl;
+                    isUploadingSetter?.(false);
+                })
+            }
+            )
+        })).then(() => newLinks);
+    }    
     
-    const handleSave = () => {
-        console.log(`saving with technicians: ${certificationDetails.users}`);
-        if (!certificationDetails.item || !certificationDetails.users?.length ||
-            (!certificationDetails.lastCertificationDate && !certificationDetails.plannedCertificationDate)) {
-            // if the required fields of the Certification mongo schema are not filled then don't save
-            console.log("Please make sure to enter an item name, technician and either last or planned certification date");
-            return;
-        }
+    const saveCertification = ({ certificationId, saveLinks, newLinks, technicianId } : 
+        { certificationId?: string, saveLinks: boolean, newLinks: Record<string, string>, technicianId?: string }): Promise<any> => {
+
+        const certificationDetails = {
+            id: id,
+            item,
+            users: technicianId ? [ { _id: technicianId } ] : technicians,
+            certificationDocumentLink: saveLinks ? (newLinks.certificationDocumentLink ?? certificationDocumentLink) : undefined,
+            firstCertificationDate,
+            lastCertificationDate,
+            plannedCertificationDate,
+        };
 
         console.log(`Saving certification with details: ${JSON.stringify(certificationDetails, null, 4)}`);
 
         const { users, ...restDetails } = certificationDetails;
-        const promises = users.map((technician) => {
+        return Promise.all(users.map((technician) => {
+            console.log(`saving certification for user: ${technician!._id}, item: ${item?._id}`);
             const body = JSON.stringify({ ...restDetails, user: technician});
-            if (!params.certificationid) {
+            if (certificationId) {
+                return fetchBackend(encodeURI(`certifications/${certificationId}`), {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'auth-token': authToken
+                    },
+                    body
+                });                
+            } else {
                 return fetchBackend(`certifications`, {
                     method: 'POST',
                     headers: {
@@ -158,26 +210,45 @@ const CertificationMenu = () => {
                     },
                     body
                 })
-            } else {
-                return fetchBackend(encodeURI(`certifications/${params.certificationid}`), {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'auth-token': authToken
-                    },
-                    body
-                });
             }
-        })
-        return Promise.all(promises)
-            .then(() => {
-                console.log("Successfully saved certification!");
-                dispatch(viewingActions.changesAppliedToCertification(false));
-                navigate(-1);
-            })
-            .catch((err) => console.log(`Error saving/updating certification: ${err}`));
+        }));
     }
+
+    const handleSave = () => {
+        if (!item || !technicians?.length ||
+            (!lastCertificationDate && !plannedCertificationDate)) {
+            // if the required fields of the Certification mongo schema are not filled then don't save
+            console.log("Please make sure to enter an item name, technician and either last or planned certification date");
+            return;
+        }
+
+        if (params.certificationid) {
+            saveLinks(params.certificationid)
+                .then(newLinks => saveCertification({ certificationId: params.certificationid, saveLinks: true, newLinks }))
+                .then(() => {
+                    dispatch(viewingActions.changesAppliedToCertification(false));
+                    navigate(-1);
+                })
+        } else {
+            saveCertification({ saveLinks: false, newLinks: {} })
+                .then(ress => ress[0].json())
+                .then(json =>
+                    (technicians.length === 1) ?
+                        saveLinks(json.id).then(newLinks => ({ certificationId: json.id, newLinks})) :
+                        Promise.resolve({ certificationId: json.id, newLinks: {} })
+                )
+                .then(({ certificationId, newLinks}) => {
+                    if (technicians.length === 1) {
+                        saveCertification({ certificationId, saveLinks: true, newLinks, technicianId: technicians[0]?._id })
+                    }
+                })
+                .then(() => {
+                    dispatch(viewingActions.changesAppliedToCertification(false));
+                    navigate(-1);
+                });
+        }
+    }
+
     // edit mode only:
     const handleDelete = () => {
         fetchBackend(encodeURI(`certifications/${params.certificationid}`), {
@@ -193,6 +264,7 @@ const CertificationMenu = () => {
             navigate("/certifications");
         }).catch((err) => console.log(`Error deleting certification: ${err}`));
     }
+
 
     const showItemListItem = !showItemInput && item;
     //const showTechnicianListItem = !showTechnicianInput && technician;
@@ -300,13 +372,16 @@ const CertificationMenu = () => {
                             setTechnicianSearchText(val);
                         }}
                         onSuggestionSelected={(t: any) => {
-                            setTechnicians([...technicians, t ])
+                            setTechnicians([...technicians, t ]);
+                            if (technicians.length) {
+                                setCertificationDocumentLink("");
+                            }
                             setAddTechniciansRequested(false)
                             setTechnicianSearchText("");
                         }}
                         getSuggestionValue={s => s.id}
                         placeholder='חפש טכנאי (שם, ת.ז.)'
-                        suggestions={technicianSuggestions.filter(ts => technicians.every(t => t?.id !== ts.id))}
+                        suggestions={technicianSuggestions.filter(ts => technicians.every(t => t?._id !== ts._id))}
                         onFetchSuggestions={(value: string) => {
                             fetchBackend(encodeURI(`technicians?search=${value}`), {
                                 method: 'GET',
@@ -386,7 +461,12 @@ const CertificationMenu = () => {
                     popperPlacement="bottom"
                 />
             </div>  
-            <div className={classes.inputGroup}> 
+            {/* <LabeledInput type="file" label=">קישור לתעודת הסמכה" value={getFilename(certificationDocumentLink)} placeholder="מדריך למשתמש" */}
+            {technicians.length <= 1 && <div className={classes.inputGroup}>
+                <label htmlFor="certificationDocumentLink">קישור לתעודת הסמכה</label>
+                <UploadFile id="certificationDocumentLink" placeholder="קישור לתעודת הסמכה" url={getFilename(certificationDocumentLink)} isUploading={isCertificationDocumentUploading} disabled={!lastCertificationDate} onChange={(e) => setCertificationDocumentLink(e.target.files?.[0] ?? '')} onClear={() => setCertificationDocumentLink("")}/>
+            </div>}
+            {/* <div className={classes.inputGroup}> 
                 <label htmlFor="certificationDocumentLink">קישור לתעודת הסמכה</label>
                 <input
                     id="certificationDocumentLink"
@@ -396,9 +476,9 @@ const CertificationMenu = () => {
                     disabled={!lastCertificationDate}
                     onChange={(e) => handleInput(setCertificationDocumentLink, e)}
                 />      
-            </div>
+            </div> */}
             <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "2.5rem" }} />
-            {params.technicianid && <BigButton text="מחק הסמכה" action={() => setAreYouSureDelete(true)} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} />}
+            {params.certificationid && <BigButton text="מחק הסמכה" action={() => setAreYouSureDelete(true)} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} />}
             {areYouSureDelete && <AreYouSure text="האם באמת למחוק הסמכה?" leftText='מחק' leftAction={handleDelete} rightText='לא' rightAction={() => setAreYouSureDelete(false)} />}
         </div>
     )
