@@ -41,6 +41,19 @@ const NotificationBell = () => {
         setNotifications(notifications.map(notification => notification._id === notificationId ? { ...notification, read: true} : notification)) 
     }
 
+    const deleteNotification = async (notificationId: string) => {
+        await fetchBackend(`notifications/${notificationId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'auth-token': authToken
+            }
+        });
+        setNotifications(notifications.filter(notification => notification._id !== notificationId) );
+    }
+
+
     return (
         <span
             className={classes.notificationBell}
@@ -72,6 +85,13 @@ const NotificationBell = () => {
                                 className={classes.notificationItem}
                                 onClick={() => markNotificationAsRead(n._id)}
                             >
+                                <button
+                                    className={classes.notificationDeleteBtn}
+                                    onClick={() => deleteNotification(n._id)}
+                                    title="מחק התראה"
+                                >
+                                    ×
+                                </button>                                
                                 <div className={classes.notificationSubject}>{n.subject}</div>
                                 <div className={classes.notificationMessage}>{n.message}</div>
                                 {!n.read && (

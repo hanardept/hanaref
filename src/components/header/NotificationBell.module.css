@@ -46,3 +46,20 @@
   text-align: center;
   color: #888;
 }
+
+.notificationDeleteBtn {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 1.1em;
+  cursor: pointer;
+  z-index: 2;
+  transition: color 0.2s;
+}
+
+.notificationDeleteBtn:hover {
+  color: #d00;
+}
