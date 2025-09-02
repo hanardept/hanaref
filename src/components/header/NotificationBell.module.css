@@ -1,0 +1,48 @@
+@import '../../css-variables/constants.css';
+
+.notificationBell {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  position: relative;
+}
+
+.notificationDropdown {
+  position: absolute;
+  top: 120%;
+  min-width: 220px;
+  background: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  z-index: 100;
+  padding: 0.5rem 0;
+  direction: rtl;
+}
+
+.notificationItem {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.notificationItem:last-child {
+  border-bottom: none;
+}
+
+.notificationSubject {
+  font-weight: bold;
+  margin-bottom: 0.2rem;
+  color: #555;
+  margin-right: 5px;
+}
+
+.notificationMessage {
+  font-size: 0.95em;
+  color: #555;
+  margin-right: 5px;
+}
+
+.notificationEmpty {
+  padding: 1rem;
+  text-align: center;
+  color: #888;
+}
