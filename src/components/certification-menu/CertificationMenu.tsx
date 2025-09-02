@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchBackend } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
@@ -104,11 +104,6 @@ const CertificationMenu = () => {
         }
         
     }, [params.certificationid, fetchItem, authToken]);
-
-    const handleInput = (setFunc: (val: string) => any, event: ChangeEvent<HTMLInputElement>) => {
-        setFunc(event.target.value);
-        dispatch(viewingActions.changesAppliedToCertification(true));
-    }
 
     useEffect(() => {
         const fetchTechnician = async () => {
