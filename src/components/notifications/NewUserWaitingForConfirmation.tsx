@@ -4,18 +4,15 @@ import classes from './Notifications.module.css';
 import { fetchBackend } from '../../backend-variables/address';
 import { useAppSelector } from '../../hooks/redux-hooks';
 
-const NewUserWaitingForConfirmation = ({ notification }: { notification: Notification }) => { 
+const NewUserWaitingForConfirmation = ({ notification, onAction }: { notification: Notification, onAction?: () => void }) => { 
 
     const navigate = useNavigate();
     const authToken = useAppSelector(state => state.auth.jwt);
     
     const { subject, message, data } = notification;
 
-    console.log(`original message: ${message}`);
-    console.log(`replaced message: ${message.replace('{user.email}', `<a href=mailto:${data.user.email}>{data.user.email}</a>`)}`);
-
-    const body1 = message.substring(0, message.indexOf('{user.email}'));
-    const body2 = message.substring(message.indexOf('{user.email}') + '{user.email}'.length);
+    const body1 = message.substring(0, message.indexOf('{userDisplayName}'));
+    const body2 = message.substring(message.indexOf('{userDisplayName}') + '{userDisplayName}'.length);
     return (
         <>
             <div className={classes.notificationSubject}>{subject}</div>
@@ -25,10 +22,11 @@ const NewUserWaitingForConfirmation = ({ notification }: { notification: Notific
                     to={`/users/${data.user._id}`} 
                     onClick={() => navigate(`/users/${data.user._id}`)}
                 >
-                    {data.user.email}
+                    {data.user.displayName}
                 </Link>
                 <span>{body2}</span>
             </div>
+            <span style={{ display: 'flex', gap: '5px', justifyContent: 'center', marginTop: '10px' }}>
             <button onClick={async () => {
                 await fetchBackend(`users/${data.user._id}/confirm`, {
                         method: 'POST',
@@ -36,8 +34,20 @@ const NewUserWaitingForConfirmation = ({ notification }: { notification: Notific
                             'Content-Type': 'application/json',
                             'auth-token': authToken,
                         },
-                    });                
+                    });
+                onAction?.();
             }}>אשר</button>
+            <button onClick={async () => {
+                await fetchBackend(`users/${data.user._id}/reject`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'auth-token': authToken,
+                    },
+                });  
+                onAction?.();              
+            }}>דחה</button>
+            </span>
         </>
     );
 };

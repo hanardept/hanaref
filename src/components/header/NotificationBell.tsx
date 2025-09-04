@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import classes from './NotificationBell.module.css'
 import { IoNotifications } from "react-icons/io5";
 import { fetchBackend } from "../../backend-variables/address";
@@ -14,21 +14,46 @@ const NotificationBell = () => {
 
     const hasUnreadNotifications = notifications.some(n => !n.read);
 
+    const getNotifications = async () => {
+        const fetchedNotifications = await fetchBackend('notifications', {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'auth-token': authToken
+            }
+        });
+        setNotifications(await fetchedNotifications.json());
+    }
+
     useEffect(() => {
-        const getNotifications = async () => {
-            const fetchedNotifications = await fetchBackend('notifications', {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'auth-token': authToken
-                }
-            });
-            return fetchedNotifications.json();
-        };
-        if (authToken) {
-            getNotifications().then(json => setNotifications(json));
+        if (authToken && showNotifications) {
+            getNotifications();
         }
-    }, [ authToken ])
+    }, [ authToken, showNotifications ])
+
+    const bellRef = useRef<HTMLSpanElement>(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!showNotifications) return;
+
+        const handleClickOutside = (event: MouseEvent) => {
+            const target = event.target as Node;
+            if (
+                (dropdownRef.current && dropdownRef.current.contains(target)) ||
+                (bellRef.current && bellRef.current.contains(target))
+            ) {
+                // Click is inside dropdown or bell, do nothing
+                return;
+            }
+            setShowNotifications(false);
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [showNotifications]);    
 
     const markNotificationAsRead = async (notificationId: string) => {
         await fetchBackend(`notifications/${notificationId}/read`, {
@@ -57,12 +82,14 @@ const NotificationBell = () => {
 
     return (
         <span
+            ref={bellRef}
             className={classes.notificationBell}
             title={notifications.length ? "יש התראות חדשות" : "אין התראות חדשות"}
         >
             <IoNotifications color="#ffffff" size={20} onClick={() => setShowNotifications(!showNotifications)} />
             {hasUnreadNotifications && (
             <span
+                onClick={() => setShowNotifications(!showNotifications)}
                 style={{
                     position: "absolute",
                     top: 2,
@@ -76,12 +103,12 @@ const NotificationBell = () => {
             />
         )}
             {showNotifications && (
-                <div className={classes.notificationDropdown}>
+                <div ref={dropdownRef} className={classes.notificationDropdown} /*onBlur={() => setShowNotifications(false)}*/>
                     {notifications.length === 0 ? (
                         <div className={classes.notificationEmpty}>אין התראות חדשות</div>
                     ) : (
                         notifications.map((n, idx) => {
-                            const notification = createNotification(n);
+                            const notification = createNotification(n, () => getNotifications());
                             return (
                             <div 
                                 key={idx} 
