@@ -20,7 +20,7 @@
 }
 
 .notificationItem {
-  padding: 0.5rem 1rem;
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid #eee;
 }
 
@@ -28,7 +28,7 @@
   border-bottom: none;
 }
 
-.notificationSubject {
+/* .notificationSubject {
   font-weight: bold;
   margin-bottom: 0.2rem;
   color: #555;
@@ -39,7 +39,7 @@
   font-size: 0.95em;
   color: #555;
   margin-right: 5px;
-}
+} */
 
 .notificationEmpty {
   padding: 1rem;

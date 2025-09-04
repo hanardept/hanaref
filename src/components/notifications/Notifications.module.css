@@ -1,0 +1,14 @@
+@import '../../css-variables/constants.css';
+
+.notificationSubject {
+  font-weight: bold;
+  margin-bottom: 0.2rem;
+  color: #555;
+  margin-right: 5px;
+}
+
+.notificationMessage {
+  font-size: 0.95em;
+  color: #555;
+  margin-right: 5px;
+}

@@ -4,6 +4,7 @@ import { IoNotifications } from "react-icons/io5";
 import { fetchBackend } from "../../backend-variables/address";
 import { useAppSelector } from "../../hooks/redux-hooks";
 import { Notification } from '../../types/notification_types';
+import createNotification from "../notifications/NotificationFactory";
 
 const NotificationBell = () => {
 
@@ -52,7 +53,7 @@ const NotificationBell = () => {
         });
         setNotifications(notifications.filter(notification => notification._id !== notificationId) );
     }
-
+    
 
     return (
         <span
@@ -79,7 +80,9 @@ const NotificationBell = () => {
                     {notifications.length === 0 ? (
                         <div className={classes.notificationEmpty}>אין התראות חדשות</div>
                     ) : (
-                        notifications.map((n, idx) => (
+                        notifications.map((n, idx) => {
+                            const notification = createNotification(n);
+                            return (
                             <div 
                                 key={idx} 
                                 className={classes.notificationItem}
@@ -92,8 +95,9 @@ const NotificationBell = () => {
                                 >
                                     ×
                                 </button>                                
-                                <div className={classes.notificationSubject}>{n.subject}</div>
-                                <div className={classes.notificationMessage}>{n.message}</div>
+                                {/* <div className={classes.notificationSubject}>{n.subject}</div>
+                                <div className={classes.notificationMessage}>{n.message}</div> */}
+                                {notification}
                                 {!n.read && (
                                 <span
                                     style={{
@@ -108,7 +112,8 @@ const NotificationBell = () => {
                                 />
                             )}                                
                             </div>
-                        ))
+                        )
+                    })
                     )}
                 </div>
             )}            
