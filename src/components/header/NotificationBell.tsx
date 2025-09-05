@@ -27,6 +27,12 @@ const NotificationBell = () => {
     }, [ setNotifications, authToken ]);
 
     useEffect(() => {
+        if (authToken) {
+            getNotifications();
+        }
+    }, [ authToken, getNotifications ])    
+
+    useEffect(() => {
         if (authToken && showNotifications) {
             getNotifications();
         }
