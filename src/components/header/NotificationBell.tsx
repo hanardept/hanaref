@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import classes from './NotificationBell.module.css'
 import { IoNotifications } from "react-icons/io5";
 import { fetchBackend } from "../../backend-variables/address";
@@ -14,7 +14,8 @@ const NotificationBell = () => {
 
     const hasUnreadNotifications = notifications.some(n => !n.read);
 
-    const getNotifications = async () => {
+
+    const getNotifications = useCallback(async () => {
         const fetchedNotifications = await fetchBackend('notifications', {
             headers: {
                 'Content-Type': 'application/json',
@@ -23,13 +24,13 @@ const NotificationBell = () => {
             }
         });
         setNotifications(await fetchedNotifications.json());
-    }
+    }, [ setNotifications, authToken ]);
 
     useEffect(() => {
         if (authToken && showNotifications) {
             getNotifications();
         }
-    }, [ authToken, showNotifications ])
+    }, [ authToken, showNotifications, getNotifications ])
 
     const bellRef = useRef<HTMLSpanElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
