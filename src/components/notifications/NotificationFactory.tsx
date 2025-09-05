@@ -3,7 +3,7 @@ import GenericNotification from './GenericNotification';
 import NewUserDeleted from './NewUserDeleted';
 import NewUserWaitingForConfirmation from './NewUserWaitingForConfirmation';
 
-const createNotification = (notification : Notification, onAction?: () => void) => {
+const createNotification = (notification : Notification, onAction?: (message: string) => void) => {
     switch (notification.type) {
         case NotificationType.NewUserWaitingForConfirmation:
             return <NewUserWaitingForConfirmation notification={notification} onAction={onAction}/>

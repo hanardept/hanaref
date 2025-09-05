@@ -4,7 +4,7 @@ import classes from './Notifications.module.css';
 import { fetchBackend } from '../../backend-variables/address';
 import { useAppSelector } from '../../hooks/redux-hooks';
 
-const NewUserWaitingForConfirmation = ({ notification, onAction }: { notification: Notification, onAction?: () => void }) => { 
+const NewUserWaitingForConfirmation = ({ notification, onAction }: { notification: Notification, onAction?: (message: string) => void }) => { 
 
     const navigate = useNavigate();
     const authToken = useAppSelector(state => state.auth.jwt);
@@ -35,7 +35,7 @@ const NewUserWaitingForConfirmation = ({ notification, onAction }: { notificatio
                             'auth-token': authToken,
                         },
                     });
-                onAction?.();
+                onAction?.("המשתמש אושר");
             }}>אשר</button>
             <button onClick={async () => {
                 await fetchBackend(`users/${data.user._id}/reject`, {
@@ -45,7 +45,7 @@ const NewUserWaitingForConfirmation = ({ notification, onAction }: { notificatio
                         'auth-token': authToken,
                     },
                 });  
-                onAction?.();              
+                onAction?.("המשתמש נדחה");             
             }}>דחה</button>
             </span>
         </>

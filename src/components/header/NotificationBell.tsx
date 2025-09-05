@@ -118,7 +118,12 @@ const NotificationBell = () => {
                         <div className={classes.notificationEmpty}>אין התראות חדשות</div>
                     ) : (
                         notifications.map((n, idx) => {
-                            const notification = createNotification(n, () => getNotifications());
+                            const notification = createNotification(n, (message) => {
+                                getNotifications();
+                                if (message) {
+                                    alert(message);
+                                }
+                            });
                             return (
                             <div 
                                 key={idx} 
