@@ -86,7 +86,10 @@ const NotificationBell = () => {
             className={classes.notificationBell}
             title={notifications.length ? "יש התראות חדשות" : "אין התראות חדשות"}
         >
-            <IoNotifications color="#ffffff" size={20} onClick={() => setShowNotifications(!showNotifications)} />
+            <IoNotifications color="#ffffff" size={20} onClick={() => {
+                getNotifications();
+                setShowNotifications(!showNotifications);
+            }} />
             {hasUnreadNotifications && (
             <span
                 onClick={() => setShowNotifications(!showNotifications)}
