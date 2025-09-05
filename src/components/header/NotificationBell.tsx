@@ -27,6 +27,7 @@ const NotificationBell = () => {
     }, [ setNotifications, authToken ]);
 
     useEffect(() => {
+        console.log(`hi1`);
         if (authToken) {
             getNotifications();
         }
@@ -94,7 +95,6 @@ const NotificationBell = () => {
             title={notifications.length ? "יש התראות חדשות" : "אין התראות חדשות"}
         >
             <IoNotifications color="#ffffff" size={20} onClick={() => {
-                getNotifications();
                 setShowNotifications(!showNotifications);
             }} />
             {hasUnreadNotifications && (
