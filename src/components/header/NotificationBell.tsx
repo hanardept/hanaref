@@ -134,7 +134,7 @@ const NotificationBell = () => {
                                     style={{
                                         position: "absolute",
                                         right: 6,
-                                        top: "52%", 
+                                        top: '50%',
                                         width: 8,
                                         height: 8,
                                         background: "red",
