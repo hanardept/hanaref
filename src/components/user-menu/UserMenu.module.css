@@ -61,3 +61,7 @@
     border: 1px solid #797979;
     font-weight: bold;
 }
+
+input:invalid, select:invalid {
+  outline: red solid 1px;
+}

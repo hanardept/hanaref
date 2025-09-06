@@ -5,3 +5,7 @@
     color: #888;
     justify-self: end;
 }
+
+input:invalid, select:invalid {
+  outline: red solid 1px;
+}

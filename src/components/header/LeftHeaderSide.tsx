@@ -27,12 +27,12 @@ const LeftHeaderSide = () => {
         </span>
     ;
 
-    const addTechnician = 
+    // const addTechnician = 
 
-        <span className={classes.toolbarSpan}>
-            <AdminOnly hide={true}><span onClick={() => navigate('/technicianmenu')} style={{ lineHeight: 0 }}>+</span></AdminOnly>
-        </span>
-    ;
+    //     <span className={classes.toolbarSpan}>
+    //         <AdminOnly hide={true}><span onClick={() => navigate('/technicianmenu')} style={{ lineHeight: 0 }}>+</span></AdminOnly>
+    //     </span>
+    // ;
 
     const addCertification = 
         <span className={classes.toolbarSpan}>
@@ -64,8 +64,8 @@ const LeftHeaderSide = () => {
             <Route path="/itemnotfound/*" element={<></>} />
             <Route path="managesectors" element={<></>} />
             <Route path="sectormenu" element={<></>} />
-            <Route path="technicians" element={addTechnician} />
-            <Route path="technicians/*" element={<AdminOnly hide={true}><span className={classes.toolbarSpan} onClick={() => navigate(`technicianmenu/${currentTechnicianId}`)}>ערוך</span></AdminOnly>} />
+            {/* <Route path="technicians" element={addTechnician} /> */}
+            {/* <Route path="technicians/*" element={<AdminOnly hide={true}><span className={classes.toolbarSpan} onClick={() => navigate(`technicianmenu/${currentTechnicianId}`)}>ערוך</span></AdminOnly>} /> */}
             <Route path="technicianmenu" element={<></>} />
             <Route path="technicianmenu/*" element={<></>} />
             <Route path="certifications" element={addCertification} />

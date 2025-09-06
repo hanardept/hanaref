@@ -287,7 +287,7 @@ const CertificationMenu = () => {
         <div className={classes.certificationMenu}>
             <h1>{params.certificationid ? "עריכת הסמכה" : "הוספת הסמכה"}</h1>
             <div className={classes.inputGroup}>
-                <label htmlFor="itemSearch">מכשיר</label>                
+                <label htmlFor="itemSearch">מכשיר *</label>                
                 {showItemListItem ? (
                     <span className={classes.listItemContainer}>
                         <ItemListItem
@@ -337,12 +337,13 @@ const CertificationMenu = () => {
                                 setItemSearchText("");
                             }
                         }}
+                        required
                     />
                 )}
             </div>
             { frontEndPrivilege === Role.Admin && 
             <div className={classes.inputGroup}>
-                <label htmlFor="technicianSearch">טכנאי</label>
+                <label htmlFor="technicianSearch">טכנאי *</label>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                     {technicians.map((technician, i) =>
                         <span className={classes.listItemContainer}>
@@ -400,6 +401,7 @@ const CertificationMenu = () => {
                                 setTechnicianSearchText("");
                             }
                         }}
+                        required={!technicians.length}
                     />
                 )}
                 {(!params.certificationid && !addTechniciansRequested && technicians.length) ? 
@@ -427,7 +429,7 @@ const CertificationMenu = () => {
                 />
             </div>
             <div className={classes.inputGroup}> 
-                <label htmlFor="lastCertificationDate">תאריך הסמכה אחרונה</label>
+                <label htmlFor="lastCertificationDate">תאריך הסמכה אחרונה *</label>
                 <DatePicker
                     id="lastCertificationDate"
                     className={classes.datepicker}
@@ -444,12 +446,13 @@ const CertificationMenu = () => {
                         }
                     }}
                     popperPlacement="bottom"
+                    required
                 />
             </div>  
             <span>{`תוקף הסמכה אחרונה בחודשים: ${item?.certificationPeriodMonths ?? ''}`}</span>
             <span>{`תאריך תפוגת הסמכה אחרונה: ${isoDate(lastCertificationExpirationDate)}`}</span>
             <div className={classes.inputGroup}>
-                <label htmlFor="plannedCertificationDate">תאריך הסמכה צפויה</label>
+                <label htmlFor="plannedCertificationDate">תאריך הסמכה צפויה *</label>
                 <DatePicker
                     id="plannedCertificationDate"
                     className={classes.datepicker}
@@ -459,6 +462,7 @@ const CertificationMenu = () => {
                     placeholderText='תאריך הסמכה צפויה'
                     onChange={setPlannedCertificationDate}
                     popperPlacement="bottom"
+                    required
                 />
             </div>  
             {/* <LabeledInput type="file" label=">קישור לתעודת הסמכה" value={getFilename(certificationDocumentLink)} placeholder="מדריך למשתמש" */}

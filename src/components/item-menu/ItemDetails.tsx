@@ -38,8 +38,8 @@ const ItemDetails = (props: ItemDetailsProps) => {
 
     return (
         <>
-            <LabeledInput label="שם הפריט" value={name} onChange={(e) => handleInput(setName, e)} placeholder="שם הפריט" />
-            <LabeledInput label='מק"ט' value={cat} onChange={(e) => handleInput(setCat, e)} placeholder='מק"ט' />
+            <LabeledInput label="שם הפריט" required value={name} onChange={(e) => handleInput(setName, e)} placeholder="שם הפריט" />
+            <LabeledInput label='מק"ט' value={cat} required onChange={(e) => handleInput(setCat, e)} placeholder='מק"ט' />
             {catType === "מכשיר" && <LabeledInput label='מק"ט ערכה' value={kitCats[0] ?? ''} onChange={(e) => { console.log(`settings kit cats`); setKitCats([e.target.value]); }} placeholder='מק"ט ערכה' />}
             {catType === "מכשיר" && <LabeledInput
                 type="number"
@@ -49,8 +49,8 @@ const ItemDetails = (props: ItemDetailsProps) => {
                 value={certificationPeriodMonths ?? ''}
                 onChange={(e) => handleInput(val => setCertificationPeriodMonths(Number.parseInt(val) ? +val : null), e)}
             />}
-            <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} priorChosenSector={sector} />
-            <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} priorChosenDepartment={department} />
+            <SectorSelection sectorNames={sectorNames} handleSetSector={handleSetSector} priorChosenSector={sector} required/>
+            <DepartmentSelection departments={departmentsToChooseFrom} handleSetDepartment={handleSetDepartment} priorChosenDepartment={department} required />
             <CatTypeSelection catTypes={catTypesToChooseFrom} selectCatType={handleSetCatType} currentCatType={catType} />
             <textarea value={description} onChange={handleDescription} placeholder="תיאור" />
             {catType === "מכשיר" && <div className={classes.emergencyToggle}>

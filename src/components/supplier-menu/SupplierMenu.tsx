@@ -132,8 +132,8 @@ const SupplierMenu = () => {
     return (
         <div className={classes.supplierMenu}>
             <h1>{params.supplierid ? "עריכת ספק" : "הוספת ספק"}</h1>       
-            <LabeledInput label="מספר ספק במשרד הביטחון" placeholder="מספר ספק במשרד הביטחון" value={id} onChange={(e) => handleInput(setId, e)} />
-            <LabeledInput label="שם" placeholder="שם" value={name} onChange={(e) => handleInput(setName, e)} />
+            <LabeledInput label="מספר ספק במשרד הביטחון" placeholder="מספר ספק במשרד הביטחון" value={id} onChange={(e) => handleInput(setId, e)} required/>
+            <LabeledInput label="שם" placeholder="שם" value={name} onChange={(e) => handleInput(setName, e)} required/>
             <LabeledInput label="רחוב" placeholder="רחוב" value={street} onChange={(e) => handleInput(setStreet, e)} />
             <LabeledInput label="עיר" placeholder="עיר" value={city} onChange={(e) => handleInput(setCity, e)} />
             <LabeledInput label="מספר טלפון משרדי" placeholder="מספר טלפון משרדי" value={officePhone} onChange={(e) => handleInput(setOfficePhone, e)} />

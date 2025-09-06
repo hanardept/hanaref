@@ -271,3 +271,7 @@ html {
     justify-content: center;
     font-size: 30px;
 }
+
+input:invalid, select:invalid {
+  outline: red solid 1px;
+}
