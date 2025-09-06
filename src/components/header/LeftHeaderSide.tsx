@@ -65,7 +65,7 @@ const LeftHeaderSide = () => {
             <Route path="managesectors" element={<></>} />
             <Route path="sectormenu" element={<></>} />
             {/* <Route path="technicians" element={addTechnician} /> */}
-            {/* <Route path="technicians/*" element={<AdminOnly hide={true}><span className={classes.toolbarSpan} onClick={() => navigate(`technicianmenu/${currentTechnicianId}`)}>ערוך</span></AdminOnly>} /> */}
+            <Route path="technicians/:id" element={<AdminOnly hide={true}><span className={classes.toolbarSpan} onClick={() => navigate(`technicianmenu/${currentTechnicianId}`)}>ערוך</span></AdminOnly>} />
             <Route path="technicianmenu" element={<></>} />
             <Route path="technicianmenu/*" element={<></>} />
             <Route path="certifications" element={addCertification} />
