@@ -72,6 +72,7 @@ const UserMenu = () => {
         if (!userDetails.username || !userDetails.email) {
             // if the required fields of the User mongo schema are not filled then don't save
             console.log("Please make sure to enter a username and email");
+            alert("לא כל שדות החובה מולאו");
             return;
         }
 

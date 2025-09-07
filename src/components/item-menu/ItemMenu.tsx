@@ -265,14 +265,10 @@ const ItemMenu = () => {
     }
 
     const handleSave = () => {
-        if (!name || !sector || !department) {
+        if (!cat || !name || !sector || !department) {
             // if the required fields of the Item mongo schema are not filled then don't save
             console.log("Please make sure to enter a name, catalog number, sector and department");
-            return;
-        }
-
-        if(!cat){
-            alert("מק\"ט הוא שדה חובה");
+            alert("לא כל שדות החובה מולאו");
             return;
         }
 

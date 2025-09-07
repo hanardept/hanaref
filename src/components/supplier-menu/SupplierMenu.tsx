@@ -72,6 +72,7 @@ const SupplierMenu = () => {
         if (!supplierDetails.id?.length || !supplierDetails.name?.length) {
             // if the required fields of the Supplier mongo schema are not filled then don't save
             console.log("Please make sure to enter a supplier id and name");
+            alert("לא כל שדות החובה מולאו");
             return;
         }
 

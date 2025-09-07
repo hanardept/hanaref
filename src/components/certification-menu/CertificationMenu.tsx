@@ -219,6 +219,7 @@ const CertificationMenu = () => {
             (!lastCertificationDate && !plannedCertificationDate)) {
             // if the required fields of the Certification mongo schema are not filled then don't save
             console.log("Please make sure to enter an item name, technician and either last or planned certification date");
+            alert("לא כל שדות החובה מולאו");
             return;
         }
 
