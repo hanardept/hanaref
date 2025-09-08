@@ -14,9 +14,7 @@ import { FaUser } from "react-icons/fa";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Role } from "../../types/user_types";
 import { GiHandTruck } from "react-icons/gi";
-
-
-
+import NotificationBell from "./NotificationBell";
 
 const RightHeaderSide = ({ loggedIn }: { loggedIn: boolean }) => {
     const navigate = useNavigate();
@@ -104,13 +102,14 @@ const RightHeaderSide = ({ loggedIn }: { loggedIn: boolean }) => {
                                 element={
                                     <span className={classes.rightHeaderSpan}>
                                         {burger}
+                                        <NotificationBell />
                                         <GoBack />
                                     </span>}
                                 key={path} 
                             />)
                     }
-                    <Route path="/itemnotfound/*" element={<span className={classes.rightHeaderSpan}>{burger}<GoBack goHome={true} /></span>} />
-                    <Route path="/" element={<span className={classes.rightHeaderSpan}>{burger}{signOut}</span>}/>
+                    <Route path="/itemnotfound/*" element={<span className={classes.rightHeaderSpan}>{burger}<NotificationBell /><GoBack goHome={true} /></span>} />
+                    <Route path="/" element={<span className={classes.rightHeaderSpan}>{burger}<NotificationBell />{signOut}</span>}/>
             </Routes>
             {areYouSureLogout && <AreYouSure text="לצאת מהמשתמש?" leftText="צא" leftAction={handleLogout} rightText="לא" rightAction={() => setAreYouSureLogout(false)} />}
         </>
