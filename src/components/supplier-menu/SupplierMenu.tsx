@@ -72,6 +72,7 @@ const SupplierMenu = () => {
         if (!supplierDetails.id?.length || !supplierDetails.name?.length) {
             // if the required fields of the Supplier mongo schema are not filled then don't save
             console.log("Please make sure to enter a supplier id and name");
+            alert("לא כל שדות החובה מולאו");
             return;
         }
 
@@ -132,8 +133,8 @@ const SupplierMenu = () => {
     return (
         <div className={classes.supplierMenu}>
             <h1>{params.supplierid ? "עריכת ספק" : "הוספת ספק"}</h1>       
-            <LabeledInput label="מספר ספק במשרד הביטחון" placeholder="מספר ספק במשרד הביטחון" value={id} onChange={(e) => handleInput(setId, e)} />
-            <LabeledInput label="שם" placeholder="שם" value={name} onChange={(e) => handleInput(setName, e)} />
+            <LabeledInput label="מספר ספק במשרד הביטחון" placeholder="מספר ספק במשרד הביטחון" value={id} onChange={(e) => handleInput(setId, e)} required/>
+            <LabeledInput label="שם" placeholder="שם" value={name} onChange={(e) => handleInput(setName, e)} required/>
             <LabeledInput label="רחוב" placeholder="רחוב" value={street} onChange={(e) => handleInput(setStreet, e)} />
             <LabeledInput label="עיר" placeholder="עיר" value={city} onChange={(e) => handleInput(setCity, e)} />
             <LabeledInput label="מספר טלפון משרדי" placeholder="מספר טלפון משרדי" value={officePhone} onChange={(e) => handleInput(setOfficePhone, e)} />

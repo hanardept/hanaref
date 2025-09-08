@@ -303,3 +303,7 @@
 .itemCat {
     flex-grow: 1;
 }
+
+input:invalid, select:invalid {
+  outline: red solid 1px;
+}

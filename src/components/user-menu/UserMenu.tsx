@@ -72,6 +72,7 @@ const UserMenu = () => {
         if (!userDetails.username || !userDetails.email) {
             // if the required fields of the User mongo schema are not filled then don't save
             console.log("Please make sure to enter a username and email");
+            alert("לא כל שדות החובה מולאו");
             return;
         }
 
@@ -131,8 +132,8 @@ const UserMenu = () => {
             <h1>{params.userid ? "עריכת משתמש" : "הוספת משתמש"}</h1>
             <LabeledInput label="שם פרטי" placeholder="שם פרטי" value={firstName} onChange={(e) => handleInput(setFirstName, e)} />
             <LabeledInput label="שם משפחה" placeholder="שם משפחה" value={lastName} onChange={(e) => handleInput(setLastName, e)} />
-            <LabeledInput label="שם משתמש" placeholder="שם משתמש" value={username} onChange={(e) => handleInput(setUsername, e)} />
-            <LabeledInput type="email" label="דואר אלקטרוני" placeholder="דואר אלקטרוני" value={email} onChange={(e) => handleInput(setEmail, e)} />
+            <LabeledInput label="שם משתמש" placeholder="שם משתמש" value={username} onChange={(e) => handleInput(setUsername, e)} required />
+            <LabeledInput type="email" label="דואר אלקטרוני" placeholder="דואר אלקטרוני" value={email} onChange={(e) => handleInput(setEmail, e)} required/>
             <LabeledInput 
                 label="תפקיד"
                 placeholder="תפקיד"

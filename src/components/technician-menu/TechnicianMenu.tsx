@@ -56,6 +56,7 @@ const TechnicianMenu = () => {
         if (!technicianDetails.firstName || !technicianDetails.lastName || !technicianDetails.association) {
             // if the required fields of the Technician mongo schema are not filled then don't save
             console.log("Please make sure to enter a first name, last name and association");
+            alert("לא כל שדות החובה מולאו");
             return;
         }
 
