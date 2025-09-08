@@ -28,6 +28,7 @@ const SectorMenu = ({ exit, sector, reload }: { exit: () => void, sector?: Secto
     const dispatch = useAppDispatch();
     const changesApplied = useAppSelector(state => state.viewing.sectorManagement.changesApplied);
     const [showAreYouSure, setShowAreYouSure] = useState(false);
+    const [editedDepartmentIndex, setEditedDepartmentIndex] = useState<number | null>(null);
     const [warningBeforeDeletion, setWarningBeforeDeletion] = useState(false); // useful only in edit mode;
 
     const handleDepartmentChangeByIndex = (index: number, event: ChangeEvent<HTMLInputElement>) => {
@@ -39,17 +40,23 @@ const SectorMenu = ({ exit, sector, reload }: { exit: () => void, sector?: Secto
         });
     }
     const deleteUponBlur = (event: FocusEvent<HTMLInputElement>) => {
-        if (event.target.value.length === 0) { 
+        if (event.target.value.length === 0 && editedDepartmentIndex !== null) { 
             setDepartments(prev => {
                 const newDepartments = [...prev];
-                return newDepartments.slice(0, newDepartments.length-1)
+                newDepartments.splice(editedDepartmentIndex, 1);
+                return newDepartments;
             });
         }
     }
     const addInput = () => {
         setDepartments(prev => {
             const newDepartments = [...prev];
-            newDepartments.push({ departmentName: "" });
+            const newDepartment = { departmentName: "" };
+            if (editedDepartmentIndex !== null) {
+                newDepartments.splice(editedDepartmentIndex, 0, newDepartment);
+            } else {
+                newDepartments.push(newDepartment);
+            }
             return newDepartments;
         })
     }
@@ -144,6 +151,9 @@ const SectorMenu = ({ exit, sector, reload }: { exit: () => void, sector?: Secto
     }
     // ----------- relevant only for edit mode -------------
 
+    
+    console.log(`editedDepartmentIndex: ${editedDepartmentIndex}`);
+
     return (
         <div className={classes.wrapper}>
             {showAreYouSure && <AreYouSure text='נדמה לנו שבוצעו שינויים. לצאת ללא שמירה?' leftText='צא' leftAction={exitAndRevertChanges} rightText='הישאר' rightAction={() => setShowAreYouSure(false)} />}
@@ -153,12 +163,22 @@ const SectorMenu = ({ exit, sector, reload }: { exit: () => void, sector?: Secto
                 <input type="checkbox" id="hiddenFromPublic" defaultChecked={!visibleToPublic} onChange={toggleVisibility} />
                 <label htmlFor="hiddenFromPublic">מוסתר מהציבור</label>
             </div>
-            <input type="text" placeholder="שם תחום" value={departments[0].departmentName} onChange={(event) => handleDepartmentChangeByIndex(0, event)} />
+            <input type="text" placeholder="שם תחום" value={departments[0].departmentName} onFocus={() => setEditedDepartmentIndex(0)} onBlur={() => setEditedDepartmentIndex(null)} onChange={(event) => handleDepartmentChangeByIndex(0, event)} />
             {departments.map((d, idx) => {
                 if (idx === 0) return <React.Fragment key="a"></React.Fragment>
-                return <input key={`${idx.toString()}+z`} type="text" placeholder="שם תחום" value={d.departmentName} onChange={(event) => handleDepartmentChangeByIndex(idx, event)} onBlur={deleteUponBlur} />
+                return <input
+                    key={`${idx.toString()}+z`}
+                    type="text"
+                    placeholder="שם תחום"
+                    value={d.departmentName}
+                    onFocus={() => setEditedDepartmentIndex(idx)}
+                    onChange={(event) => handleDepartmentChangeByIndex(idx, event)}
+                    onBlur={event => {
+                        deleteUponBlur(event);
+                        setEditedDepartmentIndex(null);
+                    }} />
             })}
-            <div className={classes.plusButton} onClick={addInput}>+</div>
+            <div className={classes.plusButton} onMouseDown={event => event.preventDefault()} onClick={addInput}>+</div>
             <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "3rem" }} />
             {sector && <BigButton text="מחיקת מדור" action={triggerWarningBeforeDeletion} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} />}
             {warningBeforeDeletion && <AreYouSure text="באמת למחוק מדור?" leftText='מחק' leftAction={handleDeleteSector} rightText="אל תמחק" rightAction={() => setWarningBeforeDeletion(false)} />}
