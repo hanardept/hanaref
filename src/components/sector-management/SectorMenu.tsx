@@ -9,6 +9,13 @@ import { portalElement } from '../../elements/portalElement';
 import AreYouSure from '../UI/AreYouSure';
 import { viewingActions } from '../../store/viewing-slice';
 import { backendFirebaseUri } from '../../backend-variables/address';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from '@hello-pangea/dnd';
+
 
 function vacateItemListIfEmpty(itemList: Department[]) {
     return itemList.filter(i => i.departmentName !== "");
@@ -28,6 +35,7 @@ const SectorMenu = ({ exit, sector, reload }: { exit: () => void, sector?: Secto
     const dispatch = useAppDispatch();
     const changesApplied = useAppSelector(state => state.viewing.sectorManagement.changesApplied);
     const [showAreYouSure, setShowAreYouSure] = useState(false);
+    const [editedDepartmentIndex, setEditedDepartmentIndex] = useState<number | null>(null);
     const [warningBeforeDeletion, setWarningBeforeDeletion] = useState(false); // useful only in edit mode;
 
     const handleDepartmentChangeByIndex = (index: number, event: ChangeEvent<HTMLInputElement>) => {
@@ -39,17 +47,23 @@ const SectorMenu = ({ exit, sector, reload }: { exit: () => void, sector?: Secto
         });
     }
     const deleteUponBlur = (event: FocusEvent<HTMLInputElement>) => {
-        if (event.target.value.length === 0) { 
+        if (event.target.value.length === 0 && editedDepartmentIndex !== null) { 
             setDepartments(prev => {
                 const newDepartments = [...prev];
-                return newDepartments.slice(0, newDepartments.length-1)
+                newDepartments.splice(editedDepartmentIndex, 1);
+                return newDepartments;
             });
         }
     }
     const addInput = () => {
         setDepartments(prev => {
             const newDepartments = [...prev];
-            newDepartments.push({ departmentName: "" });
+            const newDepartment = { departmentName: "" };
+            if (editedDepartmentIndex !== null) {
+                newDepartments.splice(editedDepartmentIndex, 0, newDepartment);
+            } else {
+                newDepartments.push(newDepartment);
+            }
             return newDepartments;
         })
     }
@@ -144,6 +158,18 @@ const SectorMenu = ({ exit, sector, reload }: { exit: () => void, sector?: Secto
     }
     // ----------- relevant only for edit mode -------------
 
+    const onDragEnd = (result: DropResult) => {
+        if (!result.destination) return;
+        const reordered = Array.from(departments);
+        const [removed] = reordered.splice(result.source.index, 1);
+        reordered.splice(result.destination.index, 0, removed);
+        setDepartments(reordered);
+        dispatch(viewingActions.changesAppliedToSector(true));
+    };
+
+    
+    console.log(`editedDepartmentIndex: ${editedDepartmentIndex}`);
+
     return (
         <div className={classes.wrapper}>
             {showAreYouSure && <AreYouSure text='נדמה לנו שבוצעו שינויים. לצאת ללא שמירה?' leftText='צא' leftAction={exitAndRevertChanges} rightText='הישאר' rightAction={() => setShowAreYouSure(false)} />}
@@ -153,12 +179,53 @@ const SectorMenu = ({ exit, sector, reload }: { exit: () => void, sector?: Secto
                 <input type="checkbox" id="hiddenFromPublic" defaultChecked={!visibleToPublic} onChange={toggleVisibility} />
                 <label htmlFor="hiddenFromPublic">מוסתר מהציבור</label>
             </div>
-            <input type="text" placeholder="שם תחום" value={departments[0].departmentName} onChange={(event) => handleDepartmentChangeByIndex(0, event)} />
-            {departments.map((d, idx) => {
-                if (idx === 0) return <React.Fragment key="a"></React.Fragment>
-                return <input key={`${idx.toString()}+z`} type="text" placeholder="שם תחום" value={d.departmentName} onChange={(event) => handleDepartmentChangeByIndex(idx, event)} onBlur={deleteUponBlur} />
-            })}
-            <div className={classes.plusButton} onClick={addInput}>+</div>
+            <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="departments-droppable">
+                    {(droppableProvided, droppableSnapshot) => (
+                        <div
+                            ref={droppableProvided.innerRef}
+                        >
+                            {departments.map((d, idx) => (
+                                <Draggable key={idx} draggableId={idx.toString()} index={idx}>
+                                    {(draggableProvided, draggableSnapshot) => (
+                                        <div
+                                            ref={draggableProvided.innerRef}
+                                            {...draggableProvided.draggableProps}
+                                            {...draggableProvided.dragHandleProps}
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                marginBottom: "0.5rem",
+                                                background: draggableSnapshot.isDragging ? "#f0f0f0" : undefined,
+                                                ...draggableProvided.draggableProps.style
+                                            }}
+                                        >
+                                            <input
+                                                key={idx.toString()}
+                                                type="text"
+                                                placeholder="שם תחום"
+                                                value={d.departmentName}
+                                                onFocus={() => setEditedDepartmentIndex(idx)}
+                                                onChange={(event) => handleDepartmentChangeByIndex(idx, event)}
+                                                onBlur={event => {
+                                                    if (idx !== 0) {
+                                                        deleteUponBlur(event);
+                                                    }
+                                                    setEditedDepartmentIndex(null);
+                                                }}
+                                                style={{ flex: 1 }}
+                                            />
+                                            <span style={{ fontSize: 30 , cursor: "grab", marginRight: 8 }}>☰</span>
+                                        </div>
+                                    )}
+                                </Draggable>
+                            ))}
+                        {droppableProvided.placeholder}
+                    </div>
+                    )}
+                </Droppable>
+            </DragDropContext>
+            <div className={classes.plusButton} onMouseDown={event => event.preventDefault()} onClick={addInput}>+</div>
             <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "3rem" }} />
             {sector && <BigButton text="מחיקת מדור" action={triggerWarningBeforeDeletion} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} />}
             {warningBeforeDeletion && <AreYouSure text="באמת למחוק מדור?" leftText='מחק' leftAction={handleDeleteSector} rightText="אל תמחק" rightAction={() => setWarningBeforeDeletion(false)} />}
