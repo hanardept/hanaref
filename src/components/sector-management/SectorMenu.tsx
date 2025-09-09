@@ -215,7 +215,7 @@ const SectorMenu = ({ exit, sector, reload }: { exit: () => void, sector?: Secto
                                                 }}
                                                 style={{ flex: 1 }}
                                             />
-                                            <span style={{ cursor: "grab", marginRight: 8 }}>☰</span>
+                                            <span style={{ fontSize: 30 , cursor: "grab", marginRight: 8 }}>☰</span>
                                         </div>
                                     )}
                                 </Draggable>
