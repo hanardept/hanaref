@@ -13,7 +13,6 @@ import {
   DragDropContext,
   Droppable,
   Draggable,
-  DraggableStyle,
   DropResult,
 } from '@hello-pangea/dnd';
 
