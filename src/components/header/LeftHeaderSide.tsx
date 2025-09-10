@@ -4,10 +4,12 @@ import AdminOnly from "../authorization/AdminOnly";
 import { exportItemsToCsv } from "../item-search/DownloadItemWorksheet";
 import { exportCertificationsToCsv } from "../certification-page/DownloadCertificationWorksheet";
 import classes from './Header.module.css';
-import { CiExport } from "react-icons/ci";
+import { CiExport, CiImport } from "react-icons/ci";
 import { Role } from "../../types/user_types";
 import RolesOnly from "../authorization/RolesOnly";
 import { exportSuppliersToCsv } from "../supplier-page/DownloadSupplierWorksheet";
+import { useRef } from "react";
+import FileImport from "./FileImport";
 
 
 const LeftHeaderSide = () => {
@@ -21,6 +23,7 @@ const LeftHeaderSide = () => {
 
     const addItemAndManageSectors = 
         <span className={classes.toolbarSpan}>
+            <AdminOnly hide={true}><FileImport><CiImport/></FileImport></AdminOnly> 
             <AdminOnly hide={true}><span onClick={() => dispatch(exportItemsToCsv())} style={{ lineHeight: 0 }}><CiExport/></span></AdminOnly> 
             <RolesOnly hide={true} roles={[ Role.Admin, Role.Technician ]}><span onClick={() => navigate('/itemmenu')} style={{ lineHeight: 0 }}>+</span></RolesOnly>
             <AdminOnly hide={true}><span onClick={() => navigate('/managesectors')} style={{ lineHeight: 0 }}>⋮</span></AdminOnly>
