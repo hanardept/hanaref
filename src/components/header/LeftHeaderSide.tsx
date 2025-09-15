@@ -8,7 +8,6 @@ import { CiExport, CiImport } from "react-icons/ci";
 import { Role } from "../../types/user_types";
 import RolesOnly from "../authorization/RolesOnly";
 import { exportSuppliersToCsv } from "../supplier-page/DownloadSupplierWorksheet";
-import { useRef } from "react";
 import FileImport from "./FileImport";
 
 
