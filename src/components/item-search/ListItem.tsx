@@ -1,6 +1,7 @@
 // src/components/item-search/ListItem.tsx
 
 import classes from './HomePage.module.css'; // Uses the same CSS file as HomePage
+import { useLongPress } from "@uidotdev/usehooks";
 
 interface ListItemProps {
     name: string;
@@ -9,6 +10,7 @@ interface ListItemProps {
     imageLink?: string;
     shouldBeColored: boolean;
     goToItemPage?: (cat: string) => void;
+    selectItem?: () => void;
     isArchived?: boolean;
     className?: string;
     textContentClassName?: string;
@@ -39,8 +41,14 @@ const ListItem = (props: ListItemProps) => {
     .map(part => `${part.label}: ${part.value}`)
     .join(' | ');
 
+    const press = useLongPress(() => props.selectItem?.(), {
+        onFinish: () => console.log(`Finished press`),
+        onCancel: (e) => handleClick(), /*console.log(`Finished cnacel: ${JSON.stringify(Object.keys(e))}`*/
+        threshold: 500
+    });
+
     return (
-        <div onClick={handleClick} className={props.className} style={style}>
+        <div {...press} /*onClick={handleClick}*/ className={props.className} style={style}>
             <div className={props.textContentClassName} data-custom-element={props.customElement}>
                 <h2>{props.name}</h2>
                 <p>{catText}</p>

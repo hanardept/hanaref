@@ -23,6 +23,8 @@ const HomePage = () => {
     const isAdmin = userPrivilege === "admin";
     const [initialized, setInitialized] = useState(false);
 
+    const [ selectedItems, setSelectedItems ] = useState<string[]>([]);
+
     // For debugging admin status
     useEffect(() => {
         console.log("[HomePage] User Privilege:", userPrivilege, "Is Admin:", isAdmin);
@@ -119,6 +121,17 @@ const HomePage = () => {
         }
     }
 
+    const toggleItemSelection = (cat: string) => {
+        console.log(`toggling item cat: ${cat}`);
+        if (selectedItems.includes(cat)) {
+            setSelectedItems(selectedItems.filter(c => c !== cat));
+        } else {
+            setSelectedItems([ ...selectedItems, cat ]);
+        }
+    }
+
+    console.log(`selected items: ${JSON.stringify(selectedItems)}`);
+
     return (
         <>
             <SearchMenu hideArchive={!isAdmin}/>
@@ -127,7 +140,25 @@ const HomePage = () => {
             {searchComplete && items.length === 0 && <p className={classes.noResults}>לא נמצאו פריטים</p>}
             <div className={classes.itemsWrapper} onScroll={handleScroll}>
                 {/* 4. Pass the `isArchived` prop down to the ListItem component */}
-                {items.map(i => <ListItem className={classes.listItem} textContentClassName={classes.itemTextContent} imageClassName={classes.itemImage} key={i._id} name={i.name} cat={i.cat} kitCat={i.kitCats?.[0]} shouldBeColored={i.imageLink === "" && isAdmin} imageLink={i.imageLink} goToItemPage={goToItemPage} isArchived={i.archived} />)}
+                {items.map((i, index) => 
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> 
+                    {selectedItems.length ? 
+                    <input type="checkbox" checked={selectedItems.includes(i.cat)} onClick={() => toggleItemSelection(i.cat)} /> : <></>}
+                    <ListItem
+                        className={classes.listItem}
+                        textContentClassName={classes.itemTextContent}
+                        imageClassName={classes.itemImage}
+                        key={i._id}
+                        name={i.name}
+                        cat={i.cat}
+                        kitCat={i.kitCats?.[0]}
+                        shouldBeColored={i.imageLink === "" && isAdmin}
+                        imageLink={i.imageLink}
+                        goToItemPage={goToItemPage}
+                        selectItem={() => toggleItemSelection(i.cat) }
+                        isArchived={i.archived}
+                    />
+                    </div>)}
             </div>
         </>
     )
