@@ -17,13 +17,14 @@ const HomePage = () => {
     const dispatch = useAppDispatch();
     const items = useAppSelector(state => state.items.items);
     const searchComplete = useAppSelector(state => state.items.searchComplete);
+    const selectedItems = useAppSelector(state => state.viewing.itemManagement.selectedCats);
     const { searchVal, sector, department, showArchived, page, blockScrollSearch } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
     const userPrivilege = useAppSelector(state => state.auth.frontEndPrivilege); // Debug
     const isAdmin = userPrivilege === "admin";
     const [initialized, setInitialized] = useState(false);
 
-    const [ selectedItems, setSelectedItems ] = useState<string[]>([]);
+    //const [ selectedItems, setSelectedItems ] = useState<string[]>([]);
 
     // For debugging admin status
     useEffect(() => {
@@ -124,9 +125,9 @@ const HomePage = () => {
     const toggleItemSelection = (cat: string) => {
         console.log(`toggling item cat: ${cat}`);
         if (selectedItems.includes(cat)) {
-            setSelectedItems(selectedItems.filter(c => c !== cat));
+            dispatch(viewingActions.changeSelectedItems(selectedItems.filter(c => c !== cat)));
         } else {
-            setSelectedItems([ ...selectedItems, cat ]);
+            dispatch(viewingActions.changeSelectedItems([ ...selectedItems, cat ]));
         }
     }
 

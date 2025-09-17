@@ -6,6 +6,7 @@ const initialViewState = {
         changesApplied: false
     },
     itemManagement: {
+        selectedCats: [] as string[],
         currentCat: "",
         changesApplied: false
     },
@@ -68,6 +69,9 @@ const viewingSlice = createSlice({
         },
         changesAppliedToItem(state, action: PayloadAction<boolean>) {
             state.itemManagement.changesApplied = action.payload;
+        },
+        changeSelectedItems(state, action: PayloadAction<string[]>) {
+            state.itemManagement.selectedCats = action.payload;
         },
         manageSupplierId(state, action: PayloadAction<string>) {
             state.supplierManagement.currentSupplierId = action.payload;

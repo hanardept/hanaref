@@ -2,7 +2,8 @@
 
 .navbar {
     display: grid;
-    grid-template-columns: 5rem 1fr 5rem;
+    /* grid-template-columns: 5rem 1fr 8rem; */
+    grid-template-columns: auto 1fr auto;
     background-color: #6f0707;
     color: white;
     position: fixed;
@@ -29,8 +30,6 @@
     column-gap: 0.5rem;
     align-items: center;
     justify-content: flex-end;
-    /* margin: 1rem; */
-    padding-right: 10px;
     width: fit-content;
 }
 
@@ -40,6 +39,7 @@
     align-items: center;
     column-gap: 0.7rem;
     justify-content: left;
+    width: fit-content;
 }
 
 
