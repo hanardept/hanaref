@@ -29,17 +29,17 @@ interface DeviceFieldsProps {
     consumables: AbbreviatedItem[];
     spareParts: AbbreviatedItem[];
     handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => void;
-    setImageLink: React.Dispatch<React.SetStateAction<string | File>>;
-    setQaStandardLink: React.Dispatch<React.SetStateAction<string | File>>;
-    setMedicalEngineeringManualLink: React.Dispatch<React.SetStateAction<string | File>>;
-    setUserManualLink: React.Dispatch<React.SetStateAction<string | File>>;
-    setServiceManualLink: React.Dispatch<React.SetStateAction<string | File>>;
-    setHebrewManualLink: React.Dispatch<React.SetStateAction<string | File>>;
-    setSupplier: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
-    setModels: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
-    setAccessories: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
-    setConsumables: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
-    setSpareParts: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
+    setImageLink?: React.Dispatch<React.SetStateAction<string | File>>;
+    setQaStandardLink?: React.Dispatch<React.SetStateAction<string | File>>;
+    setMedicalEngineeringManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
+    setUserManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
+    setServiceManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
+    setHebrewManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
+    setSupplier?: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
+    setModels?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
+    setAccessories?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
+    setConsumables?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
+    setSpareParts?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
 }
 
 const DeviceFields = (props: DeviceFieldsProps) => {
@@ -68,23 +68,23 @@ const DeviceFields = (props: DeviceFieldsProps) => {
             }
         });
         const supplierDetails = await res.json();
-        setSupplier(supplierDetails);
+        setSupplier?.(supplierDetails);
     }, [ authToken, setSupplier ]);    
 
     return (
         <>
             <LabeledInput type="file" label="קישור לתמונה" value={imageLink}  placeholder="קישור לתמונה" 
-                customInputElement={<UploadFile placeholder= "קישור לתמונה" url={imageLink} accept="image/png, image/jpeg" isUploading={isImageUploading} onChange={(e) => setImageLink(e.target.files?.[0] ?? '')} onClear={() => setImageLink("")}/>}/>
+                customInputElement={<UploadFile placeholder= "קישור לתמונה" url={imageLink} accept="image/png, image/jpeg" isUploading={isImageUploading} onChange={(e) => setImageLink?.(e.target.files?.[0] ?? '')} onClear={() => setImageLink?.("")}/>}/>
             <LabeledInput type="file" label="מדריך למשתמש" value={userManualLink} placeholder="מדריך למשתמש"
-                customInputElement={<UploadFile placeholder="מדריך למשתמש" url={userManualLink} isUploading={isUserManualUploading} onChange={(e) => setUserManualLink(e.target.files?.[0] ?? '')} onClear={() => setUserManualLink("")}/>}/>                
+                customInputElement={<UploadFile placeholder="מדריך למשתמש" url={userManualLink} isUploading={isUserManualUploading} onChange={(e) => setUserManualLink?.(e.target.files?.[0] ?? '')} onClear={() => setUserManualLink?.("")}/>}/>                
             <LabeledInput type="file" label="הוראות הפעלה בעברית" value={hebrewManualLink} placeholder="הוראות הפעלה בעברית" 
-                customInputElement={<UploadFile placeholder="הוראות הפעלה בעברית" url={hebrewManualLink} isUploading={isHebrewManualUploading} onChange={(e) => setHebrewManualLink(e.target.files?.[0] ?? '')} onClear={() => setHebrewManualLink("")}/>}/>
+                customInputElement={<UploadFile placeholder="הוראות הפעלה בעברית" url={hebrewManualLink} isUploading={isHebrewManualUploading} onChange={(e) => setHebrewManualLink?.(e.target.files?.[0] ?? '')} onClear={() => setHebrewManualLink?.("")}/>}/>
             <LabeledInput type="file" label="הוראות הנר" value={medicalEngineeringManualLink} placeholder="הוראות הנר" 
-                customInputElement={<UploadFile placeholder="הוראות הנר" url={medicalEngineeringManualLink} isUploading={isMedicalEngineeringManualUploading} onChange={(e) => setMedicalEngineeringManualLink(e.target.files?.[0] ?? '')}  onClear={() => setMedicalEngineeringManualLink("")}/>}/>
+                customInputElement={<UploadFile placeholder="הוראות הנר" url={medicalEngineeringManualLink} isUploading={isMedicalEngineeringManualUploading} onChange={(e) => setMedicalEngineeringManualLink?.(e.target.files?.[0] ?? '')}  onClear={() => setMedicalEngineeringManualLink?.("")}/>}/>
             <LabeledInput type="file" label="תקן בחינה" value={qaStandardLink} placeholder="תקן בחינה"
-                customInputElement={<UploadFile placeholder="תקן בחינה" url={qaStandardLink} isUploading={isQaStandardUploading} onChange={(e) => setQaStandardLink(e.target.files?.[0] ?? '')}  onClear={() => setQaStandardLink("")}/>}/>
+                customInputElement={<UploadFile placeholder="תקן בחינה" url={qaStandardLink} isUploading={isQaStandardUploading} onChange={(e) => setQaStandardLink?.(e.target.files?.[0] ?? '')}  onClear={() => setQaStandardLink?.("")}/>}/>
             <LabeledInput type="file" label="Service Manual" value={serviceManualLink} placeholder="Service Manual" 
-                customInputElement={<UploadFile placeholder="Service Manual" url={serviceManualLink} isUploading={isServiceManualUploading} onChange={(e) => setServiceManualLink(e.target.files?.[0] ?? '')}  onClear={() => setServiceManualLink("")}/>}/>
+                customInputElement={<UploadFile placeholder="Service Manual" url={serviceManualLink} isUploading={isServiceManualUploading} onChange={(e) => setServiceManualLink?.(e.target.files?.[0] ?? '')}  onClear={() => setServiceManualLink?.("")}/>}/>
             
             <div className={classes.inputGroup}>
                 <label htmlFor="supplierSearch">ספק בארץ</label>                
@@ -110,9 +110,9 @@ const DeviceFields = (props: DeviceFieldsProps) => {
                         className={classes.itemCat}
                         inputValue={supplierSearchText}
                         onValueChanged={(val: any) => setSupplierSearchText(val)}
-                        onValueErased={() => setSupplier(null)}
+                        onValueErased={() => setSupplier?.(null)}
                         onSuggestionSelected={(s: any) => {
-                            setSupplier(s);
+                            setSupplier?.(s);
                             fetchSupplier(s._id);
                             setShowSupplierInput(false)
                         }}

@@ -10,6 +10,7 @@ import { UIEvent, useEffect, useState } from "react";
 import { viewingActions } from "../../store/viewing-slice";
 import { itemsActions } from "../../store/item-slice";
 import { fetchBackend } from "../../backend-variables/address";
+import { AbbreviatedItem } from "../../types/item_types";
 
 const HomePage = () => {
     const navigate = useNavigate();
@@ -17,7 +18,7 @@ const HomePage = () => {
     const dispatch = useAppDispatch();
     const items = useAppSelector(state => state.items.items);
     const searchComplete = useAppSelector(state => state.items.searchComplete);
-    const selectedItems = useAppSelector(state => state.viewing.itemManagement.selectedCats);
+    const selectedItems = useAppSelector(state => state.viewing.itemManagement.selectedItems);
     const { searchVal, sector, department, showArchived, page, blockScrollSearch } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
     const userPrivilege = useAppSelector(state => state.auth.frontEndPrivilege); // Debug
@@ -122,12 +123,12 @@ const HomePage = () => {
         }
     }
 
-    const toggleItemSelection = (cat: string) => {
-        console.log(`toggling item cat: ${cat}`);
-        if (selectedItems.includes(cat)) {
-            dispatch(viewingActions.changeSelectedItems(selectedItems.filter(c => c !== cat)));
+    const toggleItemSelection = (item: Partial<AbbreviatedItem>) => {
+        console.log(`toggling item cat: ${item.cat}`);
+        if (!!selectedItems.find(i => i.cat === item.cat)) {
+            dispatch(viewingActions.changeSelectedItems(selectedItems.filter(i => i.cat !== item.cat)));
         } else {
-            dispatch(viewingActions.changeSelectedItems([ ...selectedItems, cat ]));
+            dispatch(viewingActions.changeSelectedItems([ ...selectedItems, item ]));
         }
     }
 
@@ -144,7 +145,7 @@ const HomePage = () => {
                 {items.map((i, index) => 
                     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> 
                     {selectedItems.length ? 
-                    <input type="checkbox" checked={selectedItems.includes(i.cat)} onClick={() => toggleItemSelection(i.cat)} /> : <></>}
+                    <input type="checkbox" checked={!!selectedItems.find(item => item.cat === i.cat)} onClick={() => toggleItemSelection(i)} /> : <></>}
                     <ListItem
                         className={classes.listItem}
                         textContentClassName={classes.itemTextContent}
@@ -156,7 +157,7 @@ const HomePage = () => {
                         shouldBeColored={i.imageLink === "" && isAdmin}
                         imageLink={i.imageLink}
                         goToItemPage={goToItemPage}
-                        selectItem={() => toggleItemSelection(i.cat) }
+                        selectItem={() => toggleItemSelection(i) }
                         isArchived={i.archived}
                     />
                     </div>)}

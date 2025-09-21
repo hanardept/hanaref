@@ -25,7 +25,7 @@ function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
     })
 }
 
-const ItemMenu = () => {
+const ItemMenu = ({ fields }: { fields?: string[] }) => {
     const params = useParams();
     const { jwt: authToken, frontEndPrivilege } = useAppSelector(state => state.auth);
     const [sectorsToChooseFrom, setSectorsToChooseFrom] = useState<Sector[]>([]);
@@ -122,9 +122,11 @@ const ItemMenu = () => {
         }
     }, [params.itemid, authToken, frontEndPrivilege]);
 
-    const handleInput = (setFunc: (val: string) => any, event: ChangeEvent<HTMLInputElement>) => {
-        setFunc(event.target.value);
-        dispatch(viewingActions.changesAppliedToItem(true));
+    const handleInput = (setFunc: ((val: string) => any) | undefined, event: ChangeEvent<HTMLInputElement>) => {
+        if (setFunc) {
+            setFunc(event.target.value);
+            dispatch(viewingActions.changesAppliedToItem(true));
+        }
     }
     const handleDescription = (event: ChangeEvent<HTMLTextAreaElement>) => {
         setDescription(event.target.value);
@@ -333,6 +335,7 @@ const ItemMenu = () => {
                     setEmergency={setEmergency}
                     setCat={setCat}
                     setKitCats={setKitCats}
+                    fields={fields}
                 />
             </div>
             <div className={classes.relations}>

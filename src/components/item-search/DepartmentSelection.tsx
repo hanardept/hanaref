@@ -1,9 +1,9 @@
 import { Department } from "../../types/sector_types";
 
 const DepartmentSelection = ({ departments, handleSetDepartment, priorChosenDepartment, required }:
-    { departments: Department[], handleSetDepartment: (value: string) => void, priorChosenDepartment?: string, required?: boolean }) => {
+    { departments: Department[], handleSetDepartment: ((value: string) => void) | undefined, priorChosenDepartment?: string, required?: boolean }) => {
     const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        handleSetDepartment(event.target.value);
+        handleSetDepartment?.(event.target.value);
     }
     
     return (

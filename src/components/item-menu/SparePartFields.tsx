@@ -19,11 +19,11 @@ interface SparePartFieldsProps {
     models: AbbreviatedItem[];
     belongsToDevices: AbbreviatedItem[];
     handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => void;
-    setImageLink: React.Dispatch<React.SetStateAction<string | File>>;
-    setUserManualLink: React.Dispatch<React.SetStateAction<string | File>>;
-    setSupplier: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
-    setModels: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
-    setBelongsToDevices: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
+    setImageLink?: React.Dispatch<React.SetStateAction<string | File>>;
+    setUserManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
+    setSupplier?: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
+    setModels?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
+    setBelongsToDevices?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
 }
 
 const SparePartFields = (props: SparePartFieldsProps) => {
@@ -57,15 +57,15 @@ const SparePartFields = (props: SparePartFieldsProps) => {
             }
         });
         const supplierDetails = await res.json();
-        setSupplier(supplierDetails);
+        setSupplier?.(supplierDetails);
     }, [ authToken, setSupplier ]);       
 
     return (
         <>
             <LabeledInput type="file" label="קישור לתמונה" value={imageLink} placeholder="קישור לתמונה" 
-                customInputElement={<UploadFile placeholder="קישור לתמונה" url={imageLink} accept="image/png, image/jpeg" isUploading={isImageUploading} onChange={(e) => setImageLink(e.target.files?.[0] ?? '')} onClear={() => setImageLink("")}/>}/>
+                customInputElement={<UploadFile placeholder="קישור לתמונה" url={imageLink} accept="image/png, image/jpeg" isUploading={isImageUploading} onChange={(e) => setImageLink?.(e.target.files?.[0] ?? '')} onClear={() => setImageLink?.("")}/>}/>
             <LabeledInput type="file" label="מדריך למשתמש" value={userManualLink} placeholder="מדריך למשתמש" 
-                customInputElement={<UploadFile placeholder="מדריך למשתמש" url={userManualLink} isUploading={isUserManualUploading} onChange={(e) => setUserManualLink(e.target.files?.[0] ?? '')} onClear={() => setUserManualLink("")}/>}/>
+                customInputElement={<UploadFile placeholder="מדריך למשתמש" url={userManualLink} isUploading={isUserManualUploading} onChange={(e) => setUserManualLink?.(e.target.files?.[0] ?? '')} onClear={() => setUserManualLink?.("")}/>}/>
 
             <div className={classes.inputGroup}>
                 <label htmlFor="supplierSearch">ספק בארץ</label>      
@@ -94,9 +94,9 @@ const SparePartFields = (props: SparePartFieldsProps) => {
                             className={classes.itemCat}
                             inputValue={supplierSearchText}
                             onValueChanged={(val: any) => setSupplierSearchText(val)}
-                            onValueErased={() => setSupplier(null)}
+                            onValueErased={() => setSupplier?.(null)}
                             onSuggestionSelected={(s: any) => {
-                                setSupplier(s);
+                                setSupplier?.(s);
                                 fetchSupplier(s._id);
                                 setShowSupplierInput(false)
                             }}
@@ -128,7 +128,7 @@ const SparePartFields = (props: SparePartFieldsProps) => {
                         type="checkbox"
                         checked={supplier === undefined}
                         onChange={v => {
-                            setSupplier(v.target.checked ? undefined : null);
+                            setSupplier?.(v.target.checked ? undefined : null);
                             setSupplierSearchText("");
                         }}/>
                 </div>

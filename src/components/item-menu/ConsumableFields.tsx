@@ -19,13 +19,13 @@ interface ConsumableFieldsProps {
     lifeSpan: string;
     models: AbbreviatedItem[];
     belongsToDevices: AbbreviatedItem[];
-    handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => void;
-    setImageLink: React.Dispatch<React.SetStateAction<string | File>>;
-    setUserManualLink: React.Dispatch<React.SetStateAction<string | File>>;
-    setSupplier: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
-    setLifeSpan: React.Dispatch<React.SetStateAction<string>>;
-    setModels: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
-    setBelongsToDevices: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
+    handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>> | undefined, event: ChangeEvent<HTMLInputElement>) => void;
+    setImageLink?: React.Dispatch<React.SetStateAction<string | File>>;
+    setUserManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
+    setSupplier?: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
+    setLifeSpan?: React.Dispatch<React.SetStateAction<string>>;
+    setModels?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
+    setBelongsToDevices?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
 }
 
 const ConsumableFields = (props: ConsumableFieldsProps) => {
@@ -59,16 +59,16 @@ const ConsumableFields = (props: ConsumableFieldsProps) => {
             }
         });
         const supplierDetails = await res.json();
-        setSupplier(supplierDetails);
+        setSupplier?.(supplierDetails);
     }, [ authToken, setSupplier ]);         
 
     return (
         <>                   
             <LabeledInput label="אורך חיים בחודשים" value={lifeSpan} onChange={(e) => handleInput(setLifeSpan, e)} placeholder="אורך חיים בחודשים" />
             <LabeledInput type="file" label="קישור לתמונה" value={imageLink} placeholder="קישור לתמונה" 
-                customInputElement={<UploadFile placeholder="קישור לתמונה" url={imageLink} isUploading={isImageUploading} accept="image/png, image/jpeg" onChange={(e) => setImageLink(e.target.files?.[0] ?? '')} onClear={() => setImageLink("")}/>}/>
+                customInputElement={<UploadFile placeholder="קישור לתמונה" url={imageLink} isUploading={isImageUploading} accept="image/png, image/jpeg" onChange={(e) => setImageLink?.(e.target.files?.[0] ?? '')} onClear={() => setImageLink?.("")}/>}/>
             <LabeledInput type="file" label="מדריך למשתמש" value={userManualLink} placeholder="מדריך למשתמש" 
-                customInputElement={<UploadFile placeholder="מדריך למשתמש" url={userManualLink} isUploading={isUserManualUploading} onChange={(e) => setUserManualLink(e.target.files?.[0] ?? '')} onClear={() => setUserManualLink("")}/>}/>
+                customInputElement={<UploadFile placeholder="מדריך למשתמש" url={userManualLink} isUploading={isUserManualUploading} onChange={(e) => setUserManualLink?.(e.target.files?.[0] ?? '')} onClear={() => setUserManualLink?.("")}/>}/>
 
             <div className={classes.inputGroup}>
                 <label htmlFor="supplierSearch">ספק בארץ</label>      
@@ -97,9 +97,9 @@ const ConsumableFields = (props: ConsumableFieldsProps) => {
                             className={classes.itemCat}
                             inputValue={supplierSearchText}
                             onValueChanged={(val: any) => setSupplierSearchText(val)}
-                            onValueErased={() => setSupplier(null)}
+                            onValueErased={() => setSupplier?.(null)}
                             onSuggestionSelected={(s: any) => {
-                                setSupplier(s);
+                                setSupplier?.(s);
                                 fetchSupplier(s._id);
                                 setShowSupplierInput(false)
                             }}
@@ -131,7 +131,7 @@ const ConsumableFields = (props: ConsumableFieldsProps) => {
                         type="checkbox"
                         checked={supplier === undefined}
                         onChange={v => {
-                            setSupplier(v.target.checked ? undefined : null);
+                            setSupplier?.(v.target.checked ? undefined : null);
                             setSupplierSearchText("");
                         }}/>
                 </div>

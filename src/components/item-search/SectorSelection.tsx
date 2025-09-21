@@ -1,9 +1,9 @@
 import React from "react";
 
 const SectorSelection = ({ sectorNames, handleSetSector, priorChosenSector, required }:
-    { sectorNames: string[], handleSetSector: (value: string) => void, priorChosenSector?: string, required?: boolean }) => {
+    { sectorNames: string[], handleSetSector: ((value: string) => void) | undefined, priorChosenSector?: string, required?: boolean }) => {
     const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        handleSetSector(event.target.value);
+        handleSetSector?.(event.target.value);
     }
     
     return (

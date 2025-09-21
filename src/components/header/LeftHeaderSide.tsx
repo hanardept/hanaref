@@ -15,7 +15,7 @@ import { MdEdit } from "react-icons/md";
 const LeftHeaderSide = () => {
     const navigate = useNavigate();
     const currentCat = useAppSelector(state => state.viewing.itemManagement.currentCat);
-    const selectedCats = useAppSelector(state => state.viewing.itemManagement.selectedCats);
+    const selectedItems = useAppSelector(state => state.viewing.itemManagement.selectedItems);
     const currentTechnicianId = useAppSelector(state => state.viewing.technicianManagement.currentTechnicianId);
     const currentCertificationId = useAppSelector(state => state.viewing.certificationManagement.currentCertificationId);
     const currentUserId = useAppSelector(state => state.viewing.userManagement.currentUserId);
@@ -24,7 +24,7 @@ const LeftHeaderSide = () => {
 
     const addItemAndManageSectors = 
         <span className={classes.toolbarSpan}>
-            {selectedCats.length ? <AdminOnly hide={true}><MdEdit onClick={() => navigate('/managesectors')} style={{ lineHeight: 0 }}/></AdminOnly> : <></>}
+            {selectedItems.length ? <AdminOnly hide={true}><MdEdit onClick={() => navigate('/itemmenu/multiple')} style={{ lineHeight: 0 }}/></AdminOnly> : <></>}
             <AdminOnly hide={true}><FileImport><CiImport/></FileImport></AdminOnly> 
             <AdminOnly hide={true}><span onClick={() => dispatch(exportItemsToCsv())} style={{ lineHeight: 0 }}><CiExport/></span></AdminOnly> 
             <RolesOnly hide={true} roles={[ Role.Admin, Role.Technician ]}><span onClick={() => navigate('/itemmenu')} style={{ lineHeight: 0 }}>+</span></RolesOnly>
