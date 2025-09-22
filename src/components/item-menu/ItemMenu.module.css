@@ -7,6 +7,20 @@
     padding: 0 var(--gutterHorizontal);
     gap: 1rem 3rem;
 }
+.multiItemMenu {
+    /* display: grid;
+    grid-template-columns: 1fr 1fr; */
+    grid-template-areas: "title title" "fields fields" "details relations" "buttons buttons";
+    /* padding: 0 var(--gutterHorizontal);
+    gap: 1rem 3rem; */
+}
+.removeField {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+}
 .title {
     grid-area: title;
 }
@@ -23,6 +37,13 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+.fields {
+    grid-area: fields;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
 }
 
 .button {

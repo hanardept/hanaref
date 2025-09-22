@@ -95,17 +95,15 @@ const MultiItemEdit = () => {
 
         const itemDetails = fields.reduce((obj, field) => ({ ...obj, [field]: fullItemDetails[field] }), {})
 
-        
-
         try {
-            await fetch(`${backendFirebaseUri}/items`, {
+            await fetchBackend('items', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                     'auth-token': authToken
                 },
-                body: JSON.stringify({ cats: selectedItems.map(i => i.cat), itemDetails })
+                body: JSON.stringify({ cats: selectedItems.map(i => i.cat), data: itemDetails })
             });
 
             console.log("success saving items");
@@ -120,15 +118,16 @@ const MultiItemEdit = () => {
     const catType = selectedItems.reduce((type, item) => !type || (type === item.catType) ? type : undefined, undefined);
 
     return (
-        <div className={classes.itemMenu}>
+        <div className={`${classes.itemMenu} ${classes.multiItemMenu}`}>
             <h1 className={classes.title}>עריכת פריטים</h1>
-            <select name="fields" id="fields" onChange={e => setSelectedField(e.target.value)} value={selectedField}>
-                {allowedFields.filter(({ name }) => !fields?.includes(name)).map(({ name, text }) => <option selected={selectedField === name}>{text}</option>)}
-                <option value="" disabled selected>--- בחר שדה ---</option>
-            </select>   
-            <span className={classes.addButtonContainer}>
-                <MdAddCircle onClick={() => { if (selectedField) { setFields([ ...fields, allowedFields.find(f => f.text ===  selectedField as string)?.name as string ]); setSelectedField('');} } }/>
-            </span> : <></>
+            <div className={classes.fields}>
+                <select name="fields" id="fields" onChange={e => setSelectedField(e.target.value)} value={selectedField}>
+                    {allowedFields.filter(({ name }) => !fields?.includes(name)).map(({ name, text }) => <option selected={selectedField === name}>{text}</option>)}
+                    <option value="" disabled selected>--- בחר שדה ---</option>
+                </select>   
+                {selectedField ?
+                    <MdAddCircle onClick={() => { if (selectedField) { setFields([ ...fields, allowedFields.find(f => f.text ===  selectedField as string)?.name as string ]); setSelectedField('');} } }/> : <></>}
+            </div>
             <div className={classes.details}>
                 <ItemDetails
                     name=''
@@ -145,10 +144,10 @@ const MultiItemEdit = () => {
                     handleSetDepartment={handleSetDepartment}
                     setEmergency={setEmergency}
                     fields={fields}
-                    elementWrapper={(child, field) => (<span>
-                                    <MdRemoveCircle onClick={() => setFields(fields.filter(f => f !== field))}/>
-                                    {child}
-                                </span>)}
+                    elementWrapper={(child, field) => (<span className={classes.removeField}>
+                        <MdRemoveCircle onClick={() => setFields(fields.filter(f => f !== field))}/>
+                        {child}
+                    </span>)}
                 />
             </div>
             <div className={classes.relations}>
