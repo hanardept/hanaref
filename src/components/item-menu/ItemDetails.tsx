@@ -33,8 +33,6 @@ interface ItemDetailsProps {
     elementWrapper?: (element: JSX.Element, field: string) => JSX.Element;
 }
 
-const hasField = (fields: string[] | undefined, field: string) => fields?.includes(field) ?? true;
-
 const ItemDetails = (props: ItemDetailsProps) => {
     const { name, cat, kitCats, sector, department, description, emergency, catType, certificationPeriodMonths, sectorsToChooseFrom, catTypesToChooseFrom, handleInput, handleDescription, handleSetSector, handleSetDepartment, handleSetCatType, setCertificationPeriodMonths, setName, setEmergency, setCat, setKitCats, fields, elementWrapper } = props;
     const sectorNames = sectorsToChooseFrom.map(s => s.sectorName);

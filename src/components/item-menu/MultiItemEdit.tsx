@@ -1,11 +1,9 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { backendFirebaseUri, fetchBackend } from '../../backend-variables/address';
+import { fetchBackend } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
 import { viewingActions } from '../../store/viewing-slice';
-import { AbbreviatedItem, CatType, Item, SupplierSummary } from '../../types/item_types';
+import { AbbreviatedItem, CatType, SupplierSummary } from '../../types/item_types';
 import { Sector } from '../../types/sector_types';
-import AreYouSure from '../UI/AreYouSure';
 import BigButton from '../UI/BigButton';
 import classes from './ItemMenu.module.css';
 import ItemDetails from './ItemDetails';
@@ -13,7 +11,6 @@ import DeviceFields from './DeviceFields';
 import AccessoryFields from './AccessoryFields';
 import ConsumableFields from './ConsumableFields';
 import SparePartFields from './SparePartFields';
-import { getFilename } from '../../utils';
 import { Role } from '../../types/user_types';
 import { MdAddCircle, MdRemoveCircle } from 'react-icons/md';
 import LabeledInput from '../UI/LabeledInput';
@@ -37,19 +34,16 @@ const allowedFields = [
 ];
 
 const MultiItemEdit = () => {
-    const params = useParams();
     const { jwt: authToken, frontEndPrivilege } = useAppSelector(state => state.auth);
     const { selectedItems } = useAppSelector(state => state.viewing.itemManagement);
     const [sectorsToChooseFrom, setSectorsToChooseFrom] = useState<Sector[]>([]);
     const dispatch = useAppDispatch();
-    const navigate = useNavigate();
     const [sector, setSector] = useState("");
     const [department, setDepartment] = useState("");
     const [emergency, setEmergency] = useState(false);
     const [supplier, setSupplier] =  useState(undefined as SupplierSummary | null | undefined);
     const [belongsToDevices, setBelongsToDevices] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [ fields, setFields ] = useState([] as string[]);
-    const [ changes, setChanges ] = useState({});
     const [ selectedField, setSelectedField] = useState<string | undefined>();
 
     useEffect(() => {
@@ -113,8 +107,6 @@ const MultiItemEdit = () => {
         }
         return Promise.resolve();    
     }
-
-    const catTypesToChooseFrom = frontEndPrivilege === Role.Technician ? [ CatType.SparePart ] : undefined;
 
     const catType = selectedItems.reduce((type, item) => !type || (type === item.catType) ? type : undefined, undefined);
 
