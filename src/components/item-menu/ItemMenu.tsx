@@ -183,7 +183,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
         }
 
         if (newItem) { // creating a new item
-            return fetchBackend(`$items`, {
+            return fetchBackend(`items`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -197,7 +197,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
             .catch((err) => console.log(`Error saving item: ${err}`));
         }            
         if (!newItem) { // editing existing iten
-            return fetchBackend(encodeURI(`$items/${params.itemid ?? itemCat}`), {
+            return fetchBackend(encodeURI(`items/${params.itemid ?? itemCat}`), {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
