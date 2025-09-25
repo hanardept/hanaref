@@ -5,9 +5,10 @@
 }
 
 .pushBodyDown {
-  top: var(--navbarHeight);
-  position: absolute;
-  width: 100vw;
+  /* top: var(--navbarHeight); */
+  /* position: absolute; */
+  position: sticky;
+  width: 100%;
 }
 
 @keyframes welcomeFade {

@@ -6,7 +6,7 @@
     padding: 0.5rem;
     position: fixed;
     z-index: 1;
-    top: var(--navbarHeight);
+    /* top: var(--navbarHeight); */
     width: calc(100vw - 1rem);
     background-color: white;
     border-bottom: 1px solid #e4e4e4;
@@ -26,6 +26,7 @@
 .listItem {
     border-top: 1px solid #e4e4e4;
     display: flex;
+    flex-grow: 1;
     padding-right: 1rem;
     position: relative; /* This is needed for the badge positioning */
 
@@ -36,6 +37,14 @@
     gap: 15px; /* Space between the text content and the image */
     height: 80px; /* Define a fixed height for the list item, adjust as needed */
     box-sizing: border-box; /* Include padding and border in the total height */
+}
+
+.selectableListItem {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-right: 1rem;
+    gap: 15px;
 }
 
 .listItem h2 {
@@ -86,7 +95,7 @@
     overflow: scroll;
     display: flex;
     flex-direction: column;
-    height: calc(100vh - var(--navbarHeight) - var(--searchInputHeight) - 2*var(--searchSelectHeight) - 6*var(--searchPadding) - 2*0.5rem);
+    /* height: calc(100vh - var(--navbarHeight) - var(--searchInputHeight) - 2*var(--searchSelectHeight) - 6*var(--searchPadding) - 2*0.5rem); */
 }
 
 .searchRow {

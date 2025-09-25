@@ -24,7 +24,7 @@ const LeftHeaderSide = () => {
 
     const addItemAndManageSectors = 
         <span className={classes.toolbarSpan}>
-            {selectedItems.length ? <AdminOnly hide={true}><MdEdit onClick={() => navigate('/itemmenu/multiple')} style={{ lineHeight: 0 }}/></AdminOnly> : <></>}
+            {/* {selectedItems.length ? <AdminOnly hide={true}><MdEdit onClick={() => navigate('/itemmenu/multiple')} style={{ lineHeight: 0 }}/></AdminOnly> : <></>} */}
             <AdminOnly hide={true}><FileImport><CiImport/></FileImport></AdminOnly> 
             <AdminOnly hide={true}><span onClick={() => dispatch(exportItemsToCsv())} style={{ lineHeight: 0 }}><CiExport/></span></AdminOnly> 
             <RolesOnly hide={true} roles={[ Role.Admin, Role.Technician ]}><span onClick={() => navigate('/itemmenu')} style={{ lineHeight: 0 }}>+</span></RolesOnly>

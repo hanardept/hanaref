@@ -16,6 +16,7 @@ import SparePartFields from './SparePartFields';
 import { getFilename } from '../../utils';
 import { Role } from '../../types/user_types';
 import { MdAddCircle, MdRemoveCircle } from 'react-icons/md';
+import LabeledInput from '../UI/LabeledInput';
 
 function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
     const filteredList = itemList.filter(i => i.cat !== "" || i.name !== "");
@@ -117,16 +118,23 @@ const MultiItemEdit = () => {
 
     const catType = selectedItems.reduce((type, item) => !type || (type === item.catType) ? type : undefined, undefined);
 
+    console.log(`sectors to choose: ${JSON.stringify(sectorsToChooseFrom)}`);
+
     return (
         <div className={`${classes.itemMenu} ${classes.multiItemMenu}`}>
             <h1 className={classes.title}>עריכת פריטים</h1>
             <div className={classes.fields}>
-                <select name="fields" id="fields" onChange={e => setSelectedField(e.target.value)} value={selectedField}>
-                    {allowedFields.filter(({ name }) => !fields?.includes(name)).map(({ name, text }) => <option selected={selectedField === name}>{text}</option>)}
-                    <option value="" disabled selected>--- בחר שדה ---</option>
-                </select>   
-                {selectedField ?
-                    <MdAddCircle onClick={() => { if (selectedField) { setFields([ ...fields, allowedFields.find(f => f.text ===  selectedField as string)?.name as string ]); setSelectedField('');} } }/> : <></>}
+                <LabeledInput label="שדה"  placeholder="שדה"
+                    customInputElement={
+                        <div className={classes.fields}>
+                        <select name="fields" id="fields" onChange={e => setSelectedField(e.target.value)} value={selectedField}>
+                            {allowedFields.filter(({ name }) => !fields?.includes(name)).map(({ name, text }) => <option selected={selectedField === name}>{text}</option>)}
+                            <option value="" disabled selected>--- בחר שדה ---</option>
+                        </select>
+                        {selectedField ?
+                        <MdAddCircle onClick={() => { if (selectedField) { setFields([ ...fields, allowedFields.find(f => f.text ===  selectedField as string)?.name as string ]); setSelectedField('');} } }/> : <></>}
+                        </div>}
+                />
             </div>
             <div className={classes.details}>
                 <ItemDetails

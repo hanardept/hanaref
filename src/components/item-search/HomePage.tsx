@@ -137,29 +137,29 @@ const HomePage = () => {
     return (
         <>
             <SearchMenu hideArchive={!isAdmin}/>
-            <div className={classes.listItemPusher}></div>
+            {/* <div className={classes.listItemPusher}></div> */}
             {!searchComplete && <LoadingSpinner />}
             {searchComplete && items.length === 0 && <p className={classes.noResults}>לא נמצאו פריטים</p>}
             <div className={classes.itemsWrapper} onScroll={handleScroll}>
                 {/* 4. Pass the `isArchived` prop down to the ListItem component */}
                 {items.map((i, index) => 
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> 
-                    {selectedItems.length ? 
-                    <input type="checkbox" checked={!!selectedItems.find(item => item.cat === i.cat)} onClick={() => toggleItemSelection(i)} /> : <></>}
-                    <ListItem
-                        className={classes.listItem}
-                        textContentClassName={classes.itemTextContent}
-                        imageClassName={classes.itemImage}
-                        key={i._id}
-                        name={i.name}
-                        cat={i.cat}
-                        kitCat={i.kitCats?.[0]}
-                        shouldBeColored={i.imageLink === "" && isAdmin}
-                        imageLink={i.imageLink}
-                        goToItemPage={goToItemPage}
-                        selectItem={() => toggleItemSelection(i) }
-                        isArchived={i.archived}
-                    />
+                    <div className={classes.selectableListItem}> 
+                        {selectedItems.length ? 
+                        <input type="checkbox" checked={!!selectedItems.find(item => item.cat === i.cat)} onClick={() => toggleItemSelection(i)} /> : <></>}
+                        <ListItem
+                            className={classes.listItem}
+                            textContentClassName={classes.itemTextContent}
+                            imageClassName={classes.itemImage}
+                            key={i._id}
+                            name={i.name}
+                            cat={i.cat}
+                            kitCat={i.kitCats?.[0]}
+                            shouldBeColored={i.imageLink === "" && isAdmin}
+                            imageLink={i.imageLink}
+                            goToItemPage={goToItemPage}
+                            selectItem={() => toggleItemSelection(i) }
+                            isArchived={i.archived}
+                        />
                     </div>)}
             </div>
         </>
