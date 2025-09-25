@@ -4,18 +4,16 @@ import AdminOnly from "../authorization/AdminOnly";
 import { exportItemsToCsv } from "../item-search/DownloadItemWorksheet";
 import { exportCertificationsToCsv } from "../certification-page/DownloadCertificationWorksheet";
 import classes from './Header.module.css';
-import { CiEdit, CiExport, CiImport } from "react-icons/ci";
+import { CiExport, CiImport } from "react-icons/ci";
 import { Role } from "../../types/user_types";
 import RolesOnly from "../authorization/RolesOnly";
 import { exportSuppliersToCsv } from "../supplier-page/DownloadSupplierWorksheet";
 import FileImport from "./FileImport";
-import { MdEdit } from "react-icons/md";
 
 
 const LeftHeaderSide = () => {
     const navigate = useNavigate();
     const currentCat = useAppSelector(state => state.viewing.itemManagement.currentCat);
-    const selectedItems = useAppSelector(state => state.viewing.itemManagement.selectedItems);
     const currentTechnicianId = useAppSelector(state => state.viewing.technicianManagement.currentTechnicianId);
     const currentCertificationId = useAppSelector(state => state.viewing.certificationManagement.currentCertificationId);
     const currentUserId = useAppSelector(state => state.viewing.userManagement.currentUserId);
@@ -24,20 +22,12 @@ const LeftHeaderSide = () => {
 
     const addItemAndManageSectors = 
         <span className={classes.toolbarSpan}>
-            {/* {selectedItems.length ? <AdminOnly hide={true}><MdEdit onClick={() => navigate('/itemmenu/multiple')} style={{ lineHeight: 0 }}/></AdminOnly> : <></>} */}
             <AdminOnly hide={true}><FileImport><CiImport/></FileImport></AdminOnly> 
             <AdminOnly hide={true}><span onClick={() => dispatch(exportItemsToCsv())} style={{ lineHeight: 0 }}><CiExport/></span></AdminOnly> 
             <RolesOnly hide={true} roles={[ Role.Admin, Role.Technician ]}><span onClick={() => navigate('/itemmenu')} style={{ lineHeight: 0 }}>+</span></RolesOnly>
             <AdminOnly hide={true}><span onClick={() => navigate('/managesectors')} style={{ lineHeight: 0 }}>⋮</span></AdminOnly>
         </span>
-    ;
-
-    // const addTechnician = 
-
-    //     <span className={classes.toolbarSpan}>
-    //         <AdminOnly hide={true}><span onClick={() => navigate('/technicianmenu')} style={{ lineHeight: 0 }}>+</span></AdminOnly>
-    //     </span>
-    // ;
+    
 
     const addCertification = 
         <span className={classes.toolbarSpan}>
