@@ -29,8 +29,18 @@ const FileImport = ({ children }: { children: any }) => {
             if (res.ok) {
                 alert("הייבוא הצליח!");
             } else {
-                const err = await res.json().catch(() => ({}));
-                alert("שגיאה בייבוא: " + (err.details ? err.details.join("\n") : await res.text()));
+                const contentType = res.headers.get('Content-Type');
+                let alertText;
+                if (contentType?.includes('text/html')) {
+                    alertText = await res.text();
+                } else if (contentType?.includes('application/json')) {
+                    const err = await res.json();
+                    alertText = err.details ? err.details.join("\n") : '';
+                }
+                if (!alertText.length) {
+                    alertText = 'שגיאה בלתי צפויה';
+                }
+                alert("שגיאה בייבוא: " + alertText);
             }
         } catch (e) {
             alert("שגיאה בייבוא: " + e);
