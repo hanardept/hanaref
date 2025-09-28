@@ -14,7 +14,7 @@ import SparePartFields from './SparePartFields';
 import { Role } from '../../types/user_types';
 import { MdRemoveCircle } from 'react-icons/md';
 import LabeledInput from '../UI/LabeledInput';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
     const filteredList = itemList.filter(i => i.cat !== "" || i.name !== "");
@@ -28,8 +28,8 @@ function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
 const allowedFields = [
     { names: [ 'sector', 'department' ], text: 'מדור ותחום'},
     { names: [ 'supplier' ], text: 'ספק' },
-    { names: [ 'emergency' ], text: 'חירום' },
-    { names: [ 'belongsToDevices' ], text: 'שייך למכשירים' }
+    { names: [ 'emergency' ], text: 'חירום', exceptCatTypes: [ CatType.Accessory, CatType.Consumable, CatType.SparePart ] },
+    { names: [ 'belongsToDevices' ], text: 'שייך למכשירים', exceptCatTypes: [ CatType.Device ] }
 ];
 
 const MultiItemEdit = () => {
@@ -42,8 +42,9 @@ const MultiItemEdit = () => {
     const [emergency, setEmergency] = useState(false);
     const [supplier, setSupplier] =  useState(undefined as SupplierSummary | null | undefined);
     const [belongsToDevices, setBelongsToDevices] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-    const [ fields, setFields ] = useState([] as string[]);
+    const [fields, setFields ] = useState([] as string[]);
     const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
     // const [ selectedField, setSelectedField] = useState<string | undefined>();
 
     useEffect(() => {
@@ -110,8 +111,13 @@ const MultiItemEdit = () => {
             });
 
             console.log("success saving items");
+            
         } catch(err) {
             console.log(`Error saving items: ${err}`);
+        } finally {
+            dispatch(viewingActions.changesAppliedToItem(false));
+            dispatch(viewingActions.changeSelectedItems([]));
+            navigate(-1);
         }
         return Promise.resolve();    
     }
@@ -138,7 +144,10 @@ const MultiItemEdit = () => {
                                 setFields([ ...fields, ...(allowedFields.find(f => f.text ===  selectedField as string)?.names as string[])])
                             }
                             } value={""}>
-                                {allowedFields.filter(({ names }) => !fields?.some(name => names.includes(name))).map(({ names, text }) => <option>{text}</option>)}
+                                {allowedFields.filter(({ names, exceptCatTypes }) => 
+                                    (!exceptCatTypes ||
+                                    selectedItems.every(selectedItem => !exceptCatTypes.includes(selectedItem.catType!))) &&
+                                    !fields?.some(name => names.includes(name))).map(({ names, text }) => <option>{text}</option>)}
                                 <option value="" disabled selected>--- בחר שדה ---</option>
                             </select>
                             {/* {selectedField ?

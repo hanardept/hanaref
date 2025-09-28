@@ -34,7 +34,9 @@ const ActionsHeader = (props: any) => {
         })
         .then((res) => {
             console.log("Successfully set archived items!");
+            dispatch(viewingActions.changeSelectedItems([]));
             dispatch(viewingActions.changesAppliedToItem(false));
+            dispatch(viewingActions.changesIdAppliedToItems());
             setAreYouSureArchive(false);
             navigate("/");
         }).catch((err) => console.log(`Error setting archived items: ${err}`));

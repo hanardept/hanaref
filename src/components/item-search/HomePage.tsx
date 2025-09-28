@@ -18,6 +18,7 @@ const HomePage = () => {
     const dispatch = useAppDispatch();
     const items = useAppSelector(state => state.items.items);
     const searchComplete = useAppSelector(state => state.items.searchComplete);
+    const changesId = useAppSelector(state => state.viewing.itemManagement.changesId);;
     const selectedItems = useAppSelector(state => state.viewing.itemManagement.selectedItems);
     const { searchVal, sector, department, showArchived, page, blockScrollSearch } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
@@ -69,7 +70,7 @@ const HomePage = () => {
         }
         triggerNewSearch();
 
-    }, [dispatch, showArchived, searchVal, sector, department, authToken, initialized]);
+    }, [dispatch, showArchived, changesId, searchVal, sector, department, authToken, initialized]);
 
      useEffect(() => {
 
