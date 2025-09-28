@@ -14,7 +14,7 @@ import SparePartFields from './SparePartFields';
 import { Role } from '../../types/user_types';
 import { MdRemoveCircle } from 'react-icons/md';
 import LabeledInput from '../UI/LabeledInput';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
     const filteredList = itemList.filter(i => i.cat !== "" || i.name !== "");
@@ -43,9 +43,8 @@ const MultiItemEdit = () => {
     const [supplier, setSupplier] =  useState(undefined as SupplierSummary | null | undefined);
     const [belongsToDevices, setBelongsToDevices] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [fields, setFields ] = useState([] as string[]);
-    const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
-    // const [ selectedField, setSelectedField] = useState<string | undefined>();
+
 
     useEffect(() => {
             const getSectors = async () => {
@@ -121,8 +120,6 @@ const MultiItemEdit = () => {
         }
         return Promise.resolve();    
     }
-
-    const catType = selectedItems.reduce((type, item) => !type || (type === item.catType) ? type : undefined, undefined);
 
     console.log(`sectors to choose: ${JSON.stringify(sectorsToChooseFrom)}`);
 
