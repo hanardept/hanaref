@@ -1,52 +1,72 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
-import { useAppSelector } from "../../hooks/redux-hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import AdminOnly from "../authorization/AdminOnly";
 import classes from './Header.module.css';
 import { MdEdit } from "react-icons/md";
 import { FiArchive } from "react-icons/fi";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import AreYouSure from "../UI/AreYouSure";
+import { fetchBackend } from "../../backend-variables/address";
+import { viewingActions } from "../../store/viewing-slice";
 
 
 const ActionsHeader = (props: any) => {
     const navigate = useNavigate();
     const selectedItems = useAppSelector(state => state.viewing.itemManagement.selectedItems);
+    const { jwt: authToken }  = useAppSelector(state => state.auth);
+    const dispatch = useAppDispatch();
 
     const [ areYouSureArchive, setAreYouSureArchive ] = useState(false);
+    const [ isArchiveAction, setIsArchiveAction ] = useState(true);
+
+    const handleArchive = () => {
+        fetchBackend(encodeURI(`items/archive`), {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'auth-token': authToken
+            },
+            body: JSON.stringify({
+                cats: selectedItems.map(item => item.cat),
+                archived: isArchiveAction
+            })
+        })
+        .then((res) => {
+            console.log("Successfully set archived items!");
+            dispatch(viewingActions.changesAppliedToItem(false));
+            setAreYouSureArchive(false);
+            navigate("/");
+        }).catch((err) => console.log(`Error setting archived items: ${err}`));
+    }    
 
     const actions = 
         <span className={classes.toolbarSpan} {...props}>
             {selectedItems.length ? <AdminOnly hide={true}><MdEdit onClick={() => navigate('/itemmenu/multiple')} style={{ lineHeight: 0 }}/></AdminOnly> : <></>}
-            {selectedItems.length ? <AdminOnly hide={true}><FiArchive onClick={() => setAreYouSureArchive(true)} style={{ lineHeight: 0 }}/></AdminOnly> : <></>}
+            {selectedItems.length ? <AdminOnly hide={true}>
+                <span style={{ margin: 0, position: 'relative', display: 'inline-block', height: '1rem' }}>
+                    <FiArchive onClick={() => { setIsArchiveAction(false); setAreYouSureArchive(true)}} style={{ lineHeight: 0, zIndex: 10 }}/>
+                    <svg onClick={() => { setIsArchiveAction(false); setAreYouSureArchive(true)}} width="16" height="16" style={{ position: 'absolute', top: 0, left: 0 }} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <line
+                            x1="4" 
+                            y1="0" 
+                            x2="12" 
+                            y2="15" 
+                            stroke="white" 
+                            strokeWidth="1" 
+                        />
+                    </svg>                    
+                </span>
+            </AdminOnly> : <></>}            
+            {selectedItems.length ? <AdminOnly hide={true}><FiArchive onClick={() => { setIsArchiveAction(true); setAreYouSureArchive(true)}} style={{ lineHeight: 0 }}/></AdminOnly> : <></>}
         </span>
 
     return (
         <>
         <Routes>
             <Route path="/" element={actions} />
-            {/* <Route path="items/*" element={<AdminOnly hide={true}><span className={classes.toolbarSpan} onClick={() => navigate(`itemmenu/${currentCat}`)}>ערוך</span></AdminOnly>} />
-            <Route path="itemmenu" element={<></>} />
-            <Route path="itemmenu/*" element={<></>} />
-            <Route path="/itemnotfound/*" element={<></>} />
-            <Route path="managesectors" element={<></>} />
-            <Route path="sectormenu" element={<></>} />
-            <Route path="technicians/:id" element={<AdminOnly hide={true}><span className={classes.toolbarSpan} onClick={() => navigate(`technicianmenu/${currentTechnicianId}`)}>ערוך</span></AdminOnly>} />
-            <Route path="technicianmenu" element={<></>} />
-            <Route path="technicianmenu/*" element={<></>} />
-            <Route path="certifications" element={addCertification} />
-            <Route path="certifications/*" element={<AdminOnly hide={true}><span className={classes.toolbarSpan} onClick={() => navigate(`certificationmenu/${currentCertificationId}`)}>ערוך</span></AdminOnly>} />
-            <Route path="certificationmenu" element={<></>} />
-            <Route path="certificationmenu/*" element={<></>} />
-            <Route path="users" element={addUser} />
-            <Route path="users/*" element={<AdminOnly hide={true}><span className={classes.toolbarSpan} onClick={() => navigate(`usermenu/${currentUserId}`)}>ערוך</span></AdminOnly>} />
-            <Route path="usermenu" element={<></>} />
-            <Route path="usermenu/*" element={<></>} />
-            <Route path="suppliers" element={addSupplier} />
-            <Route path="suppliers/*" element={<AdminOnly hide={true}><span className={classes.toolbarSpan} onClick={() => navigate(`suppliermenu/${currentSupplierId}`)}>ערוך</span></AdminOnly>} />
-            <Route path="suppliermenu" element={<></>} />
-            <Route path="suppliermenu/*" element={<></>} />                 */}
         </Routes>
-        {areYouSureArchive && <AreYouSure text="האם באמת לארכב את הפריטים?" leftText='ארכב' leftAction={() => {}} rightText='לא' rightAction={() => setAreYouSureArchive(false)} />}
+        {areYouSureArchive && <AreYouSure text={isArchiveAction ? "האם באמת לארכב את הפריטים?" : "האם באמת להוציא את הפריטים מהארכיון?"} leftText={isArchiveAction ? 'ארכב' : 'הוצא מארכיון'} leftAction={handleArchive} rightText='לא' rightAction={() => setAreYouSureArchive(false)} />}
         </>
             
     )

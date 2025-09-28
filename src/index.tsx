@@ -5,8 +5,9 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import store from './store/redux-logic';
+import { persistor, store } from './store/redux-logic';
 import AuthProviderWithNavigate from './AuthProviderWithNavigate';
+import { PersistGate } from 'redux-persist/integration/react';
 
 console.log(`backend url: ${process.env.REACT_APP_BACKEND_URL}`);
 console.log(process.env);
@@ -17,13 +18,15 @@ console.log(`domain: ${process.env.REACT_APP_AUTH0_DOMAIN}, redirect_uri: ${wind
 
 root.render(
     <React.StrictMode>
-    <Provider store={store}>
-    <BrowserRouter>
-    <AuthProviderWithNavigate>
-      <App />
-    </AuthProviderWithNavigate>        
-    </BrowserRouter>
-    </Provider>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <BrowserRouter>
+            <AuthProviderWithNavigate>
+              <App />
+            </AuthProviderWithNavigate>        
+          </BrowserRouter>
+        </PersistGate>
+      </Provider>
     </React.StrictMode>
 );
 

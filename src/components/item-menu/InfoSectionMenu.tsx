@@ -1,6 +1,7 @@
 import React from 'react';
 import { AbbreviatedItem } from '../../types/item_types';
 import InfoSectionLine from './InfoSectionLine';
+import classes from './ItemMenu.module.css';
 
 const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, allowNewItem, onFetchSuggestions, onClearSuggestions, onBlur }: { 
         title: string,
@@ -56,7 +57,7 @@ const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, allowNewItem
     }
 
     return (
-        <>
+        <div className={classes.infoSectionMenu}>
             <h3 style={{ textAlign: "right" }}>{title}</h3>
             {/* Display at least 1 line, even if there are no items */}
             {Array.from({ length: items?.length ? items.length : 1 }).map((_, index) => {
@@ -80,7 +81,7 @@ const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, allowNewItem
                             onBlur={onBlur}
                         />
             })}
-        </>
+        </div>
     )
 };
 

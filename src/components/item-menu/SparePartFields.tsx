@@ -24,10 +24,12 @@ interface SparePartFieldsProps {
     setSupplier?: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
     setModels?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setBelongsToDevices?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
+    fields?: string[];
+    elementWrapper?: (element: JSX.Element, field: string) => JSX.Element;    
 }
 
 const SparePartFields = (props: SparePartFieldsProps) => {
-    const { imageLink, isImageUploading, userManualLink, isUserManualUploading, supplier, models, belongsToDevices, setImageLink, setUserManualLink, setSupplier, setModels, setBelongsToDevices } = props;
+    const { imageLink, isImageUploading, userManualLink, isUserManualUploading, supplier, models, belongsToDevices, setImageLink, setUserManualLink, setSupplier, setModels, setBelongsToDevices, fields, elementWrapper } = props;
 
     const authToken = useAppSelector(state => state.auth.jwt);
     const [ itemSuggestions, setItemSuggestions ] = useState([]);
@@ -60,13 +62,16 @@ const SparePartFields = (props: SparePartFieldsProps) => {
         setSupplier?.(supplierDetails);
     }, [ authToken, setSupplier ]);       
 
-    return (
-        <>
+    const namedElements = [
+        { name: 'lifeSpan', element:
             <LabeledInput type="file" label="קישור לתמונה" value={imageLink} placeholder="קישור לתמונה" 
                 customInputElement={<UploadFile placeholder="קישור לתמונה" url={imageLink} accept="image/png, image/jpeg" isUploading={isImageUploading} onChange={(e) => setImageLink?.(e.target.files?.[0] ?? '')} onClear={() => setImageLink?.("")}/>}/>
+        },
+        { name: 'userManualLink', element:
             <LabeledInput type="file" label="מדריך למשתמש" value={userManualLink} placeholder="מדריך למשתמש" 
                 customInputElement={<UploadFile placeholder="מדריך למשתמש" url={userManualLink} isUploading={isUserManualUploading} onChange={(e) => setUserManualLink?.(e.target.files?.[0] ?? '')} onClear={() => setUserManualLink?.("")}/>}/>
-
+        },
+        { name: 'supplier', element:
             <div className={classes.inputGroup}>
                 <label htmlFor="supplierSearch">ספק בארץ</label>      
                 <div className={classes.supplierRow}>         
@@ -133,8 +138,11 @@ const SparePartFields = (props: SparePartFieldsProps) => {
                         }}/>
                 </div>
             </div>
-
+        },
+        { name: 'models', element:
             <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />
+        },
+        { name: 'belongsToDevices', element:
             <InfoSectionMenu
                 title="שייך למכשיר"
                 items={belongsToDevices}
@@ -151,10 +159,18 @@ const SparePartFields = (props: SparePartFieldsProps) => {
                     .then(jsonRes => setItemSuggestions(jsonRes))
                     .catch((err) => console.log(`Error getting item suggestions: ${err}`));
                 }}
-                onClearSuggestions={() => setItemSuggestions([])}                  
-            />
-        </>
-    )
+                onClearSuggestions={() => setItemSuggestions([])}     
+            />             
+        }
+    ]
+
+    return <>
+        {
+            namedElements
+            .filter(({ name, element }) => element && (!fields || fields.includes(name)))
+            .map(({ element, name }) => elementWrapper ? elementWrapper(element!, name) : element)
+        }
+        </>        
 }
 
 export default SparePartFields;

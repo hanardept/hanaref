@@ -144,8 +144,7 @@ const HomePage = () => {
                 {/* 4. Pass the `isArchived` prop down to the ListItem component */}
                 {items.map((i, index) => 
                     <div className={classes.selectableListItem}> 
-                        {selectedItems.length ? 
-                        <input type="checkbox" checked={!!selectedItems.find(item => item.cat === i.cat)} onClick={() => toggleItemSelection(i)} /> : <></>}
+                        <input className={!selectedItems.length ? classes.checkItem : ''} type="checkbox" checked={!!selectedItems.find(item => item.cat === i.cat)} onClick={() => toggleItemSelection(i)} />
                         <ListItem
                             className={classes.listItem}
                             textContentClassName={classes.itemTextContent}

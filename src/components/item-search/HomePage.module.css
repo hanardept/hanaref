@@ -45,6 +45,7 @@
     align-items: center;
     padding-right: 1rem;
     gap: 15px;
+    justify-content: flex-start;
 }
 
 .listItem h2 {
@@ -159,4 +160,14 @@
   border-radius: 10px;
   font-weight: bold;
   text-transform: uppercase;
+}
+
+.checkItem {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .checkItem {
+        display: block;
+    }
 }

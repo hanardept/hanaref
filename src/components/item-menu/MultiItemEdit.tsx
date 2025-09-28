@@ -12,8 +12,9 @@ import AccessoryFields from './AccessoryFields';
 import ConsumableFields from './ConsumableFields';
 import SparePartFields from './SparePartFields';
 import { Role } from '../../types/user_types';
-import { MdAddCircle, MdRemoveCircle } from 'react-icons/md';
+import { MdRemoveCircle } from 'react-icons/md';
 import LabeledInput from '../UI/LabeledInput';
+import { useSearchParams } from 'react-router-dom';
 
 function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
     const filteredList = itemList.filter(i => i.cat !== "" || i.name !== "");
@@ -25,12 +26,10 @@ function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
 }
 
 const allowedFields = [
-    { name: 'sector', text: 'מדור'},
-    { name: 'department', text: 'תחום'},
-    { name: 'supplier', text: 'ספק' },
-    { name: 'emergency', text: 'חירום' },
-    { name: 'archive', text: 'ארכיון' },
-    { name: 'belongsToDevic', text: 'שייך למכשירים' }
+    { names: [ 'sector', 'department' ], text: 'מדור ותחום'},
+    { names: [ 'supplier' ], text: 'ספק' },
+    { names: [ 'emergency' ], text: 'חירום' },
+    { names: [ 'belongsToDevices' ], text: 'שייך למכשירים' }
 ];
 
 const MultiItemEdit = () => {
@@ -44,7 +43,8 @@ const MultiItemEdit = () => {
     const [supplier, setSupplier] =  useState(undefined as SupplierSummary | null | undefined);
     const [belongsToDevices, setBelongsToDevices] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [ fields, setFields ] = useState([] as string[]);
-    const [ selectedField, setSelectedField] = useState<string | undefined>();
+    const [searchParams, setSearchParams] = useSearchParams();
+    // const [ selectedField, setSelectedField] = useState<string | undefined>();
 
     useEffect(() => {
             const getSectors = async () => {
@@ -79,6 +79,14 @@ const MultiItemEdit = () => {
     }
 
     const handleSave = async (): Promise<any> => {
+        const data: Record<string, any> = { sector, department, emergency, supplier, belongsToDevices };
+        if (fields.some(f => data[f] === undefined || data[f] === "" || (Array.isArray(data[f]) && data[f].length === 0))) {
+            console.log(`missing field: ${fields.find(f => data[f] === undefined || data[f] === "" || (Array.isArray(data[f]) && data[f].length === 0))}`);
+            // if the required fields of the Item mongo schema are not filled then don't save
+            alert("לא כל השדות שנבחרו מולאו");
+            return;
+        }
+
 
         const fullItemDetails: Record<string, any> = {
             sector: sector,
@@ -112,19 +120,29 @@ const MultiItemEdit = () => {
 
     console.log(`sectors to choose: ${JSON.stringify(sectorsToChooseFrom)}`);
 
+    const removeField = (field: string) => {
+        const fieldGroup = allowedFields.find(f => f.names.includes(field));
+        setFields(fields.filter(f => !fieldGroup?.names.includes(f)));
+    }
+
     return (
         <div className={`${classes.itemMenu} ${classes.multiItemMenu}`}>
             <h1 className={classes.title}>עריכת פריטים</h1>
             <div className={classes.fields}>
                 <LabeledInput label="שדה"  placeholder="שדה"
                     customInputElement={
-                        <div className={classes.fields}>
-                        <select name="fields" id="fields" onChange={e => setSelectedField(e.target.value)} value={selectedField}>
-                            {allowedFields.filter(({ name }) => !fields?.includes(name)).map(({ name, text }) => <option selected={selectedField === name}>{text}</option>)}
-                            <option value="" disabled selected>--- בחר שדה ---</option>
-                        </select>
-                        {selectedField ?
-                        <MdAddCircle onClick={() => { if (selectedField) { setFields([ ...fields, allowedFields.find(f => f.text ===  selectedField as string)?.name as string ]); setSelectedField('');} } }/> : <></>}
+                        <div className={classes.fieldSelectionContainer}>
+                            <select className={classes.fieldSelection} name="fields" id="fields" onChange={e => {
+                                // setSelectedField(e.target.value)
+                                const selectedField = e.target.value;
+                                setFields([ ...fields, ...(allowedFields.find(f => f.text ===  selectedField as string)?.names as string[])])
+                            }
+                            } value={""}>
+                                {allowedFields.filter(({ names }) => !fields?.some(name => names.includes(name))).map(({ names, text }) => <option>{text}</option>)}
+                                <option value="" disabled selected>--- בחר שדה ---</option>
+                            </select>
+                            {/* {selectedField ?
+                            <MdAddCircle onClick={() => { if (selectedField) { setFields([ ...fields, allowedFields.find(f => f.text ===  selectedField as string)?.name as string ]); setSelectedField('');} } }/> : <></>} */}
                         </div>}
                 />
             </div>
@@ -144,14 +162,12 @@ const MultiItemEdit = () => {
                     handleSetDepartment={handleSetDepartment}
                     setEmergency={setEmergency}
                     fields={fields}
-                    elementWrapper={(child, field) => (<span className={classes.removeField}>
-                        <MdRemoveCircle onClick={() => setFields(fields.filter(f => f !== field))}/>
+                    elementWrapper={(child, field) => (<span className={classes.removableField}>
+                        <MdRemoveCircle onClick={() => removeField(field)}/>
                         {child}
                     </span>)}
                 />
-            </div>
-            <div className={classes.relations}>
-                {catType === "מכשיר" && <DeviceFields
+                <DeviceFields
                     imageLink=''
                     qaStandardLink=''
                     medicalEngineeringManualLink=''
@@ -165,8 +181,13 @@ const MultiItemEdit = () => {
                     spareParts={[]}
                     handleInput={handleInput}
                     setSupplier={setSupplier}
-                />}
-                {catType === "אביזר" && <AccessoryFields
+                    fields={fields}
+                    elementWrapper={(child, field) => (<span className={classes.removableField}>
+                        <MdRemoveCircle onClick={() => removeField(field)}/>
+                        {child}
+                    </span>)}                    
+                />
+                <AccessoryFields
                     imageLink=''
                     userManualLink=''
                     supplier={supplier}
@@ -175,8 +196,13 @@ const MultiItemEdit = () => {
                     handleInput={handleInput}
                     setSupplier={setSupplier}
                     setBelongsToDevices={setBelongsToDevices}
-                />}
-                {catType === "מתכלה" && <ConsumableFields
+                    fields={fields.filter(f => f !== 'supplier')}
+                    elementWrapper={(child, field) => (<span className={classes.removableField}>
+                        <MdRemoveCircle onClick={() => removeField(field)}/>
+                        {child}
+                    </span>)}                     
+                />
+                <ConsumableFields
                     imageLink=''
                     userManualLink=''
                     supplier={supplier}
@@ -186,8 +212,13 @@ const MultiItemEdit = () => {
                     handleInput={handleInput}
                     setSupplier={setSupplier}
                     setBelongsToDevices={setBelongsToDevices}
-                />}
-                {catType === "חלק חילוף" && <SparePartFields
+                    fields={fields.filter(f => !['belongsToDevices', 'supplier'].includes(f))}
+                    elementWrapper={(child, field) => (<span className={classes.removableField}>
+                        <MdRemoveCircle onClick={() => removeField(field)}/>
+                        {child}
+                    </span>)}                     
+                />
+                <SparePartFields
                     imageLink=''
                     userManualLink=''
                     supplier={supplier}
@@ -196,7 +227,12 @@ const MultiItemEdit = () => {
                     handleInput={handleInput}
                     setSupplier={setSupplier}
                     setBelongsToDevices={setBelongsToDevices}
-                />}
+                    fields={fields.filter(f => !['belongsToDevices', 'supplier'].includes(f))}
+                    elementWrapper={(child, field) => (<span className={classes.removableField}>
+                        <MdRemoveCircle onClick={() => removeField(field)}/>
+                        {child}
+                    </span>)}                     
+                />
             </div>
             <div className={classes.buttons}>
                 <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "2.5rem" }} className={classes.button} />

@@ -40,13 +40,15 @@ interface DeviceFieldsProps {
     setAccessories?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setConsumables?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setSpareParts?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
+    fields?: string[];
+    elementWrapper?: (element: JSX.Element, field: string) => JSX.Element;    
 }
 
 const DeviceFields = (props: DeviceFieldsProps) => {
     const {
         imageLink, isImageUploading, qaStandardLink, isQaStandardUploading, medicalEngineeringManualLink, isMedicalEngineeringManualUploading, userManualLink, isUserManualUploading, serviceManualLink, isServiceManualUploading,
         hebrewManualLink, isHebrewManualUploading, supplier, models, accessories, consumables, spareParts, setImageLink, setQaStandardLink, setMedicalEngineeringManualLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier, setModels,
-        setAccessories, setConsumables, setSpareParts
+        setAccessories, setConsumables, setSpareParts, fields, elementWrapper
     } = props;
 
     const authToken = useAppSelector(state => state.auth.jwt);
@@ -71,140 +73,151 @@ const DeviceFields = (props: DeviceFieldsProps) => {
         setSupplier?.(supplierDetails);
     }, [ authToken, setSupplier ]);    
 
-    return (
-        <>
+
+    console.log(`fields: ${JSON.stringify(fields)}`);
+
+    const namedElements = [
+        { name: 'imageLink', element:
             <LabeledInput type="file" label="קישור לתמונה" value={imageLink}  placeholder="קישור לתמונה" 
-                customInputElement={<UploadFile placeholder= "קישור לתמונה" url={imageLink} accept="image/png, image/jpeg" isUploading={isImageUploading} onChange={(e) => setImageLink?.(e.target.files?.[0] ?? '')} onClear={() => setImageLink?.("")}/>}/>
-            <LabeledInput type="file" label="מדריך למשתמש" value={userManualLink} placeholder="מדריך למשתמש"
-                customInputElement={<UploadFile placeholder="מדריך למשתמש" url={userManualLink} isUploading={isUserManualUploading} onChange={(e) => setUserManualLink?.(e.target.files?.[0] ?? '')} onClear={() => setUserManualLink?.("")}/>}/>                
-            <LabeledInput type="file" label="הוראות הפעלה בעברית" value={hebrewManualLink} placeholder="הוראות הפעלה בעברית" 
-                customInputElement={<UploadFile placeholder="הוראות הפעלה בעברית" url={hebrewManualLink} isUploading={isHebrewManualUploading} onChange={(e) => setHebrewManualLink?.(e.target.files?.[0] ?? '')} onClear={() => setHebrewManualLink?.("")}/>}/>
-            <LabeledInput type="file" label="הוראות הנר" value={medicalEngineeringManualLink} placeholder="הוראות הנר" 
-                customInputElement={<UploadFile placeholder="הוראות הנר" url={medicalEngineeringManualLink} isUploading={isMedicalEngineeringManualUploading} onChange={(e) => setMedicalEngineeringManualLink?.(e.target.files?.[0] ?? '')}  onClear={() => setMedicalEngineeringManualLink?.("")}/>}/>
-            <LabeledInput type="file" label="תקן בחינה" value={qaStandardLink} placeholder="תקן בחינה"
-                customInputElement={<UploadFile placeholder="תקן בחינה" url={qaStandardLink} isUploading={isQaStandardUploading} onChange={(e) => setQaStandardLink?.(e.target.files?.[0] ?? '')}  onClear={() => setQaStandardLink?.("")}/>}/>
-            <LabeledInput type="file" label="Service Manual" value={serviceManualLink} placeholder="Service Manual" 
-                customInputElement={<UploadFile placeholder="Service Manual" url={serviceManualLink} isUploading={isServiceManualUploading} onChange={(e) => setServiceManualLink?.(e.target.files?.[0] ?? '')}  onClear={() => setServiceManualLink?.("")}/>}/>
-            
-            <div className={classes.inputGroup}>
-                <label htmlFor="supplierSearch">ספק בארץ</label>                
-                {showSupplierListItem ? (
-                    <span className={classes.listItemContainer}>
-                        <SupplierListItem
-                            className={classes.supplierListItem}
-                            textContentClassName={classes.itemTextContent}
-                            _id={supplier?._id ?? ""}
-                            supplier={supplier}
-                            goToSupplierPage={() => setShowSupplierInput(true)}
-                        />
-                        <MdEdit
-                            onClick={() => {
-                                setShowSupplierInput(true);
-                                setSupplierSearchText(supplier.name);
+                customInputElement={<UploadFile placeholder= "קישור לתמונה" url={imageLink} accept="image/png, image/jpeg" isUploading={isImageUploading} onChange={(e) => setImageLink?.(e.target.files?.[0] ?? '')} onClear={() => setImageLink?.("")}/>}/>},
+            {name: 'userManualLink', element: <LabeledInput type="file" label="מדריך למשתמש" value={userManualLink} placeholder="מדריך למשתמש"
+                customInputElement={<UploadFile placeholder="מדריך למשתמש" url={userManualLink} isUploading={isUserManualUploading} onChange={(e) => setUserManualLink?.(e.target.files?.[0] ?? '')} onClear={() => setUserManualLink?.("")}/>}/>},
+            {name: 'hebrewManualLink', element: <LabeledInput type="file" label="הוראות הפעלה בעברית" value={hebrewManualLink} placeholder="הוראות הפעלה בעברית" 
+                customInputElement={<UploadFile placeholder="הוראות הפעלה בעברית" url={hebrewManualLink} isUploading={isHebrewManualUploading} onChange={(e) => setHebrewManualLink?.(e.target.files?.[0] ?? '')} onClear={() => setHebrewManualLink?.("")}/>}/>},
+            {name: 'medicalEngineeringManualLink', element: <LabeledInput type="file" label="הוראות הנר" value={medicalEngineeringManualLink} placeholder="הוראות הנר" 
+                customInputElement={<UploadFile placeholder="הוראות הנר" url={medicalEngineeringManualLink} isUploading={isMedicalEngineeringManualUploading} onChange={(e) => setMedicalEngineeringManualLink?.(e.target.files?.[0] ?? '')}  onClear={() => setMedicalEngineeringManualLink?.("")}/>}/>},
+            {name: 'qaStandardLink', element: <LabeledInput type="file" label="תקן בחינה" value={qaStandardLink} placeholder="תקן בחינה"
+                customInputElement={<UploadFile placeholder="תקן בחינה" url={qaStandardLink} isUploading={isQaStandardUploading} onChange={(e) => setQaStandardLink?.(e.target.files?.[0] ?? '')}  onClear={() => setQaStandardLink?.("")}/>}/>},
+            {name: 'serviceManualLink', element: <LabeledInput type="file" label="Service Manual" value={serviceManualLink} placeholder="Service Manual" 
+                customInputElement={<UploadFile placeholder="Service Manual" url={serviceManualLink} isUploading={isServiceManualUploading} onChange={(e) => setServiceManualLink?.(e.target.files?.[0] ?? '')}  onClear={() => setServiceManualLink?.("")}/>}/>},
+            {name: 'supplier', element:            
+                <div className={classes.inputGroup}>
+                    <label htmlFor="supplierSearch">ספק בארץ</label>                
+                    {showSupplierListItem ? (
+                        <span className={classes.listItemContainer}>
+                            <SupplierListItem
+                                className={classes.supplierListItem}
+                                textContentClassName={classes.itemTextContent}
+                                _id={supplier?._id ?? ""}
+                                supplier={supplier}
+                                goToSupplierPage={() => setShowSupplierInput(true)}
+                            />
+                            <MdEdit
+                                onClick={() => {
+                                    setShowSupplierInput(true);
+                                    setSupplierSearchText(supplier.name);
+                                }}
+                            />
+                        </span>
+                    ) : (
+                        <DebouncingInput
+                            id="supplierSearch"
+                            className={classes.itemCat}
+                            inputValue={supplierSearchText}
+                            onValueChanged={(val: any) => setSupplierSearchText(val)}
+                            onValueErased={() => setSupplier?.(null)}
+                            onSuggestionSelected={(s: any) => {
+                                setSupplier?.(s);
+                                fetchSupplier(s._id);
+                                setShowSupplierInput(false)
+                            }}
+                            getSuggestionValue={s => s.name}
+                            placeholder='חפש ספק (שם, מזהה במשרד הביטחון)'
+                            suggestions={supplierSuggestions}
+                            onFetchSuggestions={(value: string) => {
+                                fetchBackend(encodeURI(`suppliers?search=${value}`), {
+                                    method: 'GET',
+                                    headers: {
+                                        'auth-token': authToken
+                                    }
+                                })
+                                .then((res) => res.json())
+                                .then(jsonRes => setSupplierSuggestions(jsonRes))
+                                .catch((err) => console.log(`Error getting item suggestions: ${err}`));
+                            }}
+                            renderSuggestion={s => <span>{s.id} {s.name}</span>}
+                            onClearSuggestions={() => { console.log(`clearing suggestions`); setSupplierSuggestions([]); }}
+                            onBlur={() => {
+                                if (!supplierSuggestions.find((s: any) => s.id === supplierSearchText || s.name === supplierSearchText)) {
+                                    setSupplierSearchText("");
+                                }
                             }}
                         />
-                    </span>
-                ) : (
-                    <DebouncingInput
-                        id="supplierSearch"
-                        className={classes.itemCat}
-                        inputValue={supplierSearchText}
-                        onValueChanged={(val: any) => setSupplierSearchText(val)}
-                        onValueErased={() => setSupplier?.(null)}
-                        onSuggestionSelected={(s: any) => {
-                            setSupplier?.(s);
-                            fetchSupplier(s._id);
-                            setShowSupplierInput(false)
-                        }}
-                        getSuggestionValue={s => s.name}
-                        placeholder='חפש ספק (שם, מזהה במשרד הביטחון)'
-                        suggestions={supplierSuggestions}
-                        onFetchSuggestions={(value: string) => {
-                            fetchBackend(encodeURI(`suppliers?search=${value}`), {
-                                method: 'GET',
-                                headers: {
-                                    'auth-token': authToken
-                                }
-                            })
-                            .then((res) => res.json())
-                            .then(jsonRes => setSupplierSuggestions(jsonRes))
-                            .catch((err) => console.log(`Error getting item suggestions: ${err}`));
-                        }}
-                        renderSuggestion={s => <span>{s.id} {s.name}</span>}
-                        onClearSuggestions={() => { console.log(`clearing suggestions`); setSupplierSuggestions([]); }}
-                        onBlur={() => {
-                            if (!supplierSuggestions.find((s: any) => s.id === supplierSearchText || s.name === supplierSearchText)) {
-                                setSupplierSearchText("");
+                    )}
+                </div>},
+            {name: 'models', element: <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />},
+            {name: 'accessories', element:
+                <InfoSectionMenu 
+                    title="אביזרים"
+                    items={accessories}
+                    setItems={setAccessories}
+                    itemSuggestions={itemSuggestions}
+                    allowNewItem={true}
+                    onFetchSuggestions={(value: string, field: string) => {
+                        return fetch(encodeURI(`${backendFirebaseUri}/items?catType=אביזר&search=${value}&searchFields=${field}`), {
+                            method: 'GET',
+                            headers: {
+                                'auth-token': authToken
                             }
-                        }}
-                    />
-                )}
-            </div>
-            
-            
-            <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />
-            <InfoSectionMenu 
-                title="אביזרים"
-                items={accessories}
-                setItems={setAccessories}
-                itemSuggestions={itemSuggestions}
-                allowNewItem={true}
-                onFetchSuggestions={(value: string, field: string) => {
-                    return fetch(encodeURI(`${backendFirebaseUri}/items?catType=אביזר&search=${value}&searchFields=${field}`), {
-                        method: 'GET',
-                        headers: {
-                            'auth-token': authToken
-                        }
-                    })
-                    .then((res) => res.json())
-                    .then(jsonRes => setItemSuggestions(jsonRes))
-                    .catch((err) => console.log(`Error getting item suggestions: ${err}`));
-                }}
-                onClearSuggestions={() => setItemSuggestions([])}
-            
-            />
-            <InfoSectionMenu 
-                title="מתכלים"
-                items={consumables}
-                setItems={setConsumables}
-                itemSuggestions={itemSuggestions}
-                allowNewItem={true}
-                onFetchSuggestions={(value: string, field: string) => {
-                    return fetch(encodeURI(`${backendFirebaseUri}/items?catType=מתכלה&search=${value}&searchFields=${field}`), {
-                        method: 'GET',
-                        headers: {
-                            'auth-token': authToken
-                        }
-                    })
-                    .then((res) => res.json())
-                    .then(jsonRes => setItemSuggestions(jsonRes))
-                    .catch((err) => console.log(`Error getting item suggestions: ${err}`));
-                }}
-                onClearSuggestions={() => setItemSuggestions([])}
-            
-            />   
-            <InfoSectionMenu 
-                title="חלקי חילוף"
-                items={spareParts}
-                setItems={setSpareParts}
-                itemSuggestions={itemSuggestions}
-                allowNewItem={true}
-                onFetchSuggestions={(value: string, field: string) => {
-                    return fetch(encodeURI(`${backendFirebaseUri}/items?catType=חלק חילוף&search=${value}&searchFields=${field}`), {
-                        method: 'GET',
-                        headers: {
-                            'auth-token': authToken
-                        }
-                    })
-                    .then((res) => res.json())
-                    .then(jsonRes => setItemSuggestions(jsonRes))
-                    .catch((err) => console.log(`Error getting item suggestions: ${err}`));
-                }}
-                onClearSuggestions={() => setItemSuggestions([])}
-            
-            />
-        </>
-    )
+                        })
+                        .then((res) => res.json())
+                        .then(jsonRes => setItemSuggestions(jsonRes))
+                        .catch((err) => console.log(`Error getting item suggestions: ${err}`));
+                    }}
+                    onClearSuggestions={() => setItemSuggestions([])}
+                
+                />},
+            {name: 'consumables', element:
+                <InfoSectionMenu 
+                    title="מתכלים"
+                    items={consumables}
+                    setItems={setConsumables}
+                    itemSuggestions={itemSuggestions}
+                    allowNewItem={true}
+                    onFetchSuggestions={(value: string, field: string) => {
+                        return fetch(encodeURI(`${backendFirebaseUri}/items?catType=מתכלה&search=${value}&searchFields=${field}`), {
+                            method: 'GET',
+                            headers: {
+                                'auth-token': authToken
+                            }
+                        })
+                        .then((res) => res.json())
+                        .then(jsonRes => setItemSuggestions(jsonRes))
+                        .catch((err) => console.log(`Error getting item suggestions: ${err}`));
+                    }}
+                    onClearSuggestions={() => setItemSuggestions([])}
+                
+                />},
+            {name: 'spareParts', element:
+                <InfoSectionMenu 
+                    title="חלקי חילוף"
+                    items={spareParts}
+                    setItems={setSpareParts}
+                    itemSuggestions={itemSuggestions}
+                    allowNewItem={true}
+                    onFetchSuggestions={(value: string, field: string) => {
+                        return fetch(encodeURI(`${backendFirebaseUri}/items?catType=חלק חילוף&search=${value}&searchFields=${field}`), {
+                            method: 'GET',
+                            headers: {
+                                'auth-token': authToken
+                            }
+                        })
+                        .then((res) => res.json())
+                        .then(jsonRes => setItemSuggestions(jsonRes))
+                        .catch((err) => console.log(`Error getting item suggestions: ${err}`));
+                    }}
+                    onClearSuggestions={() => setItemSuggestions([])}
+                />
+            }
+        ];
+
+    return <>
+        {
+            namedElements
+            .filter(({ name, element }) => element && (!fields || fields.includes(name)))
+            .map(({ element, name }) => elementWrapper ? elementWrapper(element!, name) : element)
+        }
+        </>;
 }
 
 export default DeviceFields;
