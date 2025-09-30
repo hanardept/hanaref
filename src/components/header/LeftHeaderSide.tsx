@@ -9,6 +9,7 @@ import { Role } from "../../types/user_types";
 import RolesOnly from "../authorization/RolesOnly";
 import { exportSuppliersToCsv } from "../supplier-page/DownloadSupplierWorksheet";
 import FileImport from "./FileImport";
+import { Tooltip } from "react-tooltip";
 
 
 const LeftHeaderSide = () => {
@@ -22,10 +23,14 @@ const LeftHeaderSide = () => {
 
     const addItemAndManageSectors = 
         <span className={classes.toolbarSpan}>
-            <AdminOnly hide={true}><FileImport><CiImport title="ייבא פריטים"/></FileImport></AdminOnly> 
-            <AdminOnly hide={true}><span title="ייצא פריטים" onClick={() =>  dispatch(exportItemsToCsv())} style={{ lineHeight: 0, cursor: "pointer" }}><CiExport/></span></AdminOnly> 
-            <RolesOnly hide={true} roles={[ Role.Admin, Role.Technician ]}><span title="הוסף פריט חדש" onClick={() => navigate('/itemmenu')} style={{ lineHeight: 0, cursor: "pointer" }}>+</span></RolesOnly>
-            <AdminOnly hide={true}><span title="ערוך מדורים" onClick={() => navigate('/managesectors')} style={{ lineHeight: 0, cursor: "pointer" }}>⋮</span></AdminOnly>
+            <AdminOnly hide={true}><FileImport><CiImport data-tooltip-id="import-items" data-tooltip-content="ייבא פריטים"/></FileImport></AdminOnly> 
+            <AdminOnly hide={true}><span onClick={() =>  dispatch(exportItemsToCsv())} style={{ lineHeight: 0, cursor: "pointer" }} data-tooltip-id="export-items" data-tooltip-content="ייצא פריטים"><CiExport/></span></AdminOnly> 
+            <RolesOnly hide={true} roles={[ Role.Admin, Role.Technician ]}><span onClick={() => navigate('/itemmenu')} style={{ lineHeight: 0, cursor: "pointer" }} data-tooltip-id="add-item" data-tooltip-content="הוסף פריט חדש">+</span></RolesOnly>
+            <AdminOnly hide={true}><span onClick={() => navigate('/managesectors')} style={{ lineHeight: 0, cursor: "pointer" }} data-tooltip-id="edit-sectors" data-tooltip-content="ערוך מדורים">⋮</span></AdminOnly>
+            <Tooltip id="import-items" place="bottom" />
+            <Tooltip id="export-items" place="bottom" />
+            <Tooltip id="add-item" place="bottom" />
+            <Tooltip id="edit-sectors" place="bottom" />
         </span>
     
 

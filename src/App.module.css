@@ -7,7 +7,6 @@
 .pushBodyDown {
   /* top: var(--navbarHeight); */
   /* position: absolute; */
-  position: sticky;
   width: 100%;
 }
 

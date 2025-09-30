@@ -4,10 +4,11 @@ import AdminOnly from "../authorization/AdminOnly";
 import classes from './Header.module.css';
 import { MdEdit } from "react-icons/md";
 import { FiArchive } from "react-icons/fi";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import AreYouSure from "../UI/AreYouSure";
 import { fetchBackend } from "../../backend-variables/address";
 import { viewingActions } from "../../store/viewing-slice";
+import { Tooltip } from 'react-tooltip'
 
 
 const ActionsHeader = (props: any) => {
@@ -44,9 +45,11 @@ const ActionsHeader = (props: any) => {
 
     const actions = 
         <span className={classes.toolbarSpan} {...props}>
-            {selectedItems.length ? <AdminOnly hide={true}><MdEdit title="ערוך פריטים" onClick={() => navigate('/itemmenu/multiple')} style={{ lineHeight: 0, cursor: "pointer" }}/></AdminOnly> : <></>}
+            {selectedItems.length ? <AdminOnly hide={true}><MdEdit onClick={() => navigate('/itemmenu/multiple')} style={{ lineHeight: 0, cursor: "pointer" }} data-tooltip-id="edit-multiple" data-tooltip-content="ערוך פריטים"/></AdminOnly> : <></>}
+            {selectedItems.length ? <Tooltip id="edit-multiple" place="bottom" /> : <></>}
+
             {selectedItems.length ? <AdminOnly hide={true}>
-                <span title="הוצא פריטים מארכיון" style={{ margin: 0, position: 'relative', display: 'inline-block', height: '1rem' }}>
+                <span style={{ margin: 0, position: 'relative', display: 'inline-block', height: '1rem' }} data-tooltip-id="unarchive-multiple" data-tooltip-content="הוצא פריטים מארכיון">
                     <FiArchive onClick={() => { setIsArchiveAction(false); setAreYouSureArchive(true)}} style={{ lineHeight: 0, zIndex: 10, cursor: "pointer" }}/>
                     <svg onClick={() => { setIsArchiveAction(false); setAreYouSureArchive(true)}} width="16" height="16" style={{ position: 'absolute', top: 0, left: 0, cursor: "pointer" }} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <line
@@ -59,8 +62,11 @@ const ActionsHeader = (props: any) => {
                         />
                     </svg>                    
                 </span>
-            </AdminOnly> : <></>}            
-            {selectedItems.length ? <AdminOnly hide={true}><FiArchive title="ארכב פריטים" onClick={() => { setIsArchiveAction(true); setAreYouSureArchive(true)}} style={{ lineHeight: 0, cursor: "pointer" }}/></AdminOnly> : <></>}
+            </AdminOnly> : <></>}   
+            {selectedItems.length ? <Tooltip id="unarchive-multiple" place="bottom" /> : <></>}                    
+
+            {selectedItems.length ? <AdminOnly hide={true}><FiArchive title="ארכב פריטים" onClick={() => { setIsArchiveAction(true); setAreYouSureArchive(true)}} style={{ lineHeight: 0, cursor: "pointer" }} data-tooltip-id="archive-multiple" data-tooltip-content="ארכב פריטים"/></AdminOnly> : <></>}
+            {selectedItems.length ? <Tooltip id="archive-multiple" place="bottom" /> : <></>}         
         </span>
 
     return (

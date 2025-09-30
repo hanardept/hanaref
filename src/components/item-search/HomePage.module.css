@@ -4,9 +4,10 @@
     display: flex;
     flex-direction: column;
     padding: 0.5rem;
-    position: fixed;
+    position: sticky;
     z-index: 1;
     /* top: var(--navbarHeight); */
+    top: 0;
     width: calc(100vw - 1rem);
     background-color: white;
     border-bottom: 1px solid #e4e4e4;
