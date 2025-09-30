@@ -18,14 +18,14 @@ const LeftHeaderSide = () => {
     const currentCertificationId = useAppSelector(state => state.viewing.certificationManagement.currentCertificationId);
     const currentUserId = useAppSelector(state => state.viewing.userManagement.currentUserId);
     const currentSupplierId = useAppSelector(state => state.viewing.supplierManagement.currentSupplierId);
-    const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch();    
 
     const addItemAndManageSectors = 
         <span className={classes.toolbarSpan}>
-            <AdminOnly hide={true}><FileImport><CiImport/></FileImport></AdminOnly> 
-            <AdminOnly hide={true}><span onClick={() => dispatch(exportItemsToCsv())} style={{ lineHeight: 0 }}><CiExport/></span></AdminOnly> 
-            <RolesOnly hide={true} roles={[ Role.Admin, Role.Technician ]}><span onClick={() => navigate('/itemmenu')} style={{ lineHeight: 0 }}>+</span></RolesOnly>
-            <AdminOnly hide={true}><span onClick={() => navigate('/managesectors')} style={{ lineHeight: 0 }}>⋮</span></AdminOnly>
+            <AdminOnly hide={true}><FileImport><CiImport title="ייבא פריטים"/></FileImport></AdminOnly> 
+            <AdminOnly hide={true}><span title="ייצא פריטים" onClick={() =>  dispatch(exportItemsToCsv())} style={{ lineHeight: 0, cursor: "pointer" }}><CiExport/></span></AdminOnly> 
+            <RolesOnly hide={true} roles={[ Role.Admin, Role.Technician ]}><span title="הוסף פריט חדש" onClick={() => navigate('/itemmenu')} style={{ lineHeight: 0, cursor: "pointer" }}>+</span></RolesOnly>
+            <AdminOnly hide={true}><span title="ערוך מדורים" onClick={() => navigate('/managesectors')} style={{ lineHeight: 0, cursor: "pointer" }}>⋮</span></AdminOnly>
         </span>
     
 

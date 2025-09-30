@@ -44,11 +44,11 @@ const ActionsHeader = (props: any) => {
 
     const actions = 
         <span className={classes.toolbarSpan} {...props}>
-            {selectedItems.length ? <AdminOnly hide={true}><MdEdit onClick={() => navigate('/itemmenu/multiple')} style={{ lineHeight: 0 }}/></AdminOnly> : <></>}
+            {selectedItems.length ? <AdminOnly hide={true}><MdEdit title="ערוך פריטים" onClick={() => navigate('/itemmenu/multiple')} style={{ lineHeight: 0, cursor: "pointer" }}/></AdminOnly> : <></>}
             {selectedItems.length ? <AdminOnly hide={true}>
-                <span style={{ margin: 0, position: 'relative', display: 'inline-block', height: '1rem' }}>
-                    <FiArchive onClick={() => { setIsArchiveAction(false); setAreYouSureArchive(true)}} style={{ lineHeight: 0, zIndex: 10 }}/>
-                    <svg onClick={() => { setIsArchiveAction(false); setAreYouSureArchive(true)}} width="16" height="16" style={{ position: 'absolute', top: 0, left: 0 }} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <span title="הוצא פריטים מארכיון" style={{ margin: 0, position: 'relative', display: 'inline-block', height: '1rem' }}>
+                    <FiArchive onClick={() => { setIsArchiveAction(false); setAreYouSureArchive(true)}} style={{ lineHeight: 0, zIndex: 10, cursor: "pointer" }}/>
+                    <svg onClick={() => { setIsArchiveAction(false); setAreYouSureArchive(true)}} width="16" height="16" style={{ position: 'absolute', top: 0, left: 0, cursor: "pointer" }} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <line
                             x1="4" 
                             y1="0" 
@@ -60,7 +60,7 @@ const ActionsHeader = (props: any) => {
                     </svg>                    
                 </span>
             </AdminOnly> : <></>}            
-            {selectedItems.length ? <AdminOnly hide={true}><FiArchive onClick={() => { setIsArchiveAction(true); setAreYouSureArchive(true)}} style={{ lineHeight: 0 }}/></AdminOnly> : <></>}
+            {selectedItems.length ? <AdminOnly hide={true}><FiArchive title="ארכב פריטים" onClick={() => { setIsArchiveAction(true); setAreYouSureArchive(true)}} style={{ lineHeight: 0, cursor: "pointer" }}/></AdminOnly> : <></>}
         </span>
 
     return (
