@@ -10,6 +10,7 @@ import { UIEvent, useEffect, useState } from "react";
 import { viewingActions } from "../../store/viewing-slice";
 import { itemsActions } from "../../store/item-slice";
 import { fetchBackend } from "../../backend-variables/address";
+import { AbbreviatedItem } from "../../types/item_types";
 
 const HomePage = () => {
     const navigate = useNavigate();
@@ -17,11 +18,15 @@ const HomePage = () => {
     const dispatch = useAppDispatch();
     const items = useAppSelector(state => state.items.items);
     const searchComplete = useAppSelector(state => state.items.searchComplete);
+    const changesId = useAppSelector(state => state.viewing.itemManagement.changesId);;
+    const selectedItems = useAppSelector(state => state.viewing.itemManagement.selectedItems);
     const { searchVal, sector, department, showArchived, page, blockScrollSearch } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
     const userPrivilege = useAppSelector(state => state.auth.frontEndPrivilege); // Debug
     const isAdmin = userPrivilege === "admin";
     const [initialized, setInitialized] = useState(false);
+
+    //const [ selectedItems, setSelectedItems ] = useState<string[]>([]);
 
     // For debugging admin status
     useEffect(() => {
@@ -65,7 +70,7 @@ const HomePage = () => {
         }
         triggerNewSearch();
 
-    }, [dispatch, showArchived, searchVal, sector, department, authToken, initialized]);
+    }, [dispatch, showArchived, changesId, searchVal, sector, department, authToken, initialized]);
 
      useEffect(() => {
 
@@ -119,15 +124,43 @@ const HomePage = () => {
         }
     }
 
+    const toggleItemSelection = (item: Partial<AbbreviatedItem>) => {
+        console.log(`toggling item cat: ${item.cat}`);
+        if (!!selectedItems.find(i => i.cat === item.cat)) {
+            dispatch(viewingActions.changeSelectedItems(selectedItems.filter(i => i.cat !== item.cat)));
+        } else {
+            dispatch(viewingActions.changeSelectedItems([ ...selectedItems, item ]));
+        }
+    }
+
+    console.log(`selected items: ${JSON.stringify(selectedItems)}`);
+
     return (
         <>
             <SearchMenu hideArchive={!isAdmin}/>
-            <div className={classes.listItemPusher}></div>
+            {/* <div className={classes.listItemPusher}></div> */}
             {!searchComplete && <LoadingSpinner />}
             {searchComplete && items.length === 0 && <p className={classes.noResults}>לא נמצאו פריטים</p>}
             <div className={classes.itemsWrapper} onScroll={handleScroll}>
                 {/* 4. Pass the `isArchived` prop down to the ListItem component */}
-                {items.map(i => <ListItem className={classes.listItem} textContentClassName={classes.itemTextContent} imageClassName={classes.itemImage} key={i._id} name={i.name} cat={i.cat} kitCat={i.kitCats?.[0]} shouldBeColored={i.imageLink === "" && isAdmin} imageLink={i.imageLink} goToItemPage={goToItemPage} isArchived={i.archived} />)}
+                {items.map((i, index) => 
+                    <div className={classes.selectableListItem}> 
+                        <input className={!selectedItems.length ? classes.checkItem : ''} type="checkbox" checked={!!selectedItems.find(item => item.cat === i.cat)} onClick={() => toggleItemSelection(i)} />
+                        <ListItem
+                            className={classes.listItem}
+                            textContentClassName={classes.itemTextContent}
+                            imageClassName={classes.itemImage}
+                            key={i._id}
+                            name={i.name}
+                            cat={i.cat}
+                            kitCat={i.kitCats?.[0]}
+                            shouldBeColored={i.imageLink === "" && isAdmin}
+                            imageLink={i.imageLink}
+                            goToItemPage={goToItemPage}
+                            selectItem={() => toggleItemSelection(i) }
+                            isArchived={i.archived}
+                        />
+                    </div>)}
             </div>
         </>
     )

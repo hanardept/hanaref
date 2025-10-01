@@ -7,6 +7,21 @@
     padding: 0 var(--gutterHorizontal);
     gap: 1rem 3rem;
 }
+.multiItemMenu {
+    /* display: grid;
+    grid-template-columns: 1fr 1fr; */
+    grid-template-areas: "title title" "fields fields" "details details" "buttons buttons";
+    /* padding: 0 var(--gutterHorizontal);
+    gap: 1rem 3rem; */
+}
+.removableField {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    flex-wrap: nowrap;
+}
 .title {
     grid-area: title;
 }
@@ -23,6 +38,28 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+.fields {
+    grid-area: fields;
+
+}
+.fieldSelectionContainer {
+    display: flex;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    padding: 0.5rem;
+    width: 100%;
+}
+
+.fieldSelection {
+    flex-grow: 1;
+}
+
+.multiItemMenu select, input[type]:not("checkbox"),
+.inputGroup{
+    flex-grow: 1;
 }
 
 .button {
@@ -62,6 +99,12 @@
 }
 .itemMenu h3 {
     margin-top: 2rem;
+}
+
+.infoSectionMenu {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 /* InfoSectionMenu */

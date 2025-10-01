@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { backendFirebaseUri } from '../../backend-variables/address';
+import { fetchBackend } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
 import { viewingActions } from '../../store/viewing-slice';
 import { AbbreviatedItem, CatType, Item, SupplierSummary } from '../../types/item_types';
@@ -25,7 +25,7 @@ function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
     })
 }
 
-const ItemMenu = () => {
+const ItemMenu = ({ fields }: { fields?: string[] }) => {
     const params = useParams();
     const { jwt: authToken, frontEndPrivilege } = useAppSelector(state => state.auth);
     const [sectorsToChooseFrom, setSectorsToChooseFrom] = useState<Sector[]>([]);
@@ -68,7 +68,7 @@ const ItemMenu = () => {
                 params.isMaintenance = true;
             }
             const searchParams = new URLSearchParams(params);
-            const fetchedSectors = await fetch(`${backendFirebaseUri}/sectors?` + searchParams, {
+            const fetchedSectors = await fetchBackend(`sectors?` + searchParams, {
                 headers: { 'auth-token': authToken }
             });
             return await fetchedSectors.json();
@@ -76,7 +76,7 @@ const ItemMenu = () => {
         
         if (params.itemid) {
             const getItem = async () => {
-                const fetchedItem = await fetch(`${backendFirebaseUri}/items/${params.itemid}`, {
+                const fetchedItem = await fetchBackend(`items/${params.itemid}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
@@ -122,9 +122,11 @@ const ItemMenu = () => {
         }
     }, [params.itemid, authToken, frontEndPrivilege]);
 
-    const handleInput = (setFunc: (val: string) => any, event: ChangeEvent<HTMLInputElement>) => {
-        setFunc(event.target.value);
-        dispatch(viewingActions.changesAppliedToItem(true));
+    const handleInput = (setFunc: ((val: string) => any) | undefined, event: ChangeEvent<HTMLInputElement>) => {
+        if (setFunc) {
+            setFunc(event.target.value);
+            dispatch(viewingActions.changesAppliedToItem(true));
+        }
     }
     const handleDescription = (event: ChangeEvent<HTMLTextAreaElement>) => {
         setDescription(event.target.value);
@@ -181,7 +183,7 @@ const ItemMenu = () => {
         }
 
         if (newItem) { // creating a new item
-            return fetch(`${backendFirebaseUri}/items`, {
+            return fetchBackend(`items`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -195,7 +197,7 @@ const ItemMenu = () => {
             .catch((err) => console.log(`Error saving item: ${err}`));
         }            
         if (!newItem) { // editing existing iten
-            return fetch(encodeURI(`${backendFirebaseUri}/items/${params.itemid ?? itemCat}`), {
+            return fetchBackend(encodeURI(`items/${params.itemid ?? itemCat}`), {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -232,7 +234,7 @@ const ItemMenu = () => {
             const { value, setter, isUploadingSetter } = newFileFields[key]!;
             console.log(`file type: ${(value as File).type}`)
             const itemCat = cat.replace(/ /g, '');
-            return fetch(encodeURI(`${backendFirebaseUri}/items/${params.itemid ?? itemCat}/url`), {
+            return fetchBackend(encodeURI(`items/${params.itemid ?? itemCat}/url`), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -291,7 +293,7 @@ const ItemMenu = () => {
     }
     // edit mode only:
     const handleDelete = () => {
-        fetch(encodeURI(`${backendFirebaseUri}/items/${params.itemid}`), {
+        fetchBackend(encodeURI(`items/${params.itemid}`), {
             method: 'DELETE',
             headers: {
                 'auth-token': authToken
@@ -333,6 +335,7 @@ const ItemMenu = () => {
                     setEmergency={setEmergency}
                     setCat={setCat}
                     setKitCats={setKitCats}
+                    fields={fields}
                 />
             </div>
             <div className={classes.relations}>

@@ -125,7 +125,7 @@ const InfoSectionLine = ({ isLast, item, allowNewItem, addLine, deleteLine, edit
             /> :
             <input type="text" placeholder={modelsLine ? 'שם דגם' : 'שם'} value={item.name} onChange={handleNameInput} onBlur={() => conditionalDeleteUponBlur()} />
             }
-            <div onClick={handleClick} className={(item.cat.length > 0 && item.name.length > 0) ? classes.infoSectionPlusClickable : classes.infoSectionPlusGrayed} style={{ display: isLast ? "flex" : "none" }}>+</div>
+            <div onClick={handleClick} className={(item.cat.length > 0 && item.name?.length > 0) ? classes.infoSectionPlusClickable : classes.infoSectionPlusGrayed} style={{ display: isLast ? "flex" : "none" }}>+</div>
         </div>
     )
 };

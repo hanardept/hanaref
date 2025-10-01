@@ -4,10 +4,12 @@ import AdminOnly from "../authorization/AdminOnly";
 import { exportItemsToCsv } from "../item-search/DownloadItemWorksheet";
 import { exportCertificationsToCsv } from "../certification-page/DownloadCertificationWorksheet";
 import classes from './Header.module.css';
-import { CiExport } from "react-icons/ci";
+import { CiExport, CiImport } from "react-icons/ci";
 import { Role } from "../../types/user_types";
 import RolesOnly from "../authorization/RolesOnly";
 import { exportSuppliersToCsv } from "../supplier-page/DownloadSupplierWorksheet";
+import FileImport from "./FileImport";
+import { Tooltip } from "react-tooltip";
 
 
 const LeftHeaderSide = () => {
@@ -17,40 +19,47 @@ const LeftHeaderSide = () => {
     const currentCertificationId = useAppSelector(state => state.viewing.certificationManagement.currentCertificationId);
     const currentUserId = useAppSelector(state => state.viewing.userManagement.currentUserId);
     const currentSupplierId = useAppSelector(state => state.viewing.supplierManagement.currentSupplierId);
-    const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch();    
 
     const addItemAndManageSectors = 
         <span className={classes.toolbarSpan}>
-            <AdminOnly hide={true}><span onClick={() => dispatch(exportItemsToCsv())} style={{ lineHeight: 0 }}><CiExport/></span></AdminOnly> 
-            <RolesOnly hide={true} roles={[ Role.Admin, Role.Technician ]}><span onClick={() => navigate('/itemmenu')} style={{ lineHeight: 0 }}>+</span></RolesOnly>
-            <AdminOnly hide={true}><span onClick={() => navigate('/managesectors')} style={{ lineHeight: 0 }}>⋮</span></AdminOnly>
+            <AdminOnly hide={true}><FileImport><CiImport data-tooltip-id="import-items" data-tooltip-content="ייבא פריטים"/></FileImport></AdminOnly> 
+            <AdminOnly hide={true}><span onClick={() =>  dispatch(exportItemsToCsv())} style={{ lineHeight: 0, cursor: "pointer" }} data-tooltip-id="export-items" data-tooltip-content="ייצא פריטים"><CiExport/></span></AdminOnly> 
+            <RolesOnly hide={true} roles={[ Role.Admin, Role.Technician ]}><span onClick={() => navigate('/itemmenu')} style={{ lineHeight: 0, cursor: "pointer" }} data-tooltip-id="add-item" data-tooltip-content="הוסף פריט חדש">+</span></RolesOnly>
+            <AdminOnly hide={true}><span onClick={() => navigate('/managesectors')} style={{ lineHeight: 0, cursor: "pointer" }} data-tooltip-id="edit-sectors" data-tooltip-content="ערוך מדורים">⋮</span></AdminOnly>
+            <Tooltip id="import-items" place="bottom" />
+            <Tooltip id="export-items" place="bottom" />
+            <Tooltip id="add-item" place="bottom" />
+            <Tooltip id="edit-sectors" place="bottom" />
         </span>
-    ;
+    
 
-    // const addTechnician = 
-
-    //     <span className={classes.toolbarSpan}>
-    //         <AdminOnly hide={true}><span onClick={() => navigate('/technicianmenu')} style={{ lineHeight: 0 }}>+</span></AdminOnly>
-    //     </span>
-    // ;
-
-    const addCertification = 
+    const addCertification =
         <span className={classes.toolbarSpan}>
-            <AdminOnly hide={true}><span onClick={() => dispatch(exportCertificationsToCsv())} style={{ lineHeight: 0 }}><CiExport/></span></AdminOnly>
-            <span onClick={() => navigate('/certificationmenu')} style={{ lineHeight: 0 }}>+</span>
+            <AdminOnly hide={true}>
+                    <span onClick={() => dispatch(exportCertificationsToCsv())} style={{ lineHeight: 0 }} data-tooltip-id="export-certifications" data-tooltip-content="ייצא הסמכות"><CiExport/></span>
+                    <Tooltip id="export-certifications" place="bottom" />
+            </AdminOnly>
+            <span onClick={() => navigate('/certificationmenu')} style={{ lineHeight: 0 }} data-tooltip-id="add-certification" data-tooltip-content="הוסף הסמכה חדשה">+</span>
+            <Tooltip id="add-certification" place="bottom" />
         </span>
     ;
 
     const addUser = 
         <span className={classes.toolbarSpan}>
-            <span onClick={() => navigate('/usermenu')} style={{ lineHeight: 0 }}>+</span>
+            <span onClick={() => navigate('/usermenu')} style={{ lineHeight: 0 }} data-tooltip-id="add-user" data-tooltip-content="הוסף משתמש חדש">+</span>
+            <Tooltip id="add-user" place="bottom" />
         </span>
     ;
 
     const addSupplier = 
         <span className={classes.toolbarSpan}>
-            <AdminOnly hide={true}><span onClick={() => dispatch(exportSuppliersToCsv())} style={{ lineHeight: 0 }}><CiExport/></span></AdminOnly>
-            <span onClick={() => navigate('/suppliermenu')} style={{ lineHeight: 0 }}>+</span>
+            <AdminOnly hide={true}>
+                <span onClick={() => dispatch(exportSuppliersToCsv())} style={{ lineHeight: 0 }} data-tooltip-id="export-suppliers" data-tooltip-content="ייצא ספקים"><CiExport/></span>
+                <Tooltip id="export-suppliers" place="bottom" />
+            </AdminOnly>
+            <span onClick={() => navigate('/suppliermenu')} style={{ lineHeight: 0 }} data-tooltip-id="add-supplier" data-tooltip-content="הוסף ספק חדש">+</span>
+            <Tooltip id="add-supplier" place="bottom" />
         </span>
     ;    
 

@@ -31,6 +31,7 @@ import { Role } from './types/user_types';
 import SupplierPage from './components/supplier-page/SupplierPage';
 import Suppliers from './components/supplier-page/Suppliers';
 import SupplierMenu from './components/supplier-menu/SupplierMenu';
+import MultiItemEdit from './components/item-menu/MultiItemEdit';
 
 function App() {
   const dispatch = useAppDispatch();
@@ -151,6 +152,7 @@ function App() {
           <Route path="/" element={<RolesOnly roles={Object.values(Role)}><HomePage /></RolesOnly>} />
           {/* <Route path="/items" element={<HomePage />} /> */}
           {/* Protected Routes: */}
+          <Route path="/itemmenu/multiple" element={<RolesOnly roles={[ Role.Admin, Role.Technician ]}><MultiItemEdit /></RolesOnly>} />
           <Route path="/itemmenu" element={<RolesOnly roles={[ Role.Admin, Role.Technician ]}><ItemMenu /></RolesOnly>} />
           <Route path="/itemmenu/:itemid" element={<AdminOnly><ItemMenu /></AdminOnly>} />
           <Route path="/itemmenu/newitem/:newitemid" element={<AdminOnly><ItemMenu /></AdminOnly>} />

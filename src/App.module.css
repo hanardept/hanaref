@@ -5,9 +5,9 @@
 }
 
 .pushBodyDown {
-  top: var(--navbarHeight);
-  position: absolute;
-  width: 100vw;
+  /* top: var(--navbarHeight); */
+  /* position: absolute; */
+  width: 100%;
 }
 
 @keyframes welcomeFade {

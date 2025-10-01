@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Item } from "../types/item_types";
 
 const initialViewState = { 
     sectorManagement: {
@@ -6,8 +7,10 @@ const initialViewState = {
         changesApplied: false
     },
     itemManagement: {
+        selectedItems: [] as Partial<Item>[],
         currentCat: "",
-        changesApplied: false
+        changesApplied: false,
+        changesId: 0,
     },
     technicianManagement: {
         currentTechnicianId: "",
@@ -68,6 +71,12 @@ const viewingSlice = createSlice({
         },
         changesAppliedToItem(state, action: PayloadAction<boolean>) {
             state.itemManagement.changesApplied = action.payload;
+        },
+        changesIdAppliedToItems(state, action: PayloadAction) {
+            state.itemManagement.changesId++;
+        },        
+        changeSelectedItems(state, action: PayloadAction<Partial<Item>[]>) {
+            state.itemManagement.selectedItems = action.payload;
         },
         manageSupplierId(state, action: PayloadAction<string>) {
             state.supplierManagement.currentSupplierId = action.payload;

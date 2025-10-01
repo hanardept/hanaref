@@ -1,11 +1,12 @@
 import React from 'react';
 import { AbbreviatedItem } from '../../types/item_types';
 import InfoSectionLine from './InfoSectionLine';
+import classes from './ItemMenu.module.css';
 
 const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, allowNewItem, onFetchSuggestions, onClearSuggestions, onBlur }: { 
         title: string,
         items: AbbreviatedItem[],
-        setItems: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>
+        setItems?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>
         itemSuggestions?: AbbreviatedItem[],
         allowNewItem?: boolean,
         onFetchSuggestions?: (value: string, field: string) => any,
@@ -13,35 +14,35 @@ const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, allowNewItem
         onBlur?: () => any,
     }) => {
     const editItemCat = (index: number, cat: string) => {
-        setItems(prev => {
+        setItems?.(prev => {
             const output = [...prev];
             output[index].cat = cat;
             return output;
         });
     }
     const editItemName = (index: number, name: string) => {
-        setItems(prev => {
+        setItems?.(prev => {
             const output = [...prev];
             output[index].name = name;
             return output;
         });
     }
     const editItemManufacturer = (index: number, manufacturer: string) => {
-        setItems(prev => {
+        setItems?.(prev => {
             const output = [...prev];
             output[index].manufacturer = manufacturer;
             return output;
         });
     }
     const addLine = () => {
-        setItems(prev => {
+        setItems?.(prev => {
             const output = [...prev];
             output.push({ name: "", cat: "", manufacturer: "" });
             return output;
         })
     };
     const deleteLine = (index: number) => {
-        setItems(prev => {
+        setItems?.(prev => {
             const output = [...prev];
             // if there is 1 item left, do not delete it, just reset the fields
             if (output.length === 1) {
@@ -56,7 +57,7 @@ const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, allowNewItem
     }
 
     return (
-        <>
+        <div className={classes.infoSectionMenu}>
             <h3 style={{ textAlign: "right" }}>{title}</h3>
             {/* Display at least 1 line, even if there are no items */}
             {Array.from({ length: items?.length ? items.length : 1 }).map((_, index) => {
@@ -80,7 +81,7 @@ const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, allowNewItem
                             onBlur={onBlur}
                         />
             })}
-        </>
+        </div>
     )
 };
 
