@@ -1,7 +1,7 @@
 import classes from './App.module.css';
 import { Routes, Route, useNavigate, useSearchParams } from 'react-router-dom';
 import { get } from 'idb-keyval';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useAppDispatch } from './hooks/redux-hooks';
 import { authActions } from './store/auth-slice';
 import Header from './components/header/Header';
@@ -39,6 +39,7 @@ function App() {
   const [showWelcome, setShowWelcome] = useState(true);
   const firstRender = useRef(true);
   const [params] = useSearchParams();
+   const [headerHeight, setHeaderHeight] = useState(0);
 
   useEffect(() => {
     if (firstRender.current) {
@@ -137,14 +138,28 @@ function App() {
       }
     }, [user, isLoading, navigate]);
 
+  // useLayoutEffect(() => {
+  //   console.log(`Layout effect, ref: ${headerRef.current}`);
+  //   if (headerRef.current) {
+  //     // Use ResizeObserver for more robustness against internal changes
+  //     const observer = new ResizeObserver(entries => {
+  //       console.log(`Header height: ${entries[0].contentRect.height}`);
+  //       setHeaderHeight(entries[0].contentRect.height);
+  //     });
+  //     console.log(`Header height: ${headerRef.current?.contentRect.height}`);
+  //     observer.observe(headerRef.current);
+  //     return () => observer.disconnect();
+  //   }
+  // }, []);    
+
   if (isLoading) {
     return <LoadingSpinner />;
   }    
 
   return (
     <div className={classes.App}>
-      <Header />
-      <div className={classes.pushBodyDown}>
+      <Header onHeightChanged={height => { console.log(`setting top to: ${height}`); setHeaderHeight(height)}} />
+      <div style={{ top: `${headerHeight}px` }} className={classes.pushBodyDown}>
         <Routes>
           {/* Public Routes: */}
           <Route path="/login" element={<LoginPage />} />

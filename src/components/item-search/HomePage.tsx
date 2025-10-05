@@ -11,6 +11,7 @@ import { viewingActions } from "../../store/viewing-slice";
 import { itemsActions } from "../../store/item-slice";
 import { fetchBackend } from "../../backend-variables/address";
 import { AbbreviatedItem } from "../../types/item_types";
+import LabeledInput from "../UI/LabeledInput";
 
 const HomePage = () => {
     const navigate = useNavigate();
@@ -20,6 +21,8 @@ const HomePage = () => {
     const searchComplete = useAppSelector(state => state.items.searchComplete);
     const changesId = useAppSelector(state => state.viewing.itemManagement.changesId);;
     const selectedItems = useAppSelector(state => state.viewing.itemManagement.selectedItems);
+    const excludedItems = useAppSelector(state => state.viewing.itemManagement.excludedItems);
+    const selectAllItems = useAppSelector(state => state.viewing.itemManagement.selectAllItems);
     const { searchVal, sector, department, showArchived, page, blockScrollSearch } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
     const userPrivilege = useAppSelector(state => state.auth.frontEndPrivilege); // Debug
@@ -44,6 +47,8 @@ const HomePage = () => {
 
         // This function will be called to start a new search
         const triggerNewSearch = () => {
+            dispatch(viewingActions.changeSelectedItems({ selectAll: false, excludedItems: [], selectedItems: [] }));
+
             const archiveStatus = showArchived ? 'all' : 'active';
             fetchBackend(encodeURI(`items?search=${searchVal}&sector=${sector}&department=${department}&page=0&status=${archiveStatus}`), {
                 headers: { 'auth-token': authToken }
@@ -126,10 +131,21 @@ const HomePage = () => {
 
     const toggleItemSelection = (item: Partial<AbbreviatedItem>) => {
         console.log(`toggling item cat: ${item.cat}`);
-        if (!!selectedItems.find(i => i.cat === item.cat)) {
-            dispatch(viewingActions.changeSelectedItems(selectedItems.filter(i => i.cat !== item.cat)));
+        if (selectAllItems) {
+            console.log(`select all is active, excluded items: ${JSON.stringify(excludedItems)}`);
+            if (excludedItems.find(i => i.cat === item.cat)) {
+                console.log(`item was in excluded, removing`);
+                dispatch(viewingActions.changeSelectedItems({ excludedItems: excludedItems.filter(i => i.cat !== item.cat) }));
+            } else {
+                console.log(`item was not in excluded, adding`);
+                dispatch(viewingActions.changeSelectedItems({ excludedItems: [ ...excludedItems, item ]}));
+            }
         } else {
-            dispatch(viewingActions.changeSelectedItems([ ...selectedItems, item ]));
+            if (selectedItems.find(i => i.cat === item.cat)) {
+                dispatch(viewingActions.changeSelectedItems({ selectedItems: selectedItems.filter(i => i.cat !== item.cat) }));
+            } else {
+                dispatch(viewingActions.changeSelectedItems({ selectedItems: [ ...selectedItems, item ]}));
+            }
         }
     }
 
@@ -138,14 +154,19 @@ const HomePage = () => {
     return (
         <>
             <SearchMenu hideArchive={!isAdmin}/>
-            {/* <div className={classes.listItemPusher}></div> */}
+            <div className={classes.listItemPusher}></div>
             {!searchComplete && <LoadingSpinner />}
             {searchComplete && items.length === 0 && <p className={classes.noResults}>לא נמצאו פריטים</p>}
             <div className={classes.itemsWrapper} onScroll={handleScroll}>
-                {/* 4. Pass the `isArchived` prop down to the ListItem component */}
+                {items.length ? <LabeledInput label="בחר הכל" type="checkbox" checked={selectAllItems} className={classes.selectAllCheckbox} onChange={(e) => {
+                    dispatch(viewingActions.changeSelectedItems({ selectAll: e.target.checked, excludedItems: [], selectedItems: [] }));
+                }} /> : <></>}
+                {/* <input type="checkbox" checked={selectAllItems} className={classes.selectAllCheckbox} onClick={() => {
+                    dispatch(viewingActions.changeSelectedItems({ selectAll: !selectAllItems, excludedItems: [], selectedItems: [] }));
+                }} /> */}
                 {items.map((i, index) => 
                     <div className={classes.selectableListItem}> 
-                        <input className={!selectedItems.length ? classes.checkItem : ''} type="checkbox" checked={!!selectedItems.find(item => item.cat === i.cat)} onClick={() => toggleItemSelection(i)} />
+                        <input className={!selectedItems.length ? classes.checkItem : ''} type="checkbox" checked={(selectAllItems && !excludedItems.find(item => item.cat === i.cat)) || (!selectAllItems && !!selectedItems.find(item => item.cat === i.cat))} onClick={() => toggleItemSelection(i)} />
                         <ListItem
                             className={classes.listItem}
                             textContentClassName={classes.itemTextContent}
