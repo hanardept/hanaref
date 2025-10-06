@@ -3,7 +3,7 @@ import LeftHeaderSide from "./LeftHeaderSide";
 import RightHeaderSide from "./RightHeaderSide";
 import classes from './Header.module.css';
 import ActionsHeader from "./ActionsHeader";
-import { PropsWithChildren, useEffect, useLayoutEffect, useRef } from "react";
+import { PropsWithChildren, useLayoutEffect, useRef } from "react";
 
 const Header = ({ children, onHeightChanged }: PropsWithChildren & { onHeightChanged: (height: number) => void }) => {
     const loggedInAs = useAppSelector(state => state.auth.frontEndPrivilege);
@@ -24,7 +24,7 @@ const Header = ({ children, onHeightChanged }: PropsWithChildren & { onHeightCha
             observer.observe(navElement.current);
             return () => observer.disconnect();
         }        
-    }, [selectedItems.length, selectAllItems]);
+    }, [selectedItems.length, selectAllItems, onHeightChanged]);
 
     return (
         <nav ref={navElement} className={classes.navbar} data-extra-options={!!selectedItems.length}>
