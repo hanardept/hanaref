@@ -166,7 +166,7 @@ const HomePage = () => {
                 }} /> */}
                 {items.map((i, index) => 
                     <div className={classes.selectableListItem}> 
-                        <input className={selectAllItems || !selectedItems.length ? classes.checkItem : ''} type="checkbox" checked={(selectAllItems && !excludedItems.find(item => item.cat === i.cat)) || (!selectAllItems && !!selectedItems.find(item => item.cat === i.cat))} onClick={() => toggleItemSelection(i)} />
+                        <input className={!selectAllItems && !selectedItems.length ? classes.checkItem : ''} type="checkbox" checked={(selectAllItems && !excludedItems.find(item => item.cat === i.cat)) || (!selectAllItems && !!selectedItems.find(item => item.cat === i.cat))} onClick={() => toggleItemSelection(i)} />
                         <ListItem
                             className={classes.listItem}
                             textContentClassName={classes.itemTextContent}
