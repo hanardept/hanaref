@@ -6,7 +6,7 @@ import ListItem from "./ListItem";
 import SearchMenu from "./SearchMenu";
 import classes from './HomePage.module.css';
 import LoadingSpinner from "../UI/LoadingSpinner";
-import { UIEvent, useEffect, useState } from "react";
+import { UIEvent, useEffect, useRef, useState } from "react";
 import { viewingActions } from "../../store/viewing-slice";
 import { itemsActions } from "../../store/item-slice";
 import { fetchBackend } from "../../backend-variables/address";
@@ -151,6 +151,8 @@ const HomePage = () => {
 
     console.log(`selected items: ${JSON.stringify(selectedItems)}`);
 
+    const scrollContainerRef = useRef<any>();
+
     return (
         <>
             <SearchMenu hideArchive={!isAdmin}/>
@@ -165,7 +167,7 @@ const HomePage = () => {
                     dispatch(viewingActions.changeSelectedItems({ selectAll: !selectAllItems, excludedItems: [], selectedItems: [] }));
                 }} /> */}
                 {items.map((i, index) => 
-                    <div className={classes.selectableListItem}> 
+                    <div className={classes.selectableListItem} ref={scrollContainerRef}> 
                         <input className={!selectAllItems && !selectedItems.length ? classes.checkItem : ''} type="checkbox" checked={(selectAllItems && !excludedItems.find(item => item.cat === i.cat)) || (!selectAllItems && !!selectedItems.find(item => item.cat === i.cat))} onClick={() => toggleItemSelection(i)} />
                         <ListItem
                             className={classes.listItem}
@@ -180,6 +182,7 @@ const HomePage = () => {
                             goToItemPage={goToItemPage}
                             selectItem={() => toggleItemSelection(i) }
                             isArchived={i.archived}
+                            scrollContainerRef={scrollContainerRef.current}
                         />
                     </div>)}
             </div>

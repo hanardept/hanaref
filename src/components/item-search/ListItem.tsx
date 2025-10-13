@@ -1,5 +1,6 @@
 // src/components/item-search/ListItem.tsx
 
+import { useRef } from 'react';
 import classes from './HomePage.module.css'; // Uses the same CSS file as HomePage
 import { useLongPress } from "@uidotdev/usehooks";
 
@@ -16,6 +17,7 @@ interface ListItemProps {
     textContentClassName?: string;
     imageClassName?: string;
     customElement?: React.ReactNode;
+    scrollContainerRef?: HTMLDivElement;
 }
 
 const ListItem = (props: ListItemProps) => {
@@ -41,14 +43,70 @@ const ListItem = (props: ListItemProps) => {
     .map(part => `${part.label}: ${part.value}`)
     .join(' | ');
 
-    const press = useLongPress(() => props.selectItem?.(), {
-        onFinish: () => console.log(`Finished press`),
-        onCancel: (e) => handleClick(), /*console.log(`Finished cnacel: ${JSON.stringify(Object.keys(e))}`*/
+    const startScrollLocation = useRef<number | null>();
+    const startMousePosition = useRef<{ x: number, y: number } | null>();
+    const lastMousePosition = useRef<{ x: number, y: number } | null>();
+
+    function getScrollParent(node: Element | null): Element | null {
+        if (node == null) {
+            return null;
+        }
+
+        if (node.scrollHeight > node.clientHeight) {
+            return node;
+        } else {
+            return getScrollParent(node.parentNode as Element);
+        }
+    }
+
+    const hasMoved = () => {
+        const scrollContainerRef = getScrollParent(document.activeElement);
+        if (scrollContainerRef) {
+            const movement = Math.abs(startScrollLocation.current! - scrollContainerRef.scrollTop!)
+            if (movement > 20) {
+                return true;
+            }
+        }
+        console.log(`lastMouse: ${JSON.stringify(lastMousePosition.current)}, startMouse: ${JSON.stringify(startMousePosition.current)}`);
+        if (lastMousePosition.current && startMousePosition.current) {
+            if (Math.abs(lastMousePosition.current.x - startMousePosition.current?.x!) > 10 || Math.abs(lastMousePosition.current.y - startMousePosition.current?.y!) > 10) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const press = useLongPress((e: any) => {
+        if (!hasMoved()) {
+            props.selectItem?.();
+        }
+    }, {
+        onStart: () => {
+            const scrollContainerRef = getScrollParent(document.activeElement);
+            startScrollLocation.current = scrollContainerRef?.scrollTop;
+        },
+        onFinish: () => {
+            startScrollLocation.current = undefined;
+            startMousePosition.current = undefined;
+            lastMousePosition.current = undefined;
+        },
+        onCancel: (e) => {
+            if (!hasMoved()) {
+                handleClick();
+            }
+            startScrollLocation.current = undefined;
+            startMousePosition.current = undefined;
+            lastMousePosition.current = undefined;
+        },
         threshold: 500
     });
 
     return (
-        <div {...press} /*onClick={handleClick}*/ className={props.className} style={style}>
+        <div {...press} onPointerMove={e => {
+            lastMousePosition.current = { x: e.clientX, y: e.clientY };
+            if (startScrollLocation.current !== undefined && startMousePosition.current === undefined) {
+                startMousePosition.current = { x: e.clientX, y: e.clientY }
+            }}} className={props.className} style={style}>
             <div className={props.textContentClassName} data-custom-element={props.customElement}>
                 <h2>{props.name}</h2>
                 <p>{catText}</p>
@@ -57,7 +115,6 @@ const ListItem = (props: ListItemProps) => {
                 {props.customElement}
             </div>
             {props.imageLink?.length !== undefined && props.imageLink?.length > 0 && <img src={props.imageLink} alt={props.cat} className={props.imageClassName} />}
-            {/* 4. Add a visual marker for archived items using a span. */}
             {props.isArchived && <span className={classes.archivedBadge}>בארכיון</span>}
         </div>
     )
