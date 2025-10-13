@@ -69,7 +69,7 @@ const ListItem = (props: ListItemProps) => {
         }
         console.log(`lastMouse: ${JSON.stringify(lastMousePosition.current)}, startMouse: ${JSON.stringify(startMousePosition.current)}`);
         if (lastMousePosition.current && startMousePosition.current) {
-            if (Math.abs(lastMousePosition.current.x - startMousePosition.current?.x!) > 10 || Math.abs(lastMousePosition.current.y - startMousePosition.current?.y!) > 10) {
+            if (Math.abs(lastMousePosition.current.x - startMousePosition.current?.x!) > 5 || Math.abs(lastMousePosition.current.y - startMousePosition.current?.y!) > 5) {
                 return true;
             }
         }
@@ -102,10 +102,16 @@ const ListItem = (props: ListItemProps) => {
     });
 
     return (
-        <div {...press} onPointerMove={e => {
-            lastMousePosition.current = { x: e.clientX, y: e.clientY };
+        <div {...press} 
+            // onTouchMove={e => console.log(`touch mouse move: ${JSON.stringify({ x: e.touches[0].clientX, y: e.touches[0].clientY })}`)}
+
+            //onPointerMove={e => {
+            onTouchMove={e => {
+            //console.log(`current mouse pos: ${JSON.stringify({ x: e.clientX, y: e.clientY })}`);
+            lastMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
             if (startScrollLocation.current !== undefined && startMousePosition.current === undefined) {
-                startMousePosition.current = { x: e.clientX, y: e.clientY }
+                startMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+                console.log(`set start mouse position to: ${JSON.stringify(startMousePosition.current)}`);
             }}} className={props.className} style={style}>
             <div className={props.textContentClassName} data-custom-element={props.customElement}>
                 <h2>{props.name}</h2>
