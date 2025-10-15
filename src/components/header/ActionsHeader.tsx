@@ -13,16 +13,31 @@ import { Tooltip } from 'react-tooltip'
 
 const ActionsHeader = (props: any) => {
     const navigate = useNavigate();
-    const selectedItems = useAppSelector(state => state.viewing.itemManagement.selectedItems);
-    const selectedAllItems = useAppSelector(state => state.viewing.itemManagement.selectAllItems);
+    //const selectedItems = useAppSelector(state => state.viewing.itemManagement.selectedItems);
+    //const selectedAllItems = useAppSelector(state => state.viewing.itemManagement.selectAllItems);
+    const { selectAllItems, selectedItems, excludedItems } = useAppSelector(state => state.viewing.itemManagement);
+    const { searchVal, sector: filteredSector, department: filteredDepartment, showArchived } = useAppSelector(state => state.viewing.searching);
     const { jwt: authToken }  = useAppSelector(state => state.auth);
     const dispatch = useAppDispatch();
 
     const [ areYouSureArchive, setAreYouSureArchive ] = useState(false);
     const [ isArchiveAction, setIsArchiveAction ] = useState(true);
 
+    let searchParams: URLSearchParams;
+    if (selectAllItems) {
+        searchParams = new URLSearchParams({ selectAll: 'true' });
+        if (searchVal) searchParams.append('search', searchVal);
+        if (filteredSector) searchParams.append('sector', filteredSector);
+        if (filteredDepartment) searchParams.append('department', filteredDepartment);  
+        if (!showArchived) searchParams.append('status', 'active');
+        excludedItems?.forEach(item => searchParams.append('excludedCats', item.cat!));
+    } else {
+        searchParams = new URLSearchParams();
+        selectedItems?.forEach(item => searchParams.append('cats', item.cat!));
+    }   
+
     const handleArchive = () => {
-        fetchBackend(encodeURI(`items/archive`), {
+        fetchBackend(encodeURI(`items/archive?` + searchParams.toString()), {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -30,7 +45,6 @@ const ActionsHeader = (props: any) => {
                 'auth-token': authToken
             },
             body: JSON.stringify({
-                cats: selectedItems.map(item => item.cat),
                 archived: isArchiveAction
             })
         })
@@ -44,7 +58,7 @@ const ActionsHeader = (props: any) => {
         }).catch((err) => console.log(`Error setting archived items: ${err}`));
     }    
 
-    const selected = !!(selectedAllItems || selectedItems.length);
+    const selected = !!(selectAllItems || selectedItems.length);
     console.log(`selected: ${selected}`);
 
     const actions = 
