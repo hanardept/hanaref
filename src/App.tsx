@@ -159,7 +159,7 @@ function App() {
   return (
     <div className={classes.App}>
       <Header onHeightChanged={height => { console.log(`setting top to: ${height}`); setHeaderHeight(height)}} />
-      <div style={{ top: `${headerHeight}px` }} className={classes.pushBodyDown}>
+      <div style={{ height: `calc(100% - ${headerHeight}px)`, top: `${headerHeight}px` }} className={classes.pushBodyDown}>
         <Routes>
           {/* Public Routes: */}
           <Route path="/login" element={<LoginPage />} />

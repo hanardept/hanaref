@@ -55,7 +55,7 @@ const ListItem = (props: ListItemProps) => {
         if (node.scrollHeight > node.clientHeight) {
             return node;
         } else {
-            return getScrollParent(node.parentNode as Element);
+            return getScrollParent(node.parentElement as Element);
         }
     }
 
@@ -81,8 +81,8 @@ const ListItem = (props: ListItemProps) => {
             props.selectItem?.();
         }
     }, {
-        onStart: () => {
-            const scrollContainerRef = getScrollParent(document.activeElement);
+        onStart: (e) => {
+            const scrollContainerRef = getScrollParent(e.currentTarget as Element);
             startScrollLocation.current = scrollContainerRef?.scrollTop;
         },
         onFinish: () => {
@@ -102,7 +102,7 @@ const ListItem = (props: ListItemProps) => {
     });
 
     return (
-        <div {...press} 
+        <div {...press}
             // onTouchMove={e => console.log(`touch mouse move: ${JSON.stringify({ x: e.touches[0].clientX, y: e.touches[0].clientY })}`)}
 
             //onPointerMove={e => {

@@ -5,7 +5,9 @@
     flex-direction: column;
     padding: 0.5rem;
     z-index: 1;
-    position: fixed;
+    /* position: fixed;*/
+    position: sticky;
+    top: 0;
     /* top: var(--navbarHeight); */
     width: calc(100vw - 1rem);
     background-color: white;
@@ -20,6 +22,8 @@
 
 .listItemPusher {
     width: 100%;
+    position: sticky;
+    top: 0;
     height: calc(var(--searchInputHeight) + 2*var(--searchSelectHeight) + 6*var(--searchPadding) + 2*1.5rem);
 }
 
@@ -93,7 +97,8 @@
 }
 
 .itemsWrapper {
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     /* height: calc(100vh - var(--navbarHeight) - var(--searchInputHeight) - 2*var(--searchSelectHeight) - 6*var(--searchPadding) - 2*0.5rem); */

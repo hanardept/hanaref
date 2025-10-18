@@ -35,7 +35,7 @@ const initialViewState = {
         sector: "",
         department: "",
         showArchived: false,
-        page: 1,
+        page: 0,
         blockScrollSearch: false
     }
  };

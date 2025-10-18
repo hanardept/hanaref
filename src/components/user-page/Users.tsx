@@ -77,8 +77,8 @@ const Users = () => {
 
     return (
         <>
-            <SearchMenu/>
-            <div className={classes.listItemPusher}></div>
+            {/* <SearchMenu/> */}
+            {/* <div className={classes.listItemPusher}></div> */}
             {!searchComplete && <LoadingSpinner />}
             {searchComplete && users.length === 0 && <p className={classes.noResults}>לא נמצאו משתמשים</p>}
             <div className={classes.itemsWrapper} onScroll={handleScroll}>

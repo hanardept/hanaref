@@ -58,7 +58,7 @@ const HomePage = () => {
                 // Replace the current list with the new results
                 dispatch(itemsActions.setItems(jsonedRes)); 
                 // Reset pagination and scroll lock for the new search
-                dispatch(viewingActions.changeSearchCriteria({ page: 2 }));
+                dispatch(viewingActions.changeSearchCriteria({ page: 1 }));
                 dispatch(viewingActions.changeBlockSearcScroll(false));
                 dispatch(itemsActions.declareSearchComplete(true));
             })
@@ -110,6 +110,7 @@ const HomePage = () => {
 
     let scrollThrottler = true;
     const handleScroll = (event: UIEvent<HTMLDivElement>) => {
+        console.log(`on scroll!`);
         if (!blockScrollSearch && scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
             scrollThrottler = false;
             // 2. Ensure the infinite scroll also respects the archive status
@@ -156,10 +157,10 @@ const HomePage = () => {
     return (
         <>
             <SearchMenu hideArchive={!isAdmin}/>
-            <div className={classes.listItemPusher}></div>
+            {/* <div className={classes.listItemPusher}></div> */}
             {!searchComplete && <LoadingSpinner />}
             {searchComplete && items.length === 0 && <p className={classes.noResults}>לא נמצאו פריטים</p>}
-            <div className={classes.itemsWrapper} onScroll={handleScroll}>
+            <div className={classes.itemsWrapper} onScroll={handleScroll} ref={scrollContainerRef}>
                 {items.length ? <LabeledInput label="בחר הכל" type="checkbox" checked={selectAllItems} className={classes.selectAllCheckbox} onChange={(e) => {
                     dispatch(viewingActions.changeSelectedItems({ selectAll: e.target.checked, excludedItems: [], selectedItems: [] }));
                 }} /> : <></>}
@@ -167,7 +168,7 @@ const HomePage = () => {
                     dispatch(viewingActions.changeSelectedItems({ selectAll: !selectAllItems, excludedItems: [], selectedItems: [] }));
                 }} /> */}
                 {items.map((i, index) => 
-                    <div className={classes.selectableListItem} ref={scrollContainerRef}> 
+                    <div className={classes.selectableListItem}> 
                         <input className={!selectAllItems && !selectedItems.length ? classes.checkItem : ''} type="checkbox" checked={(selectAllItems && !excludedItems.find(item => item.cat === i.cat)) || (!selectAllItems && !!selectedItems.find(item => item.cat === i.cat))} onClick={() => toggleItemSelection(i)} />
                         <ListItem
                             className={classes.listItem}
