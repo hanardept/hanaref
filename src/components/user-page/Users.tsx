@@ -7,7 +7,6 @@ import { fetchBackend } from "../../backend-variables/address";
 import { usersActions } from "../../store/users-slice";
 import { viewingActions } from "../../store/viewing-slice";
 import { useNavigate } from "react-router-dom";
-import SearchMenu from "./SearchMenu";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 
 
