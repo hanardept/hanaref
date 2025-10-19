@@ -160,7 +160,7 @@ const HomePage = () => {
             {/* <div className={classes.listItemPusher}></div> */}
             {!searchComplete && <LoadingSpinner />}
             {searchComplete && items.length === 0 && <p className={classes.noResults}>לא נמצאו פריטים</p>}
-            <div className={classes.itemsWrapper} onScroll={handleScroll} ref={scrollContainerRef}>
+            <div className={classes.itemsWrapper} onScroll={handleScroll} ref={scrollContainerRef} id="itemWrapper">
                 {items.length ? <LabeledInput label="בחר הכל" type="checkbox" checked={selectAllItems} className={classes.selectAllCheckbox} onChange={(e) => {
                     dispatch(viewingActions.changeSelectedItems({ selectAll: e.target.checked, excludedItems: [], selectedItems: [] }));
                 }} /> : <></>}
@@ -168,7 +168,7 @@ const HomePage = () => {
                     dispatch(viewingActions.changeSelectedItems({ selectAll: !selectAllItems, excludedItems: [], selectedItems: [] }));
                 }} /> */}
                 {items.map((i, index) => 
-                    <div className={classes.selectableListItem}> 
+                    <div className={classes.selectableListItem} id={`selectableListItem_${index}`}> 
                         <input className={!selectAllItems && !selectedItems.length ? classes.checkItem : ''} type="checkbox" checked={(selectAllItems && !excludedItems.find(item => item.cat === i.cat)) || (!selectAllItems && !!selectedItems.find(item => item.cat === i.cat))} onClick={() => toggleItemSelection(i)} />
                         <ListItem
                             className={classes.listItem}

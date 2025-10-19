@@ -47,20 +47,23 @@ const ListItem = (props: ListItemProps) => {
     const startMousePosition = useRef<{ x: number, y: number } | null>();
     const lastMousePosition = useRef<{ x: number, y: number } | null>();
 
-    function getScrollParent(node: Element | null): Element | null {
-        if (node == null) {
-            return null;
-        }
+    // function getScrollParent(node: Element | null): Element | null {
+    //     if (node == null) {
+    //         return null;
+    //     }
 
-        if (node.scrollHeight > node.clientHeight) {
-            return node;
-        } else {
-            return getScrollParent(node.parentElement as Element);
-        }
-    }
+    //     console.log(`searching scroll parent. id: ${node.id}, scroll height: ${node.scrollHeight}, client height: ${node.clientHeight}`);
 
-    const hasMoved = () => {
-        const scrollContainerRef = getScrollParent(document.activeElement);
+    //     if (node.scrollHeight > node.clientHeight) {
+    //         console.log(`found scroll parent. id: ${node.id}, scroll height: ${node.scrollHeight}, client height: ${node.clientHeight}`);
+    //         return node;
+    //     } else {
+    //         return getScrollParent(node.parentElement as Element);
+    //     }
+    // }
+
+    const hasMoved = (node: Element | null) => {
+        const scrollContainerRef = props.scrollContainerRef as Element;
         if (scrollContainerRef) {
             const movement = Math.abs(startScrollLocation.current! - scrollContainerRef.scrollTop!)
             if (movement > 20) {
@@ -76,13 +79,14 @@ const ListItem = (props: ListItemProps) => {
         return false;
     }
 
-    const press = useLongPress((e: any) => {
-        if (!hasMoved()) {
+    const press = useLongPress((e: Event) => {
+        if (!hasMoved(e.currentTarget as Element)) {
             props.selectItem?.();
         }
     }, {
         onStart: (e) => {
-            const scrollContainerRef = getScrollParent(e.currentTarget as Element);
+            const scrollContainerRef = props.scrollContainerRef as Element;
+            console.log(`start: scroll parent: ${scrollContainerRef?.id}`);
             startScrollLocation.current = scrollContainerRef?.scrollTop;
         },
         onFinish: () => {
@@ -91,7 +95,7 @@ const ListItem = (props: ListItemProps) => {
             lastMousePosition.current = undefined;
         },
         onCancel: (e) => {
-            if (!hasMoved()) {
+            if (!hasMoved(e.currentTarget as Element)) {
                 handleClick();
             }
             startScrollLocation.current = undefined;
@@ -108,6 +112,7 @@ const ListItem = (props: ListItemProps) => {
             //onPointerMove={e => {
             onTouchMove={e => {
             //console.log(`current mouse pos: ${JSON.stringify({ x: e.clientX, y: e.clientY })}`);
+            console.log(`on touch move. start mouse: ${JSON.stringify(startMousePosition.current)}, start scroll: ${JSON.stringify(startScrollLocation.current)}`);
             lastMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
             if (startScrollLocation.current !== undefined && startMousePosition.current === undefined) {
                 startMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
