@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { fetchBackend } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
 import { viewingActions } from '../../store/viewing-slice';
-import { AbbreviatedItem, CatType, SupplierSummary } from '../../types/item_types';
+import { AbbreviatedItem, CatType, Item, SupplierSummary } from '../../types/item_types';
 import { Sector } from '../../types/sector_types';
 import BigButton from '../UI/BigButton';
 import classes from './ItemMenu.module.css';
@@ -34,7 +34,9 @@ const allowedFields = [
 
 const MultiItemEdit = () => {
     const { jwt: authToken, frontEndPrivilege } = useAppSelector(state => state.auth);
-    const { selectedItems } = useAppSelector(state => state.viewing.itemManagement);
+    const { searchVal, sector: filteredSector, department: filteredDepartment, showArchived } = useAppSelector(state => state.viewing.searching);
+    const { selectAllItems, selectedItems, excludedItems } = useAppSelector(state => state.viewing.itemManagement);
+    const items = useAppSelector(state => state.items.items);
     const [sectorsToChooseFrom, setSectorsToChooseFrom] = useState<Sector[]>([]);
     const dispatch = useAppDispatch();
     const [sector, setSector] = useState("");
@@ -98,27 +100,44 @@ const MultiItemEdit = () => {
 
         const itemDetails = fields.reduce((obj, field) => ({ ...obj, [field]: fullItemDetails[field] }), {})
 
+        let searchParams: URLSearchParams;
+        if (selectAllItems) {
+            searchParams = new URLSearchParams({ selectAll: 'true' });
+            if (searchVal) searchParams.append('search', searchVal);
+            if (filteredSector) searchParams.append('sector', filteredSector);
+            if (filteredDepartment) searchParams.append('department', filteredDepartment);  
+            if (!showArchived) searchParams.append('status', 'active');
+            excludedItems?.forEach(item => searchParams.append('excludedCats', item.cat!));
+        } else {
+            searchParams = new URLSearchParams();
+            selectedItems?.forEach(item => searchParams.append('cats', item.cat!));
+        }
+
         try {
-            await fetchBackend('items', {
+            const res = await fetchBackend('items?' + searchParams.toString(), {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
                     'auth-token': authToken
                 },
-                body: JSON.stringify({ cats: selectedItems.map(i => i.cat), data: itemDetails })
+                body: JSON.stringify(itemDetails)
             });
+
+            if (res.status !== 200) {
+                const errJson = await res.json();
+                alert(`עריכת הפריטים נכשל: ${errJson.details}`);
+            }
+
+            dispatch(viewingActions.changesAppliedToItem(false));
+            dispatch(viewingActions.changeSelectedItems({ selectAll: false, excludedItems: [], selectedItems: [] }));
+            navigate(-1);
 
             console.log("success saving items");
             
         } catch(err) {
             console.log(`Error saving items: ${err}`);
-        } finally {
-            dispatch(viewingActions.changesAppliedToItem(false));
-            dispatch(viewingActions.changeSelectedItems([]));
-            navigate(-1);
         }
-        return Promise.resolve();    
     }
 
     console.log(`sectors to choose: ${JSON.stringify(sectorsToChooseFrom)}`);
@@ -127,6 +146,9 @@ const MultiItemEdit = () => {
         const fieldGroup = allowedFields.find(f => f.names.includes(field));
         setFields(fields.filter(f => !fieldGroup?.names.includes(f)));
     }
+
+    const editedItems = selectAllItems ? items.filter(i => !excludedItems.some(ei => ei.cat === i.cat)).map(i => i as Partial<Item>) : selectedItems;
+    console.log(`editing items: ${JSON.stringify(editedItems)}`);
 
     return (
         <div className={`${classes.itemMenu} ${classes.multiItemMenu}`}>
@@ -141,10 +163,14 @@ const MultiItemEdit = () => {
                                 setFields([ ...fields, ...(allowedFields.find(f => f.text ===  selectedField as string)?.names as string[])])
                             }
                             } value={""}>
-                                {allowedFields.filter(({ names, exceptCatTypes }) => 
-                                    (!exceptCatTypes ||
-                                    selectedItems.every(selectedItem => !exceptCatTypes.includes(selectedItem.catType!))) &&
-                                    !fields?.some(name => names.includes(name))).map(({ names, text }) => <option>{text}</option>)}
+                                {allowedFields
+                                    .filter(({ names, exceptCatTypes }) => { 
+                                        console.log(`exceptCatTypes: ${exceptCatTypes}, selectedItems: ${JSON.stringify(selectedItems)}`);
+                                        return (!exceptCatTypes ||
+                                        editedItems.every(selectedItem => !exceptCatTypes.includes(selectedItem.catType!))) &&
+                                        !fields?.some(name => names.includes(name))
+                                    })
+                                    .map(({ text }) => <option>{text}</option>)}
                                 <option value="" disabled selected>--- בחר שדה ---</option>
                             </select>
                             {/* {selectedField ?

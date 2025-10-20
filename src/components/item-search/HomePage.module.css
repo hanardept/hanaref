@@ -4,10 +4,11 @@
     display: flex;
     flex-direction: column;
     padding: 0.5rem;
-    position: sticky;
     z-index: 1;
-    /* top: var(--navbarHeight); */
+    /* position: fixed;*/
+    position: sticky;
     top: 0;
+    /* top: var(--navbarHeight); */
     width: calc(100vw - 1rem);
     background-color: white;
     border-bottom: 1px solid #e4e4e4;
@@ -21,7 +22,9 @@
 
 .listItemPusher {
     width: 100%;
-    height: calc(var(--searchInputHeight) + 2*var(--searchSelectHeight) + 6*var(--searchPadding) + 2*0.5rem);
+    position: sticky;
+    top: 0;
+    height: calc(var(--searchInputHeight) + 2*var(--searchSelectHeight) + 6*var(--searchPadding) + 2*1.5rem);
 }
 
 .listItem {
@@ -94,10 +97,17 @@
 }
 
 .itemsWrapper {
-    overflow: scroll;
+    overflow-y: scroll;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     /* height: calc(100vh - var(--navbarHeight) - var(--searchInputHeight) - 2*var(--searchSelectHeight) - 6*var(--searchPadding) - 2*0.5rem); */
+}
+
+.selectAllCheckbox {
+    margin: 0.5rem;
+    margin-right: 1.2rem;
+    align-self: flex-start;
 }
 
 .searchRow {

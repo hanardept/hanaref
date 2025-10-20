@@ -4,9 +4,9 @@
     display: flex;
     flex-direction: column;
     padding: 0.5rem;
-    position: fixed;
+    /* position: fixed; */
     z-index: 2;
-    top: var(--navbarHeight);
+    /* top: var(--navbarHeight); */
     width: calc(100vw - 1rem);
     background-color: white;
     border-bottom: 1px solid #e4e4e4;

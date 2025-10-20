@@ -7,7 +7,9 @@ const initialViewState = {
         changesApplied: false
     },
     itemManagement: {
+        selectAllItems: false,
         selectedItems: [] as Partial<Item>[],
+        excludedItems: [] as Partial<Item>[],
         currentCat: "",
         changesApplied: false,
         changesId: 0,
@@ -33,7 +35,7 @@ const initialViewState = {
         sector: "",
         department: "",
         showArchived: false,
-        page: 1,
+        page: 0,
         blockScrollSearch: false
     }
  };
@@ -75,8 +77,13 @@ const viewingSlice = createSlice({
         changesIdAppliedToItems(state, action: PayloadAction) {
             state.itemManagement.changesId++;
         },        
-        changeSelectedItems(state, action: PayloadAction<Partial<Item>[]>) {
-            state.itemManagement.selectedItems = action.payload;
+        changeSelectedItems(state, action: PayloadAction<{ selectAll?: boolean, excludedItems?: Partial<Item>[], selectedItems?: Partial<Item>[] }>)  {
+            if (typeof action.payload.selectAll === "boolean") {
+                state.itemManagement.selectAllItems = action.payload.selectAll;
+            }
+
+            state.itemManagement.excludedItems = action.payload.excludedItems ?? [];
+            state.itemManagement.selectedItems = action.payload.selectedItems ?? [];
         },
         manageSupplierId(state, action: PayloadAction<string>) {
             state.supplierManagement.currentSupplierId = action.payload;

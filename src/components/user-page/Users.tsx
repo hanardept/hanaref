@@ -7,7 +7,6 @@ import { fetchBackend } from "../../backend-variables/address";
 import { usersActions } from "../../store/users-slice";
 import { viewingActions } from "../../store/viewing-slice";
 import { useNavigate } from "react-router-dom";
-import SearchMenu from "./SearchMenu";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 
 
@@ -77,8 +76,8 @@ const Users = () => {
 
     return (
         <>
-            <SearchMenu/>
-            <div className={classes.listItemPusher}></div>
+            {/* <SearchMenu/> */}
+            {/* <div className={classes.listItemPusher}></div> */}
             {!searchComplete && <LoadingSpinner />}
             {searchComplete && users.length === 0 && <p className={classes.noResults}>לא נמצאו משתמשים</p>}
             <div className={classes.itemsWrapper} onScroll={handleScroll}>

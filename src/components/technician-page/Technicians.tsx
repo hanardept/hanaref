@@ -76,7 +76,7 @@ const Technicians = () => {
     return (
         <>
             <SearchMenu/>
-            <div className={classes.listItemPusher}></div>
+            {/* <div className={classes.listItemPusher}></div> */}
             {!searchComplete && <LoadingSpinner />}
             {searchComplete && technicians.length === 0 && <p className={classes.noResults}>לא נמצאו טכנאים</p>}
             <div className={classes.itemsWrapper} onScroll={handleScroll}>

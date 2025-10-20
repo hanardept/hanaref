@@ -10,3 +10,11 @@
     font-family: 'Alef-Regular';
     src: url('Alef-Regular'), url(fonts/Alef-Regular.ttf) format("truetype");
 }
+
+#root {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+}
