@@ -49,13 +49,22 @@ const ActionsHeader = (props: any) => {
             })
         })
         .then((res) => {
+            if (res.status !== 200) {
+                return res.json();
+            }
             console.log("Successfully set archived items!");
             dispatch(viewingActions.changeSelectedItems({ selectAll: false, excludedItems: [], selectedItems: [] }));
             dispatch(viewingActions.changesAppliedToItem(false));
             dispatch(viewingActions.changesIdAppliedToItems());
-            setAreYouSureArchive(false);
             navigate("/");
-        }).catch((err) => console.log(`Error setting archived items: ${err}`));
+        })
+        .then(errJson => {
+            if (errJson) {
+                alert(`ארכוב הפריטים נכשל: ${errJson.details}`);
+            }
+            setAreYouSureArchive(false);
+        })
+        .catch((err) => console.log(`Error setting archived items: ${err}`));
     }    
 
     const selected = !!(selectAllItems || selectedItems.length);

@@ -114,7 +114,7 @@ const MultiItemEdit = () => {
         }
 
         try {
-            await fetchBackend('items?' + searchParams.toString(), {
+            const res = await fetchBackend('items?' + searchParams.toString(), {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -124,16 +124,20 @@ const MultiItemEdit = () => {
                 body: JSON.stringify(itemDetails)
             });
 
+            if (res.status !== 200) {
+                const errJson = await res.json();
+                alert(`עריכת הפריטים נכשל: ${errJson.details}`);
+            }
+
+            dispatch(viewingActions.changesAppliedToItem(false));
+            dispatch(viewingActions.changeSelectedItems({ selectAll: false, excludedItems: [], selectedItems: [] }));
+            navigate(-1);
+
             console.log("success saving items");
             
         } catch(err) {
             console.log(`Error saving items: ${err}`);
-        } finally {
-            dispatch(viewingActions.changesAppliedToItem(false));
-            dispatch(viewingActions.changeSelectedItems({ selectAll: false, excludedItems: [], selectedItems: [] }));
-            navigate(-1);
         }
-        return Promise.resolve();    
     }
 
     console.log(`sectors to choose: ${JSON.stringify(sectorsToChooseFrom)}`);
