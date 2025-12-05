@@ -131,7 +131,7 @@ const ItemPage = () => {
                 {item.catType === "מתכלה" && <p>{`אורך חיים בחודשים: ${item.lifeSpan ?? ''}`}</p>}
                 {item.catType === "מכשיר" && <p>{`חירום: ${item.emergency ? "כן" : "לא"}`}</p>}
                 {item.catType === "מכשיר" && <p>{`שיטת אחזקה: ${item.maintenanceMethod ?? ''}`}</p>}
-                {item.catType === "מכשיר" && item.maintenanceMethod === MaintenanceMethod.PeriodicTestAndCalibration && <p>{`תדירות אחזקה בחודשים: ${item.maintenanceIntervalMonths}`}</p>}
+                {item.catType === "מכשיר" && item.maintenanceMethod === MaintenanceMethod.PeriodicTestAndCalibration && <p>{`תדירות אחזקה בחודשים: ${item.maintenanceIntervalMonths ?? ''}`}</p>}
                 <p>{'ספק בארץ: '}
                 {actualSupplier.supplier && 
                 <>
