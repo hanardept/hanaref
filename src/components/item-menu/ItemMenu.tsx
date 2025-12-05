@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { fetchBackend } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
 import { viewingActions } from '../../store/viewing-slice';
-import { AbbreviatedItem, CatType, Item, SupplierSummary } from '../../types/item_types';
+import { AbbreviatedItem, CatType, Item, MaintenanceMethod, SupplierSummary } from '../../types/item_types';
 import { Sector } from '../../types/sector_types';
 import AreYouSure from '../UI/AreYouSure';
 import BigButton from '../UI/BigButton';
@@ -52,6 +52,8 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
     const [hebrewManualLink, setHebrewManualLink] = useState("" as (string | File));
     const [isHebrewManualUploading, setIsHebrewManualUploading] = useState(false);
     const [emergency, setEmergency] = useState(false);
+    const [maintenanceMethod, setMaintenanceMethod] = useState(MaintenanceMethod.PeriodicTestAndCalibration);
+    const [maintenanceIntervalMonths, setMaintenanceIntervalMonths] = useState<number | null>(null);
     const [supplier, setSupplier] =  useState(undefined as SupplierSummary | null | undefined);
     const [lifeSpan, setLifeSpan] = useState("");
     const [models, setModels] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
@@ -105,6 +107,8 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                 if (i.serviceManualLink) setServiceManualLink(i.serviceManualLink);
                 if (i.hebrewManualLink) setHebrewManualLink(i.hebrewManualLink);
                 if (i.emergency) setEmergency(i.emergency);
+                if (i.maintenanceMethod) setMaintenanceMethod(i.maintenanceMethod);
+                if (i.maintenanceIntervalMonths) setMaintenanceIntervalMonths(i.maintenanceIntervalMonths);
                 setSupplier(i.supplier);
                 if (i.lifeSpan) setLifeSpan(i.lifeSpan);
                 if (i.models && i.models.length > 0) setModels(i.models);
@@ -145,6 +149,10 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
         setCatType(catType);
         dispatch(viewingActions.changesAppliedToItem(true));
     }
+    const handleSetMaintenanceMethod = (maintenanceMethod: MaintenanceMethod) => {
+        setMaintenanceMethod(maintenanceMethod);
+        dispatch(viewingActions.changesAppliedToItem(true));
+    }    
 
     const saveItem = (newItem: boolean, saveLinks: boolean, newLinks: Record<string, string>): Promise<any> => {
 
@@ -166,6 +174,8 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
             serviceManualLink: saveLinks ? newLinks.serviceManualLink ?? serviceManualLink : undefined,
             hebrewManualLink: saveLinks ? newLinks.hebrewManualLink ?? hebrewManualLink : undefined,
             emergency: emergency,
+            maintenanceMethod,
+            maintenanceIntervalMonths,
             supplier: supplier,
             lifeSpan: lifeSpan,
             models: vacateItemListIfEmptyAndRemoveSpaces(models),
@@ -308,6 +318,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
     }
 
     const catTypesToChooseFrom = frontEndPrivilege === Role.Technician ? [ CatType.SparePart ] : undefined;
+    const maintenanceMethodsToChooseFrom = Object.values(MaintenanceMethod);
 
     return (
         <div className={classes.itemMenu}>
@@ -322,6 +333,9 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     description={description}
                     catType={catType}
                     emergency={emergency}
+                    maintenanceMethod={maintenanceMethod}
+                    maintenanceMethodsToChooseFrom={maintenanceMethodsToChooseFrom}
+                    maintenanceIntervalMonths={maintenanceIntervalMonths}
                     certificationPeriodMonths={certificationPeriodMonths}
                     sectorsToChooseFrom={sectorsToChooseFrom}
                     catTypesToChooseFrom={catTypesToChooseFrom}
@@ -330,6 +344,8 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     handleSetSector={handleSetSector}
                     handleSetDepartment={handleSetDepartment}
                     handleSetCatType={handleSetCatType}
+                    handleSetMaintenanceMethod={handleSetMaintenanceMethod}
+                    handleSetMaintenanceIntervalMonths={setMaintenanceIntervalMonths}                    
                     setCertificationPeriodMonths={setCertificationPeriodMonths}
                     setName={setName}
                     setEmergency={setEmergency}
