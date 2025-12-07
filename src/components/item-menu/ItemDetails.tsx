@@ -5,8 +5,7 @@ import SectorSelection from "../item-search/SectorSelection";
 import CatTypeSelection from "./CatTypeSelection";
 import LabeledInput from "../UI/LabeledInput";
 import classes from './ItemMenu.module.css';
-import { CatType, MaintenanceMethod } from "../../types/item_types";
-import MaintenanceMethodSelection from "./MaintenanceMethodSelection";
+import { CatType } from "../../types/item_types";
 
 interface ItemDetailsProps {
     name: string;
@@ -16,9 +15,6 @@ interface ItemDetailsProps {
     department: string;
     description: string;
     emergency: boolean;
-    maintenanceMethod: MaintenanceMethod,
-    maintenanceMethodsToChooseFrom?: MaintenanceMethod[];
-    maintenanceIntervalMonths?: number | null;
     catType: CatType;
     certificationPeriodMonths?: number | null;
     sectorsToChooseFrom: Sector[];
@@ -31,8 +27,6 @@ interface ItemDetailsProps {
     setName?: React.Dispatch<React.SetStateAction<string>>;
     setCat?: React.Dispatch<React.SetStateAction<string>>;
     setEmergency?: React.Dispatch<React.SetStateAction<boolean>>;
-    handleSetMaintenanceMethod?: (maintenanceMethod: MaintenanceMethod) => void;
-    handleSetMaintenanceIntervalMonths?: (value: number | null) => void;
     setCertificationPeriodMonths?: (value: number | null) => void;
     setKitCats?: React.Dispatch<React.SetStateAction<string[]>>;
     fields?: string[];
@@ -40,11 +34,9 @@ interface ItemDetailsProps {
 }
 
 const ItemDetails = (props: ItemDetailsProps) => {
-    const { name, cat, kitCats, sector, department, description, emergency, maintenanceMethod, maintenanceIntervalMonths, catType, certificationPeriodMonths, sectorsToChooseFrom, catTypesToChooseFrom, maintenanceMethodsToChooseFrom, handleInput, handleDescription, handleSetSector, handleSetDepartment, handleSetCatType, setCertificationPeriodMonths, setName, setEmergency, handleSetMaintenanceMethod, handleSetMaintenanceIntervalMonths, setCat, setKitCats, fields, elementWrapper } = props;
+    const { name, cat, kitCats, sector, department, description, emergency, catType, certificationPeriodMonths, sectorsToChooseFrom, catTypesToChooseFrom, handleInput, handleDescription, handleSetSector, handleSetDepartment, handleSetCatType, setCertificationPeriodMonths, setName, setEmergency, setCat, setKitCats, fields, elementWrapper } = props;
     const sectorNames = sectorsToChooseFrom.map(s => s.sectorName);
     const departmentsToChooseFrom = (sector && sectorsToChooseFrom.length > 0) ? sectorsToChooseFrom.filter(s => s.sectorName === sector)[0].departments : [];
-
-    console.log(`maintenanceMethod: ${maintenanceMethod}`);
 
     console.log(`fields: ${fields}`);
 
@@ -74,21 +66,6 @@ const ItemDetails = (props: ItemDetailsProps) => {
                     חירום
                 </label>
             </div> : undefined},
-            { name: 'maintenanceMethod', element: <LabeledInput
-                label='שיטת אחזקה'
-                placeholder='שיטת אחזקה'
-                customInputElement={
-                    <MaintenanceMethodSelection maintenanceMethods={maintenanceMethodsToChooseFrom} selectMaintenanceMethod={handleSetMaintenanceMethod} currentMaintenanceMethod={maintenanceMethod} />
-                }/>
-            },
-            { name: 'maintenanceIntervalMonths', element: catType === "מכשיר" && maintenanceMethod === MaintenanceMethod.PeriodicTestAndCalibration ? <LabeledInput
-                type="number"
-                label='תדירות אחזקה בחודשים'
-                placeholder='תדירות אחזקה בחודשים'
-                min={0}
-                value={maintenanceIntervalMonths ?? ''}
-                onChange={(e) => handleInput(val => handleSetMaintenanceIntervalMonths?.(Number.parseInt(val) ? +val : null), e)}
-            /> : undefined },
     ];
 
     return <>

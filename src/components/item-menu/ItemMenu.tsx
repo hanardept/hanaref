@@ -333,9 +333,6 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     description={description}
                     catType={catType}
                     emergency={emergency}
-                    maintenanceMethod={maintenanceMethod}
-                    maintenanceMethodsToChooseFrom={maintenanceMethodsToChooseFrom}
-                    maintenanceIntervalMonths={maintenanceIntervalMonths}
                     certificationPeriodMonths={certificationPeriodMonths}
                     sectorsToChooseFrom={sectorsToChooseFrom}
                     catTypesToChooseFrom={catTypesToChooseFrom}
@@ -343,9 +340,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     handleDescription={handleDescription}
                     handleSetSector={handleSetSector}
                     handleSetDepartment={handleSetDepartment}
-                    handleSetCatType={handleSetCatType}
-                    handleSetMaintenanceMethod={handleSetMaintenanceMethod}
-                    handleSetMaintenanceIntervalMonths={setMaintenanceIntervalMonths}                    
+                    handleSetCatType={handleSetCatType}                
                     setCertificationPeriodMonths={setCertificationPeriodMonths}
                     setName={setName}
                     setEmergency={setEmergency}
@@ -369,6 +364,9 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     hebrewManualLink={getFilename(hebrewManualLink)}
                     isHebrewManualUploading={isHebrewManualUploading}
                     supplier={supplier}
+                    maintenanceMethod={maintenanceMethod}
+                    maintenanceMethodsToChooseFrom={maintenanceMethodsToChooseFrom}
+                    maintenanceIntervalMonths={maintenanceIntervalMonths}                    
                     models={models}
                     accessories={accessories}
                     consumables={consumables}
@@ -381,6 +379,8 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     setServiceManualLink={setServiceManualLink}
                     setHebrewManualLink={setHebrewManualLink}
                     setSupplier={setSupplier}
+                    handleSetMaintenanceMethod={handleSetMaintenanceMethod}
+                    handleSetMaintenanceIntervalMonths={setMaintenanceIntervalMonths}                        
                     setModels={setModels}
                     setAccessories={setAccessories}
                     setConsumables={setConsumables}

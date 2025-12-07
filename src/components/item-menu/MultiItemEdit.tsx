@@ -192,16 +192,11 @@ const MultiItemEdit = () => {
                     description=''
                     catType={CatType.Device}
                     emergency={emergency}
-                    maintenanceMethod={maintenanceMethod}
-                    maintenanceMethodsToChooseFrom={maintenanceMethodsToChooseFrom}
-                    maintenanceIntervalMonths={maintenanceIntervalMonths}
                     sectorsToChooseFrom={sectorsToChooseFrom}
                     handleInput={handleInput}
                     handleSetSector={handleSetSector}
                     handleSetDepartment={handleSetDepartment}
                     setEmergency={setEmergency}
-                    handleSetMaintenanceMethod={setMaintenanceMethod}
-                    handleSetMaintenanceIntervalMonths={setMaintenanceIntervalMonths}
                     fields={fields}
                     elementWrapper={(child, field) => (<span className={classes.removableField}>
                         <MdRemoveCircle onClick={() => removeField(field)}/>
@@ -216,12 +211,17 @@ const MultiItemEdit = () => {
                     serviceManualLink=''
                     hebrewManualLink=''
                     supplier={supplier}
+                    maintenanceMethod={maintenanceMethod}
+                    maintenanceMethodsToChooseFrom={maintenanceMethodsToChooseFrom}
+                    maintenanceIntervalMonths={maintenanceIntervalMonths}                    
                     models={[]}
                     accessories={[]}
                     consumables={[]}
                     spareParts={[]}
                     handleInput={handleInput}
                     setSupplier={setSupplier}
+                    handleSetMaintenanceMethod={setMaintenanceMethod}
+                    handleSetMaintenanceIntervalMonths={setMaintenanceIntervalMonths}                    
                     fields={fields}
                     elementWrapper={(child, field) => (<span className={classes.removableField}>
                         <MdRemoveCircle onClick={() => removeField(field)}/>

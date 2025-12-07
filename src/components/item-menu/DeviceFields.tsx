@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useCallback, useState } from "react";
-import { AbbreviatedItem, SupplierSummary } from "../../types/item_types";
+import { AbbreviatedItem, MaintenanceMethod, SupplierSummary } from "../../types/item_types";
 import InfoSectionMenu from "./InfoSectionMenu";
 import LabeledInput from "../UI/LabeledInput";
 import UploadFile from "../UI/UploadFile";
@@ -9,6 +9,7 @@ import DebouncingInput from "../UI/DebouncingInput";
 import classes from './ItemMenu.module.css';
 import { MdEdit } from "react-icons/md";
 import { default as SupplierListItem } from "../supplier-page/ListItem"
+import MaintenanceMethodSelection from "./MaintenanceMethodSelection";
 
 interface DeviceFieldsProps {
     imageLink: string;
@@ -24,11 +25,14 @@ interface DeviceFieldsProps {
     hebrewManualLink: string;
     isHebrewManualUploading?: boolean;
     supplier: SupplierSummary | null | undefined;
+    maintenanceMethod: MaintenanceMethod,
+    maintenanceMethodsToChooseFrom?: MaintenanceMethod[];
+    maintenanceIntervalMonths?: number | null;    
     models: AbbreviatedItem[];
     accessories: AbbreviatedItem[];
     consumables: AbbreviatedItem[];
     spareParts: AbbreviatedItem[];
-    handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => void;
+    handleInput: (setFunc: ((value: string) => void) | undefined, event: ChangeEvent<HTMLInputElement>) => void;
     setImageLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setQaStandardLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setMedicalEngineeringManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
@@ -36,6 +40,8 @@ interface DeviceFieldsProps {
     setServiceManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setHebrewManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setSupplier?: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
+    handleSetMaintenanceMethod?: (maintenanceMethod: MaintenanceMethod) => void;
+    handleSetMaintenanceIntervalMonths?: (value: number | null) => void;    
     setModels?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setAccessories?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setConsumables?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
@@ -47,8 +53,8 @@ interface DeviceFieldsProps {
 const DeviceFields = (props: DeviceFieldsProps) => {
     const {
         imageLink, isImageUploading, qaStandardLink, isQaStandardUploading, medicalEngineeringManualLink, isMedicalEngineeringManualUploading, userManualLink, isUserManualUploading, serviceManualLink, isServiceManualUploading,
-        hebrewManualLink, isHebrewManualUploading, supplier, models, accessories, consumables, spareParts, setImageLink, setQaStandardLink, setMedicalEngineeringManualLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier, setModels,
-        setAccessories, setConsumables, setSpareParts, fields, elementWrapper
+        hebrewManualLink, isHebrewManualUploading, supplier, maintenanceMethod, maintenanceMethodsToChooseFrom, maintenanceIntervalMonths, models, accessories, consumables, spareParts, handleInput, setImageLink, setQaStandardLink, setMedicalEngineeringManualLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier,
+        handleSetMaintenanceMethod, handleSetMaintenanceIntervalMonths, setModels, setAccessories, setConsumables, setSpareParts, fields, elementWrapper
     } = props;
 
     const authToken = useAppSelector(state => state.auth.jwt);
@@ -145,6 +151,21 @@ const DeviceFields = (props: DeviceFieldsProps) => {
                         />
                     )}
                 </div>},
+            { name: 'maintenanceMethod', element: <LabeledInput
+                label='שיטת אחזקה'
+                placeholder='שיטת אחזקה'
+                customInputElement={
+                    <MaintenanceMethodSelection maintenanceMethods={maintenanceMethodsToChooseFrom} selectMaintenanceMethod={handleSetMaintenanceMethod} currentMaintenanceMethod={maintenanceMethod} />
+                }/>
+            },
+            { name: 'maintenanceIntervalMonths', element: maintenanceMethod === MaintenanceMethod.PeriodicTestAndCalibration ? <LabeledInput
+                type="number"
+                label='תדירות אחזקה בחודשים'
+                placeholder='תדירות אחזקה בחודשים'
+                min={0}
+                value={maintenanceIntervalMonths ?? ''}
+                onChange={(e) => handleInput(val => handleSetMaintenanceIntervalMonths?.(Number.parseInt(val) ? +val : null), e)}
+            /> : undefined },                
             {name: 'models', element: <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />},
             {name: 'accessories', element:
                 <InfoSectionMenu 
