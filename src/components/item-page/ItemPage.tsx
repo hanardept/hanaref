@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
-import { Item, SupplierSummary } from "../../types/item_types";
+import { Item, MaintenanceMethod, SupplierSummary } from "../../types/item_types";
 import InfoSection from "./InfoSection";
 import classes from './ItemPage.module.css';
 import { viewingActions } from "../../store/viewing-slice";
@@ -130,6 +130,8 @@ const ItemPage = () => {
                 {[ Role.Admin, Role.Technician].includes(frontEndPrivilege as Role) && item.catType === "מכשיר" && <p>{`תוקף הסמכה בחודשים: ${item.certificationPeriodMonths ?? ''}`}</p>}
                 {item.catType === "מתכלה" && <p>{`אורך חיים בחודשים: ${item.lifeSpan ?? ''}`}</p>}
                 {item.catType === "מכשיר" && <p>{`חירום: ${item.emergency ? "כן" : "לא"}`}</p>}
+                {item.catType === "מכשיר" && <p>{`שיטת אחזקה: ${item.maintenanceMethod ?? ''}`}</p>}
+                {item.catType === "מכשיר" && item.maintenanceMethod === MaintenanceMethod.PeriodicTestAndCalibration && <p>{`תדירות אחזקה בחודשים: ${item.maintenanceIntervalMonths ?? ''}`}</p>}
                 <p>{'ספק בארץ: '}
                 {actualSupplier.supplier && 
                 <>

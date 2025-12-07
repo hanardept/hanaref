@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { fetchBackend } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
 import { viewingActions } from '../../store/viewing-slice';
-import { AbbreviatedItem, CatType, Item, SupplierSummary } from '../../types/item_types';
+import { AbbreviatedItem, CatType, Item, MaintenanceMethod, SupplierSummary } from '../../types/item_types';
 import { Sector } from '../../types/sector_types';
 import BigButton from '../UI/BigButton';
 import classes from './ItemMenu.module.css';
@@ -42,6 +42,8 @@ const MultiItemEdit = () => {
     const [sector, setSector] = useState("");
     const [department, setDepartment] = useState("");
     const [emergency, setEmergency] = useState(false);
+    const [maintenanceMethod, setMaintenanceMethod] = useState(MaintenanceMethod.PeriodicTestAndCalibration);
+    const [maintenanceIntervalMonths, setMaintenanceIntervalMonths] = useState<number | null>(null);
     const [supplier, setSupplier] =  useState(undefined as SupplierSummary | null | undefined);
     const [belongsToDevices, setBelongsToDevices] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [fields, setFields ] = useState([] as string[]);
@@ -150,6 +152,8 @@ const MultiItemEdit = () => {
     const editedItems = selectAllItems ? items.filter(i => !excludedItems.some(ei => ei.cat === i.cat)).map(i => i as Partial<Item>) : selectedItems;
     console.log(`editing items: ${JSON.stringify(editedItems)}`);
 
+    const maintenanceMethodsToChooseFrom = Object.values(MaintenanceMethod);
+
     return (
         <div className={`${classes.itemMenu} ${classes.multiItemMenu}`}>
             <h1 className={classes.title}>עריכת פריטים</h1>
@@ -207,12 +211,17 @@ const MultiItemEdit = () => {
                     serviceManualLink=''
                     hebrewManualLink=''
                     supplier={supplier}
+                    maintenanceMethod={maintenanceMethod}
+                    maintenanceMethodsToChooseFrom={maintenanceMethodsToChooseFrom}
+                    maintenanceIntervalMonths={maintenanceIntervalMonths}                    
                     models={[]}
                     accessories={[]}
                     consumables={[]}
                     spareParts={[]}
                     handleInput={handleInput}
                     setSupplier={setSupplier}
+                    handleSetMaintenanceMethod={setMaintenanceMethod}
+                    handleSetMaintenanceIntervalMonths={setMaintenanceIntervalMonths}                    
                     fields={fields}
                     elementWrapper={(child, field) => (<span className={classes.removableField}>
                         <MdRemoveCircle onClick={() => removeField(field)}/>

@@ -10,6 +10,12 @@ export interface SupplierSummary {
     name: string;
 }
 
+export enum MaintenanceMethod {
+    PeriodicTestAndCalibration = 'בדיקה תקופתית וכיול',
+    MalfunctionMaintenance = 'אחזקת שבר',
+    NoMaintenance = 'ללא אחזקה',
+}
+
 export type AbbreviatedItem = { _id?: string, name: string, cat: string, catType?: CatType, kitCats?: string[]; imageLink?: string, manufacturer?: string, archived?: boolean, createdAt?: string, supplier?: SupplierSummary };
 export type Item = {
     _id: string,
@@ -28,6 +34,8 @@ export type Item = {
     serviceManualLink?: string,
     hebrewManualLink?: string,
     emergency?: boolean,
+    maintenanceMethod: MaintenanceMethod,
+    maintenanceIntervalMonths?: number,
     supplier?: SupplierSummary,
     lifeSpan?: string,
     models?: AbbreviatedItem[],
