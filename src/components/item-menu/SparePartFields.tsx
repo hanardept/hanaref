@@ -19,7 +19,7 @@ interface SparePartFieldsProps {
     price?: number | null;
     models: AbbreviatedItem[];
     belongsToDevices: AbbreviatedItem[];
-    handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => void;
+    handleInput: (setFunc: ((value: string) => void) | undefined, event: ChangeEvent<HTMLInputElement>) => void;
     setImageLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setUserManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setSupplier?: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
