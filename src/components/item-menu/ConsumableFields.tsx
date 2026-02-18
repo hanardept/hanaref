@@ -16,6 +16,7 @@ interface ConsumableFieldsProps {
     userManualLink: string;
     isUserManualUploading?: boolean;
     supplier: SupplierSummary | null | undefined;
+    price?: number | null;
     lifeSpan: string;
     models: AbbreviatedItem[];
     belongsToDevices: AbbreviatedItem[];
@@ -23,6 +24,7 @@ interface ConsumableFieldsProps {
     setImageLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setUserManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setSupplier?: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
+    handleSetPrice?: (value: number | null) => void;
     setLifeSpan?: React.Dispatch<React.SetStateAction<string>>;
     setModels?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setBelongsToDevices?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
@@ -31,7 +33,7 @@ interface ConsumableFieldsProps {
 }
 
 const ConsumableFields = (props: ConsumableFieldsProps) => {
-    const { imageLink, isImageUploading, userManualLink, isUserManualUploading, supplier, lifeSpan, models, belongsToDevices, handleInput, setImageLink, setUserManualLink, setSupplier, setLifeSpan, setModels, setBelongsToDevices, fields, elementWrapper } = props;
+    const { imageLink, isImageUploading, userManualLink, isUserManualUploading, supplier, price, lifeSpan, models, belongsToDevices, handleInput, setImageLink, setUserManualLink, setSupplier, handleSetPrice, setLifeSpan, setModels, setBelongsToDevices, fields, elementWrapper } = props;
 
     const authToken = useAppSelector(state => state.auth.jwt);
     const [ itemSuggestions, setItemSuggestions ] = useState([]);        
@@ -145,6 +147,14 @@ const ConsumableFields = (props: ConsumableFieldsProps) => {
                 </div>
             </div>
         },
+        { name: 'price', element:<LabeledInput
+            type="number"
+            label='מחיר'
+            placeholder='מחיר'
+            min={0}
+            value={price ?? ''}
+            onChange={(e) => handleInput(val => handleSetPrice?.(Number.parseInt(val) ? +val : null), e)}
+        />},
         { name: 'models', element:
             <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />
         },
