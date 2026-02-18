@@ -143,7 +143,7 @@ const ItemPage = () => {
                     </>
                 }
                 </p>
-                {item.price !== null && item.price !== undefined && <p>{`מחיר: ${item.price}`}</p>}
+                {item.price !== null && item.price !== undefined && <p>{`מחיר: ${item.price} ש"ח`}</p>}
                 {item.description && <p>{item.description}</p>}
                 {item.imageLink && <img src={item.imageLink} alt={item.name} />}
                 {
