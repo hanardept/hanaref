@@ -55,6 +55,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
     const [maintenanceMethod, setMaintenanceMethod] = useState(MaintenanceMethod.PeriodicTestAndCalibration);
     const [maintenanceIntervalMonths, setMaintenanceIntervalMonths] = useState<number | null>(null);
     const [supplier, setSupplier] =  useState(undefined as SupplierSummary | null | undefined);
+    const [price, setPrice] = useState<number | null>(null);
     const [lifeSpan, setLifeSpan] = useState("");
     const [models, setModels] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [accessories, setAccessories] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
@@ -131,7 +132,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
             setFunc(event.target.value);
             dispatch(viewingActions.changesAppliedToItem(true));
         }
-    }
+    }  
     const handleDescription = (event: ChangeEvent<HTMLTextAreaElement>) => {
         setDescription(event.target.value);
         dispatch(viewingActions.changesAppliedToItem(true));
@@ -177,6 +178,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
             maintenanceMethod,
             maintenanceIntervalMonths,
             supplier: supplier,
+            price,
             lifeSpan: lifeSpan,
             models: vacateItemListIfEmptyAndRemoveSpaces(models),
             accessories: vacateItemListIfEmptyAndRemoveSpaces(accessories),
@@ -364,6 +366,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     hebrewManualLink={getFilename(hebrewManualLink)}
                     isHebrewManualUploading={isHebrewManualUploading}
                     supplier={supplier}
+                    price={price}
                     maintenanceMethod={maintenanceMethod}
                     maintenanceMethodsToChooseFrom={maintenanceMethodsToChooseFrom}
                     maintenanceIntervalMonths={maintenanceIntervalMonths}                    
@@ -379,6 +382,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     setServiceManualLink={setServiceManualLink}
                     setHebrewManualLink={setHebrewManualLink}
                     setSupplier={setSupplier}
+                    handleSetPrice={setPrice}
                     handleSetMaintenanceMethod={handleSetMaintenanceMethod}
                     handleSetMaintenanceIntervalMonths={setMaintenanceIntervalMonths}                        
                     setModels={setModels}
@@ -392,12 +396,14 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     userManualLink={getFilename(userManualLink)}
                     isUserManualUploading={isUserManualUploading}
                     supplier={supplier}
+                    price={price}
                     models={models}
                     belongsToDevices={belongsToDevices}
                     handleInput={handleInput}
                     setImageLink={setImageLink}
                     setUserManualLink={setUserManualLink}
                     setSupplier={setSupplier}
+                    handleSetPrice={setPrice}
                     setModels={setModels}
                     setBelongsToDevices={setBelongsToDevices}
                 />}
@@ -407,6 +413,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     userManualLink={getFilename(userManualLink)}
                     isUserManualUploading={isUserManualUploading}
                     supplier={supplier}
+                    price={price}
                     lifeSpan={lifeSpan}
                     models={models}
                     belongsToDevices={belongsToDevices}
@@ -414,6 +421,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     setImageLink={setImageLink}
                     setUserManualLink={setUserManualLink}
                     setSupplier={setSupplier}
+                    handleSetPrice={setPrice}
                     setLifeSpan={setLifeSpan}
                     setModels={setModels}
                     setBelongsToDevices={setBelongsToDevices}
@@ -424,12 +432,14 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     userManualLink={getFilename(userManualLink)}
                     isUserManualUploading={isUserManualUploading}
                     supplier={supplier}
+                    price={price}
                     models={models}
                     belongsToDevices={belongsToDevices}
                     handleInput={handleInput}
                     setImageLink={setImageLink}
                     setUserManualLink={setUserManualLink}
                     setSupplier={setSupplier}
+                    handleSetPrice={setPrice}
                     setModels={setModels}
                     setBelongsToDevices={setBelongsToDevices}
                 />}

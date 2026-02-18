@@ -16,12 +16,14 @@ interface SparePartFieldsProps {
     userManualLink: string;
     isUserManualUploading?: boolean;
     supplier: SupplierSummary | null | undefined;
+    price?: number | null;
     models: AbbreviatedItem[];
     belongsToDevices: AbbreviatedItem[];
-    handleInput: (setFunc: React.Dispatch<React.SetStateAction<string>>, event: ChangeEvent<HTMLInputElement>) => void;
+    handleInput: (setFunc: ((value: string) => void) | undefined, event: ChangeEvent<HTMLInputElement>) => void;
     setImageLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setUserManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setSupplier?: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
+    handleSetPrice?: (value: number | null) => void;
     setModels?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setBelongsToDevices?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     fields?: string[];
@@ -29,7 +31,7 @@ interface SparePartFieldsProps {
 }
 
 const SparePartFields = (props: SparePartFieldsProps) => {
-    const { imageLink, isImageUploading, userManualLink, isUserManualUploading, supplier, models, belongsToDevices, setImageLink, setUserManualLink, setSupplier, setModels, setBelongsToDevices, fields, elementWrapper } = props;
+    const { imageLink, isImageUploading, userManualLink, isUserManualUploading, supplier, price, models, belongsToDevices, handleInput, setImageLink, setUserManualLink, setSupplier, handleSetPrice, setModels, setBelongsToDevices, fields, elementWrapper } = props;
 
     const authToken = useAppSelector(state => state.auth.jwt);
     const [ itemSuggestions, setItemSuggestions ] = useState([]);
@@ -139,6 +141,14 @@ const SparePartFields = (props: SparePartFieldsProps) => {
                 </div>
             </div>
         },
+        { name: 'price', element:<LabeledInput
+            type="number"
+            label='מחיר'
+            placeholder='מחיר'
+            min={0}
+            value={price ?? ''}
+            onChange={(e) => handleInput(val => handleSetPrice?.(Number.parseInt(val) ? +val : null), e)}
+        />},
         { name: 'models', element:
             <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />
         },

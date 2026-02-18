@@ -25,6 +25,7 @@ interface DeviceFieldsProps {
     hebrewManualLink: string;
     isHebrewManualUploading?: boolean;
     supplier: SupplierSummary | null | undefined;
+    price?: number | null;
     maintenanceMethod: MaintenanceMethod,
     maintenanceMethodsToChooseFrom?: MaintenanceMethod[];
     maintenanceIntervalMonths?: number | null;    
@@ -40,6 +41,7 @@ interface DeviceFieldsProps {
     setServiceManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setHebrewManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setSupplier?: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
+    handleSetPrice?: (value: number | null) => void;
     handleSetMaintenanceMethod?: (maintenanceMethod: MaintenanceMethod) => void;
     handleSetMaintenanceIntervalMonths?: (value: number | null) => void;    
     setModels?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
@@ -53,7 +55,8 @@ interface DeviceFieldsProps {
 const DeviceFields = (props: DeviceFieldsProps) => {
     const {
         imageLink, isImageUploading, qaStandardLink, isQaStandardUploading, medicalEngineeringManualLink, isMedicalEngineeringManualUploading, userManualLink, isUserManualUploading, serviceManualLink, isServiceManualUploading,
-        hebrewManualLink, isHebrewManualUploading, supplier, maintenanceMethod, maintenanceMethodsToChooseFrom, maintenanceIntervalMonths, models, accessories, consumables, spareParts, handleInput, setImageLink, setQaStandardLink, setMedicalEngineeringManualLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier,
+        hebrewManualLink, isHebrewManualUploading, supplier, price, maintenanceMethod, maintenanceMethodsToChooseFrom, maintenanceIntervalMonths, models, accessories, consumables, spareParts, handleInput, setImageLink,
+        setQaStandardLink, setMedicalEngineeringManualLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier, handleSetPrice,
         handleSetMaintenanceMethod, handleSetMaintenanceIntervalMonths, setModels, setAccessories, setConsumables, setSpareParts, fields, elementWrapper
     } = props;
 
@@ -151,6 +154,14 @@ const DeviceFields = (props: DeviceFieldsProps) => {
                         />
                     )}
                 </div>},
+            { name: 'price', element:<LabeledInput
+                type="number"
+                label='מחיר'
+                placeholder='מחיר'
+                min={0}
+                value={price ?? ''}
+                onChange={(e) => handleInput(val => handleSetPrice?.(Number.parseInt(val) ? +val : null), e)}
+            />},
             { name: 'maintenanceMethod', element: <LabeledInput
                 label='שיטת אחזקה'
                 placeholder='שיטת אחזקה'

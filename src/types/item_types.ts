@@ -37,6 +37,7 @@ export type Item = {
     maintenanceMethod: MaintenanceMethod,
     maintenanceIntervalMonths?: number,
     supplier?: SupplierSummary,
+    price?: number,
     lifeSpan?: string,
     models?: AbbreviatedItem[],
     accessories?: AbbreviatedItem[],
