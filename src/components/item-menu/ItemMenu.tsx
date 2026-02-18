@@ -396,12 +396,14 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     userManualLink={getFilename(userManualLink)}
                     isUserManualUploading={isUserManualUploading}
                     supplier={supplier}
+                    price={price}
                     models={models}
                     belongsToDevices={belongsToDevices}
                     handleInput={handleInput}
                     setImageLink={setImageLink}
                     setUserManualLink={setUserManualLink}
                     setSupplier={setSupplier}
+                    handleSetPrice={setPrice}
                     setModels={setModels}
                     setBelongsToDevices={setBelongsToDevices}
                 />}
