@@ -154,7 +154,8 @@ function App() {
 
   if (isLoading) {
     return <LoadingSpinner />;
-  }    
+  }
+      
 
   return (
     <div className={classes.App}>
