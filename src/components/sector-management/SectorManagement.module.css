@@ -6,6 +6,7 @@
     flex-direction: column;
     align-items: center;
     padding-top: var(--gutterHorizontal);
+    height: 100%;
 }
 
 .sectorButton {
@@ -55,6 +56,10 @@
 }
 .checkbox label {
     margin-right: 0;
+}
+
+.departmentsContainer {
+    overflow: scroll;
 }
 
 .returnButtonCover {
