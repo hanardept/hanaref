@@ -2,7 +2,7 @@ import classes from './App.module.css';
 import { Routes, Route, useNavigate, useSearchParams } from 'react-router-dom';
 import { get } from 'idb-keyval';
 import { useEffect, useRef, useState } from 'react';
-import { useAppDispatch } from './hooks/redux-hooks';
+import { useAppDispatch, useAppSelector } from './hooks/redux-hooks';
 import { authActions } from './store/auth-slice';
 import Header from './components/header/Header';
 import ItemPage from './components/item-page/ItemPage';
@@ -27,7 +27,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { jwtDecode } from 'jwt-decode';
 import { backendFirebaseUri } from './backend-variables/address';
 import LoadingSpinner from './components/UI/LoadingSpinner';
-import { Role } from './types/user_types';
+import { Role, UserStatus } from './types/user_types';
 import SupplierPage from './components/supplier-page/SupplierPage';
 import Suppliers from './components/supplier-page/Suppliers';
 import SupplierMenu from './components/supplier-menu/SupplierMenu';
@@ -41,6 +41,8 @@ function App() {
   const [params] = useSearchParams();
    const [headerHeight, setHeaderHeight] = useState(0);
 
+   const status = useAppSelector(state => state.auth.status);
+
   useEffect(() => {
     if (firstRender.current) {
       setTimeout(() => {
@@ -51,14 +53,14 @@ function App() {
 
     let autoLogoutTimer: NodeJS.Timeout;
 
-    Promise.all([get('hanaref-jwt'), get('hanaref-front-end-privilege'), get('hanaref-jwt-expiry-date')])
+    Promise.all([get('hanaref-jwt'), get('hanaref-front-end-privilege'), get('hanaref-jwt-expiry-date'), get('hanaref-status')])
       .then((values) => {
         if (values.every(v => !!v)) {
-          const [jwt, frontEndPrivilege, jwtExpiryDate] = values;
+          const [jwt, frontEndPrivilege, jwtExpiryDate, status ] = values;
           if (new Date().getTime() >= jwtExpiryDate) {
             dispatch(authActions.clearAuthStateUponLogout());
           } else {
-            dispatch(authActions.consumeAuthStateFromIDB({ jwt: jwt, frontEndPrivilege: frontEndPrivilege, jwtExpiryDate: jwtExpiryDate }));
+            dispatch(authActions.consumeAuthStateFromIDB({ jwt: jwt, frontEndPrivilege: frontEndPrivilege, jwtExpiryDate: jwtExpiryDate, status }));
             autoLogoutTimer = setTimeout(() => {
               dispatch(authActions.clearAuthStateUponLogout());
             }, jwtExpiryDate - new Date().getTime());
@@ -87,16 +89,17 @@ function App() {
         console.log(`isAuthenticated = true, calling getAccessTokenSilently`);
         getAccessTokenSilently({ /*cacheMode: 'off',*/ authorizationParams: { audience: backendFirebaseUri } })
         .then(token => {
-            //console.log(`getAccessTokenSilently token: ${token}`);
+            console.log(`getAccessTokenSilently token: ${token}`);
             try {
               const rolesTokenField = `${process.env.REACT_APP_AUTH0_NAMESPACE}/roles`;
               const userIdField = `${process.env.REACT_APP_AUTH0_NAMESPACE}/user_id`;
+              const statusField = `${process.env.REACT_APP_AUTH0_NAMESPACE}/status`;
               const decoded = jwtDecode<any>(token);
               console.log(`token field: ${rolesTokenField}`);
               console.log(`decoded: ${JSON.stringify(decoded)}`);
               console.log(`role: ${decoded[rolesTokenField]?.[0]}`);
               dispatch(authActions.setAuthStateUponLogin({ jwt: token, frontEndPrivilege: decoded[rolesTokenField]?.[0], jwtExpiryDate: decoded.exp!, userId: decoded[
-                userIdField] }));
+                userIdField], status: decoded[statusField]?.[0] }));
             } catch (error) {
               console.log(`error decoding auth0 token: ${error}`);
             }
@@ -156,11 +159,15 @@ function App() {
     return <LoadingSpinner />;
   }
       
+  console.log(`status: ${JSON.stringify(status)}, enum: ${UserStatus.Registered}, status === UserStatus.Registered: ${status === UserStatus.Registered}, type1: ${typeof status}, type2: ${typeof UserStatus.Registered}`);
 
   return (
     <div className={classes.App}>
       <Header onHeightChanged={height => { console.log(`setting top to: ${height}`); setHeaderHeight(height)}} />
       <div style={{ height: `calc(100% - ${headerHeight}px)`, top: `${headerHeight}px` }} className={classes.pushBodyDown}>
+      {status === UserStatus.Registered ? <div className={classes.welcomeNewUser}>
+        <p>חשבון המשתמש שלך נמצא כרגע בבדיקה על ידי מנהל המערכת. ברגע שיאושר, תקבל גישה למערכת.</p>
+        </div> :
         <Routes>
           {/* Public Routes: */}
           <Route path="/login" element={<LoginPage />} />
@@ -200,6 +207,7 @@ function App() {
           <Route path="/suppliermenu/:supplierid" element={<AdminOnly><SupplierMenu /></AdminOnly>} />
           <Route path="/suppliermenu/newsupplier/:newsupplierid" element={<AdminOnly><SupplierMenu /></AdminOnly>} />                   
         </Routes>
+      }
       </div>
       {showWelcome && <div className={classes.welcome} onClick={() => setShowWelcome(false)}>
           <div className={classes.logoWrapper}>

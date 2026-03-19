@@ -20,11 +20,12 @@ const LoginPage = () => {
                 getAccessTokenSilently().then(token => {
                     const rolesTokenField = `${process.env.REACT_APP_AUTH0_NAMESPACE}/roles`;
                     const userIdField = `${process.env.REACT_APP_AUTH0_NAMESPACE}/user_id`;
+                    const statusField = `${process.env.REACT_APP_AUTH0_NAMESPACE}/status`;
                     const decoded = jwtDecode<any>(token);
                     console.log(`token field: ${rolesTokenField}`);
                     console.log(`decoded: ${JSON.stringify(decoded)}`);
                     console.log(`role: ${decoded[rolesTokenField]?.[0]}`);
-                    dispatch(authActions.setAuthStateUponLogin({ jwt: token, frontEndPrivilege: decoded[rolesTokenField]?.[0], jwtExpiryDate: decoded.exp, userId: decoded[userIdField] }));
+                    dispatch(authActions.setAuthStateUponLogin({ jwt: token, frontEndPrivilege: decoded[rolesTokenField]?.[0], jwtExpiryDate: decoded.exp, userId: decoded[userIdField], status: decoded[statusField]?.[0] }));
                 })
             })
         }
