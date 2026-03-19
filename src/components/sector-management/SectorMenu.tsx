@@ -184,6 +184,7 @@ const SectorMenu = ({ exit, sector, reload }: { exit: () => void, sector?: Secto
                     {(droppableProvided, droppableSnapshot) => (
                         <div
                             ref={droppableProvided.innerRef}
+                            className={classes.departmentsContainer}
                         >
                             {departments.map((d, idx) => (
                                 <Draggable key={idx} draggableId={idx.toString()} index={idx}>
