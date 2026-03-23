@@ -115,7 +115,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
             };
             unlockItem();
         };
-    }, []);
+    }, [ params.id, authToken]);
 
     useEffect(() => {
             const getSectors = async () => {

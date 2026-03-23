@@ -15,7 +15,6 @@ import { Role } from '../../types/user_types';
 import { MdRemoveCircle } from 'react-icons/md';
 import LabeledInput from '../UI/LabeledInput';
 import { useNavigate } from 'react-router-dom';
-import { set } from 'idb-keyval';
 import toast, { Toaster } from 'react-hot-toast';
 
 const notifyPartiallyLocked = () => toast('חלק מהפריטים נמצאים בעריכה ע"י משתמש אחר והושמטו מהעריכה במסך זה', { id: 'lock'} );
@@ -138,7 +137,7 @@ const MultiItemEdit = () => {
             };
             unlockItems();
         };
-    }, []);    
+    }, [ createFilterSearchParams, authToken ]);    
 
 
     useEffect(() => {
