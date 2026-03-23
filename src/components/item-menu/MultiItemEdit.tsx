@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { fetchBackend } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
 import { viewingActions } from '../../store/viewing-slice';
@@ -58,7 +58,7 @@ const MultiItemEdit = () => {
     const lockIdRef = useRef<string | null>(null);
     const unlockPromiseRef = useRef<Promise<void> | null>(null);
 
-    const createFilterSearchParams = () => {
+    const createFilterSearchParams = useCallback(() => {
         let searchParams: URLSearchParams;
         if (selectAllItems) {
             searchParams = new URLSearchParams({ selectAll: 'true' });
@@ -72,7 +72,7 @@ const MultiItemEdit = () => {
             selectedItems?.forEach(item => searchParams.append('cats', item.cat!));
         }
         return searchParams;
-    }
+    }, [ selectAllItems, searchVal, filteredSector, filteredDepartment, showArchived, selectedItems, excludedItems ] );
 
     useEffect(() => {
         const lockItems = async () => {
