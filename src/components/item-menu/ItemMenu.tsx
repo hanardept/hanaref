@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchBackend } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
@@ -63,6 +63,64 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
     const [spareParts, setSpareParts] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [belongsToDevices, setBelongsToDevices] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
+
+    const [showLockError, setShowLockError] = useState(false);
+    const [lockingUser, setLockingUser] = useState<string | null>(null);
+
+    const lockPromiseRef = useRef<Promise<Response> | null>(null);
+    const unlockPromiseRef = useRef<Promise<void> | null>(null);
+
+    useEffect(() => {
+        const lockItem = async () => {
+            if (params.itemid) {
+                const promises = [lockPromiseRef.current, unlockPromiseRef.current].filter(Boolean);
+                if (promises.length) {
+                    await Promise.all([lockPromiseRef.current, unlockPromiseRef.current].filter(Boolean));
+                }
+                lockPromiseRef.current = fetchBackend(`items/${params.itemid}/lock`, { 
+                    method: 'POST',
+                    headers: { 'auth-token': authToken }
+                });
+                try {
+                    const response = await lockPromiseRef.current;
+                    if (!response.ok) {
+                        setShowLockError(true);
+                        if (response.status === 409) {
+                            const errJson = await response.json();
+                            setLockingUser(errJson.details.user);
+                        }
+                    }
+                } catch (error) {
+                    setShowLockError(true);
+                }
+            }
+        };
+
+        lockItem();
+
+        return () => {
+            const unlockItem = async () => {
+                unlockPromiseRef.current = new Promise<void>(async resolve => {
+                    if (params.itemid) {
+                        if (lockPromiseRef.current) {
+                            await lockPromiseRef.current;
+                            lockPromiseRef.current = null;
+                        }     
+                        await fetchBackend(`items/${params.itemid}/unlock`, { 
+                            method: 'POST',
+                            headers: { 'auth-token': authToken }
+                        });        
+                    }
+
+                    resolve();
+                });
+
+                await unlockPromiseRef.current;
+                unlockPromiseRef.current = null;
+            };
+            unlockItem();
+        };
+    }, [ params.itemid, authToken]);
 
     useEffect(() => {
             const getSectors = async () => {
@@ -289,6 +347,10 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
         if (params.itemid) {
             saveLinks()
                 .then(newLinks => saveItem(false, true, newLinks))
+                .then(() => fetchBackend(`items/${params.itemid}/unlock`, { 
+                    method: 'POST',
+                    headers: { 'auth-token': authToken }
+                }))
                 .then(() => {
                     dispatch(viewingActions.changesAppliedToItem(false));
                     navigate(-1);
@@ -322,7 +384,10 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
     const catTypesToChooseFrom = frontEndPrivilege === Role.Technician ? [ CatType.SparePart ] : undefined;
     const maintenanceMethodsToChooseFrom = Object.values(MaintenanceMethod);
 
-    return (
+    return showLockError ? (<dialog open>
+        <p>פריט זה פתוח לעריכה על ידי {lockingUser}. אנא נסה שוב מאוחר יותר.</p>
+        <BigButton text="חזרה" action={() => { navigate(-1); setShowLockError(false); }} />
+    </dialog>) : (
         <div className={classes.itemMenu}>
             <h1 className={classes.title}>{params.itemid ? "עריכת פריט" : "הוספת פריט"}</h1>
             <div className={classes.details}>

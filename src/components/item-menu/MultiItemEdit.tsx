@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { fetchBackend } from '../../backend-variables/address';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux-hooks';
 import { viewingActions } from '../../store/viewing-slice';
@@ -15,6 +15,9 @@ import { Role } from '../../types/user_types';
 import { MdRemoveCircle } from 'react-icons/md';
 import LabeledInput from '../UI/LabeledInput';
 import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
+
+const notifyPartiallyLocked = () => toast('חלק מהפריטים נמצאים בעריכה ע"י משתמש אחר והושמטו מהעריכה במסך זה', { id: 'lock'} );
 
 function vacateItemListIfEmptyAndRemoveSpaces(itemList: AbbreviatedItem[]) {
     const filteredList = itemList.filter(i => i.cat !== "" || i.name !== "");
@@ -48,10 +51,97 @@ const MultiItemEdit = () => {
     const [belongsToDevices, setBelongsToDevices] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [fields, setFields ] = useState([] as string[]);
     const navigate = useNavigate();
+    const [showLockError, setShowLockError] = useState(false);
+    //const [itemsLockId, setItemsLockId] = useState<string | null>(null);
+
+    const lockPromiseRef = useRef<Promise<void> | null>(null);
+    const lockIdRef = useRef<string | null>(null);
+    const unlockPromiseRef = useRef<Promise<void> | null>(null);
+
+    const createFilterSearchParams = useCallback(() => {
+        let searchParams: URLSearchParams;
+        if (selectAllItems) {
+            searchParams = new URLSearchParams({ selectAll: 'true' });
+            if (searchVal) searchParams.append('search', searchVal);
+            if (filteredSector) searchParams.append('sector', filteredSector);
+            if (filteredDepartment) searchParams.append('department', filteredDepartment);  
+            if (!showArchived) searchParams.append('status', 'active');
+            excludedItems?.forEach(item => searchParams.append('excludedCats', item.cat!));
+        } else {
+            searchParams = new URLSearchParams();
+            selectedItems?.forEach(item => searchParams.append('cats', item.cat!));
+        }
+        return searchParams;
+    }, [ selectAllItems, searchVal, filteredSector, filteredDepartment, showArchived, selectedItems, excludedItems ] );
+
+    useEffect(() => {
+        const lockItems = async () => {
+            lockPromiseRef.current = new Promise<void>(async resolve => {
+                const promises = [lockPromiseRef.current, unlockPromiseRef.current].filter(Boolean);
+                if (promises.length) {
+                    await Promise.all([lockPromiseRef.current, unlockPromiseRef.current].filter(Boolean));
+                }
+                const filter = createFilterSearchParams();
+                try {
+                    const response = await fetchBackend('items/lock?' + filter.toString(), { 
+                        method: 'POST',
+                        headers: { 'auth-token': authToken }
+                    });
+                    if (response.ok) {
+                        const json = await response.json();
+                        console.log(`items lock result: ${JSON.stringify(json)}`);
+                        lockIdRef.current = json.id;
+                        if (response.status === 207) {
+                            notifyPartiallyLocked();
+                        }
+                    } else {
+                        setShowLockError(true);
+                    }
+                } catch (error) {
+                    setShowLockError(true);
+                } finally {
+                    resolve();
+                }
+            });
+            await lockPromiseRef.current;
+            lockPromiseRef.current = null;
+        };
+
+        lockItems();
+
+        return () => {
+            const unlockItems = async () => {
+                unlockPromiseRef.current = new Promise<void>(async resolve => {
+                    console.log(`unlocking items`);
+                    if (lockPromiseRef.current) {
+                        console.log(`unlock - waiting for lock promise to resolve before unlocking...`);
+                        await lockPromiseRef.current;
+                        console.log(`unlock - finished waiting for lock promise to resolve before unlocking...`);
+                    }
+                    console.log(`unlock - finished waiting for lock promise to resolve before unlocking...`);
+                    if (lockIdRef.current) {
+                        console.log(`unlocking items with lock id: ${lockIdRef.current}`);
+                        await fetchBackend(`items/unlock/${lockIdRef.current}`, { 
+                            method: 'POST',
+                            headers: { 'auth-token': authToken }
+                        });   
+                    } else {
+                        console.log(`no lock id found, skipping unlock request`);
+                    } 
+
+                    resolve();
+                });
+
+                await unlockPromiseRef.current;
+                unlockPromiseRef.current = null;
+            };
+            unlockItems();
+        };
+    }, [ createFilterSearchParams, authToken ]);    
 
 
     useEffect(() => {
-            const getSectors = async () => {
+        const getSectors = async () => {
             const params: any = {};
             if (frontEndPrivilege === Role.Technician) {
                 params.isMaintenance = true;
@@ -90,7 +180,6 @@ const MultiItemEdit = () => {
             alert("לא כל השדות שנבחרו מולאו");
             return;
         }
-
 
         const fullItemDetails: Record<string, any> = {
             sector: sector,
@@ -154,7 +243,10 @@ const MultiItemEdit = () => {
 
     const maintenanceMethodsToChooseFrom = Object.values(MaintenanceMethod);
 
-    return (
+    return showLockError ? (<dialog open>
+        <p>פריטים אלה פתוחים לעריכה על ידי משתמש אחר. אנא נסה שוב מאוחר יותר.</p>
+        <BigButton text="חזרה" action={() => { navigate(-1); setShowLockError(false); }} />
+    </dialog>) : (
         <div className={`${classes.itemMenu} ${classes.multiItemMenu}`}>
             <h1 className={classes.title}>עריכת פריטים</h1>
             <div className={classes.fields}>
@@ -278,6 +370,7 @@ const MultiItemEdit = () => {
             <div className={classes.buttons}>
                 <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "2.5rem" }} className={classes.button} />
             </div>
+            <Toaster />
         </div>
     )
 };
