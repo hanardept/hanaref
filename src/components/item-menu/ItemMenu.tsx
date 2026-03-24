@@ -65,6 +65,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
     const [showLockError, setShowLockError] = useState(false);
+    const [lockingUser, setLockingUser] = useState<string | null>(null);
 
     const lockPromiseRef = useRef<Promise<Response> | null>(null);
     const unlockPromiseRef = useRef<Promise<void> | null>(null);
@@ -84,6 +85,10 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     const response = await lockPromiseRef.current;
                     if (!response.ok) {
                         setShowLockError(true);
+                        if (response.status === 409) {
+                            const errJson = await response.json();
+                            setLockingUser(errJson.details.user);
+                        }
                     }
                 } catch (error) {
                     setShowLockError(true);
@@ -380,7 +385,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
     const maintenanceMethodsToChooseFrom = Object.values(MaintenanceMethod);
 
     return showLockError ? (<dialog open>
-        <p>פריט זה פתוח לעריכה על ידי משתמש אחר. אנא נסה שוב מאוחר יותר.</p>
+        <p>פריט זה פתוח לעריכה על ידי {lockingUser}. אנא נסה שוב מאוחר יותר.</p>
         <BigButton text="חזרה" action={() => { navigate(-1); setShowLockError(false); }} />
     </dialog>) : (
         <div className={classes.itemMenu}>
