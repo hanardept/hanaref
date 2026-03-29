@@ -23,12 +23,15 @@ interface DeviceFieldsProps {
     serviceManualLink: string;
     isServiceManualUploading?: boolean;
     hebrewManualLink: string;
+    schemasLink: string;
     isHebrewManualUploading?: boolean;
+    isSchemasUploading?: boolean;
     supplier: SupplierSummary | null | undefined;
     price?: number | null;
     maintenanceMethod: MaintenanceMethod,
     maintenanceMethodsToChooseFrom?: MaintenanceMethod[];
     maintenanceIntervalMonths?: number | null;    
+    minimumStock?: number | null;
     models: AbbreviatedItem[];
     accessories: AbbreviatedItem[];
     consumables: AbbreviatedItem[];
@@ -40,10 +43,12 @@ interface DeviceFieldsProps {
     setUserManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setServiceManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setHebrewManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
+    setSchemasLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setSupplier?: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
     handleSetPrice?: (value: number | null) => void;
     handleSetMaintenanceMethod?: (maintenanceMethod: MaintenanceMethod) => void;
     handleSetMaintenanceIntervalMonths?: (value: number | null) => void;    
+    handleMinimumStock?: (value: number | null) => void;    
     setModels?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setAccessories?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setConsumables?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
@@ -55,9 +60,9 @@ interface DeviceFieldsProps {
 const DeviceFields = (props: DeviceFieldsProps) => {
     const {
         imageLink, isImageUploading, qaStandardLink, isQaStandardUploading, medicalEngineeringManualLink, isMedicalEngineeringManualUploading, userManualLink, isUserManualUploading, serviceManualLink, isServiceManualUploading,
-        hebrewManualLink, isHebrewManualUploading, supplier, price, maintenanceMethod, maintenanceMethodsToChooseFrom, maintenanceIntervalMonths, models, accessories, consumables, spareParts, handleInput, setImageLink,
-        setQaStandardLink, setMedicalEngineeringManualLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSupplier, handleSetPrice,
-        handleSetMaintenanceMethod, handleSetMaintenanceIntervalMonths, setModels, setAccessories, setConsumables, setSpareParts, fields, elementWrapper
+        hebrewManualLink, isHebrewManualUploading, schemasLink, isSchemasUploading, supplier, price, maintenanceMethod, maintenanceMethodsToChooseFrom, maintenanceIntervalMonths, minimumStock, models, accessories, consumables, spareParts, handleInput, setImageLink,
+        setQaStandardLink, setMedicalEngineeringManualLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSchemasLink, setSupplier, handleSetPrice,
+        handleSetMaintenanceMethod, handleSetMaintenanceIntervalMonths, handleMinimumStock, setModels, setAccessories, setConsumables, setSpareParts, fields, elementWrapper
     } = props;
 
     const authToken = useAppSelector(state => state.auth.jwt);
@@ -93,6 +98,8 @@ const DeviceFields = (props: DeviceFieldsProps) => {
                 customInputElement={<UploadFile placeholder="מדריך למשתמש" url={userManualLink} isUploading={isUserManualUploading} onChange={(e) => setUserManualLink?.(e.target.files?.[0] ?? '')} onClear={() => setUserManualLink?.("")}/>}/>},
             {name: 'hebrewManualLink', element: <LabeledInput type="file" label="הוראות הפעלה בעברית" value={hebrewManualLink} placeholder="הוראות הפעלה בעברית" 
                 customInputElement={<UploadFile placeholder="הוראות הפעלה בעברית" url={hebrewManualLink} isUploading={isHebrewManualUploading} onChange={(e) => setHebrewManualLink?.(e.target.files?.[0] ?? '')} onClear={() => setHebrewManualLink?.("")}/>}/>},
+            {name: 'schemasLink', element: <LabeledInput type="file" label="סכמות/שרטוטים" value={schemasLink} placeholder="סכמות/שרטוטים"
+                customInputElement={<UploadFile placeholder="סכמות/שרטוטים" url={schemasLink} isUploading={isSchemasUploading} onChange={(e) => setSchemasLink?.(e.target.files?.[0] ?? '')} onClear={() => setSchemasLink?.("")}/>}/>},
             {name: 'medicalEngineeringManualLink', element: <LabeledInput type="file" label="הוראות הנר" value={medicalEngineeringManualLink} placeholder="הוראות הנר" 
                 customInputElement={<UploadFile placeholder="הוראות הנר" url={medicalEngineeringManualLink} isUploading={isMedicalEngineeringManualUploading} onChange={(e) => setMedicalEngineeringManualLink?.(e.target.files?.[0] ?? '')}  onClear={() => setMedicalEngineeringManualLink?.("")}/>}/>},
             {name: 'qaStandardLink', element: <LabeledInput type="file" label="תקן בחינה" value={qaStandardLink} placeholder="תקן בחינה"
@@ -176,7 +183,15 @@ const DeviceFields = (props: DeviceFieldsProps) => {
                 min={0}
                 value={maintenanceIntervalMonths ?? ''}
                 onChange={(e) => handleInput(val => handleSetMaintenanceIntervalMonths?.(Number.parseInt(val) ? +val : null), e)}
-            /> : undefined },                
+            /> : undefined },
+            { name: 'minimumStock', element: <LabeledInput
+                type="number"
+                label='קווים אדומים'
+                placeholder='קווים אדומים'
+                min={0}
+                value={minimumStock ?? ''}
+                onChange={(e) => handleInput(val => handleMinimumStock?.(Number.parseInt(val) ? +val : null), e)}
+            />},
             {name: 'models', element: <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />},
             {name: 'accessories', element:
                 <InfoSectionMenu 

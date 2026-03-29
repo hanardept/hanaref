@@ -15,16 +15,21 @@ interface ConsumableFieldsProps {
     isImageUploading?: boolean;
     userManualLink: string;
     isUserManualUploading?: boolean;
+    schemasLink: string;
+    isSchemasUploading?: boolean;
     supplier: SupplierSummary | null | undefined;
     price?: number | null;
+    minimumStock?: number | null;
     lifeSpan: string;
     models: AbbreviatedItem[];
     belongsToDevices: AbbreviatedItem[];
     handleInput: (setFunc: ((value: string) => void) | undefined, event: ChangeEvent<HTMLInputElement>) => void;
     setImageLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setUserManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
+    setSchemasLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setSupplier?: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
     handleSetPrice?: (value: number | null) => void;
+    handleSetMinimumStock?: (value: number | null) => void;
     setLifeSpan?: React.Dispatch<React.SetStateAction<string>>;
     setModels?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setBelongsToDevices?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
@@ -33,7 +38,7 @@ interface ConsumableFieldsProps {
 }
 
 const ConsumableFields = (props: ConsumableFieldsProps) => {
-    const { imageLink, isImageUploading, userManualLink, isUserManualUploading, supplier, price, lifeSpan, models, belongsToDevices, handleInput, setImageLink, setUserManualLink, setSupplier, handleSetPrice, setLifeSpan, setModels, setBelongsToDevices, fields, elementWrapper } = props;
+    const { imageLink, isImageUploading, userManualLink, isUserManualUploading, schemasLink, isSchemasUploading, supplier, price, minimumStock, lifeSpan, models, belongsToDevices, handleInput, setImageLink, setUserManualLink, setSchemasLink, setSupplier, handleSetPrice, handleSetMinimumStock, setLifeSpan, setModels, setBelongsToDevices, fields, elementWrapper } = props;
 
     const authToken = useAppSelector(state => state.auth.jwt);
     const [ itemSuggestions, setItemSuggestions ] = useState([]);        
@@ -78,6 +83,10 @@ const ConsumableFields = (props: ConsumableFieldsProps) => {
             <LabeledInput type="file" label="מדריך למשתמש" value={userManualLink} placeholder="מדריך למשתמש" 
                 customInputElement={<UploadFile placeholder="מדריך למשתמש" url={userManualLink} isUploading={isUserManualUploading} onChange={(e) => setUserManualLink?.(e.target.files?.[0] ?? '')} onClear={() => setUserManualLink?.("")}/>}/>
         },
+        { name: 'schemasLink', element:
+            <LabeledInput type="file" label="סכמות/שרטוטים" value={schemasLink} placeholder="סכמות/שרטוטים"
+                customInputElement={<UploadFile placeholder="סכמות/שרטוטים" url={schemasLink} isUploading={isSchemasUploading} onChange={(e) => setSchemasLink?.(e.target.files?.[0] ?? '')} onClear={() => setSchemasLink?.("")}/>}/>
+        },           
         {name: 'supplier', element:
 
             <div className={classes.inputGroup}>
@@ -155,6 +164,14 @@ const ConsumableFields = (props: ConsumableFieldsProps) => {
             value={price ?? ''}
             onChange={(e) => handleInput(val => handleSetPrice?.(Number.parseInt(val) ? +val : null), e)}
         />},
+        { name: 'minimumStock', element: <LabeledInput
+            type="number"
+            label='קווים אדומים'
+            placeholder='קווים אדומים'
+            min={0}
+            value={minimumStock ?? ''}
+            onChange={(e) => handleInput(val => handleSetMinimumStock?.(Number.parseInt(val) ? +val : null), e)}
+        />},            
         { name: 'models', element:
             <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />
         },

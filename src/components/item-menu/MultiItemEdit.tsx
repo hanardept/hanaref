@@ -302,6 +302,7 @@ const MultiItemEdit = () => {
                     userManualLink=''
                     serviceManualLink=''
                     hebrewManualLink=''
+                    schemasLink=''
                     supplier={supplier}
                     maintenanceMethod={maintenanceMethod}
                     maintenanceMethodsToChooseFrom={maintenanceMethodsToChooseFrom}
@@ -323,6 +324,7 @@ const MultiItemEdit = () => {
                 <AccessoryFields
                     imageLink=''
                     userManualLink=''
+                    schemasLink=''
                     supplier={supplier}
                     models={[]}
                     belongsToDevices={belongsToDevices}
@@ -338,6 +340,7 @@ const MultiItemEdit = () => {
                 <ConsumableFields
                     imageLink=''
                     userManualLink=''
+                    schemasLink=''
                     supplier={supplier}
                     models={[]}
                     lifeSpan=''
@@ -354,6 +357,7 @@ const MultiItemEdit = () => {
                 <SparePartFields
                     imageLink=''
                     userManualLink=''
+                    schemasLink=''
                     supplier={supplier}
                     models={[]}
                     belongsToDevices={belongsToDevices}
