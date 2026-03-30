@@ -15,15 +15,20 @@ interface SparePartFieldsProps {
     isImageUploading?: boolean;
     userManualLink: string;
     isUserManualUploading?: boolean;
+    schemasLink: string;
+    isSchemasUploading?: boolean;
     supplier: SupplierSummary | null | undefined;
     price?: number | null;
+    minimumStock?: number | null;
     models: AbbreviatedItem[];
     belongsToDevices: AbbreviatedItem[];
     handleInput: (setFunc: ((value: string) => void) | undefined, event: ChangeEvent<HTMLInputElement>) => void;
     setImageLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setUserManualLink?: React.Dispatch<React.SetStateAction<string | File>>;
+    setSchemasLink?: React.Dispatch<React.SetStateAction<string | File>>;
     setSupplier?: React.Dispatch<React.SetStateAction<SupplierSummary | null | undefined>>;
     handleSetPrice?: (value: number | null) => void;
+    handleSetMinimumStock?: (value: number | null) => void;
     setModels?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     setBelongsToDevices?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>;
     fields?: string[];
@@ -31,7 +36,7 @@ interface SparePartFieldsProps {
 }
 
 const SparePartFields = (props: SparePartFieldsProps) => {
-    const { imageLink, isImageUploading, userManualLink, isUserManualUploading, supplier, price, models, belongsToDevices, handleInput, setImageLink, setUserManualLink, setSupplier, handleSetPrice, setModels, setBelongsToDevices, fields, elementWrapper } = props;
+    const { imageLink, isImageUploading, userManualLink, isUserManualUploading, schemasLink, isSchemasUploading, supplier, price, minimumStock, models, belongsToDevices, handleInput, setImageLink, setUserManualLink, setSchemasLink, setSupplier, handleSetPrice, handleSetMinimumStock, setModels, setBelongsToDevices, fields, elementWrapper } = props;
 
     const authToken = useAppSelector(state => state.auth.jwt);
     const [ itemSuggestions, setItemSuggestions ] = useState([]);
@@ -73,6 +78,10 @@ const SparePartFields = (props: SparePartFieldsProps) => {
             <LabeledInput type="file" label="מדריך למשתמש" value={userManualLink} placeholder="מדריך למשתמש" 
                 customInputElement={<UploadFile placeholder="מדריך למשתמש" url={userManualLink} isUploading={isUserManualUploading} onChange={(e) => setUserManualLink?.(e.target.files?.[0] ?? '')} onClear={() => setUserManualLink?.("")}/>}/>
         },
+        { name: 'schemasLink', element:
+            <LabeledInput type="file" label="סכמות/שרטוטים" value={schemasLink} placeholder="סכמות/שרטוטים"
+                customInputElement={<UploadFile placeholder="סכמות/שרטוטים" url={schemasLink} isUploading={isSchemasUploading} onChange={(e) => setSchemasLink?.(e.target.files?.[0] ?? '')} onClear={() => setSchemasLink?.("")}/>}/>
+        },           
         { name: 'supplier', element:
             <div className={classes.inputGroup}>
                 <label htmlFor="supplierSearch">ספק בארץ</label>      
@@ -149,6 +158,14 @@ const SparePartFields = (props: SparePartFieldsProps) => {
             value={price ?? ''}
             onChange={(e) => handleInput(val => handleSetPrice?.(Number.parseInt(val) ? +val : null), e)}
         />},
+        { name: 'minimumStock', element: <LabeledInput
+            type="number"
+            label='מלאי קו אדום'
+            placeholder='מלאי קו אדום'
+            min={0}
+            value={minimumStock ?? ''}
+            onChange={(e) => handleInput(val => handleSetMinimumStock?.(Number.parseInt(val) ? +val : null), e)}
+        />},           
         { name: 'models', element:
             <InfoSectionMenu title="דגמים" items={models} setItems={setModels} />
         },

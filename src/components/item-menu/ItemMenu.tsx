@@ -50,10 +50,13 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
     const [serviceManualLink, setServiceManualLink] = useState("" as (string | File));
     const [isServiceManualUploading, setServiceManualUploading] = useState(false);
     const [hebrewManualLink, setHebrewManualLink] = useState("" as (string | File));
+    const [schemasLink, setSchemasLink] = useState("" as (string | File));
     const [isHebrewManualUploading, setIsHebrewManualUploading] = useState(false);
+    const [isSchemasUploading, setIsSchemasUploading] = useState(false);
     const [emergency, setEmergency] = useState(false);
     const [maintenanceMethod, setMaintenanceMethod] = useState(MaintenanceMethod.PeriodicTestAndCalibration);
     const [maintenanceIntervalMonths, setMaintenanceIntervalMonths] = useState<number | null>(null);
+    const [minimumStock, setMinimumStock] = useState<number | null>(null);
     const [supplier, setSupplier] =  useState(undefined as SupplierSummary | null | undefined);
     const [price, setPrice] = useState<number | null>(null);
     const [lifeSpan, setLifeSpan] = useState("");
@@ -165,9 +168,11 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                 if (i.userManualLink) setUserManualLink(i.userManualLink);
                 if (i.serviceManualLink) setServiceManualLink(i.serviceManualLink);
                 if (i.hebrewManualLink) setHebrewManualLink(i.hebrewManualLink);
+                if (i.schemasLink) setSchemasLink(i.schemasLink);
                 if (i.emergency) setEmergency(i.emergency);
                 if (i.maintenanceMethod) setMaintenanceMethod(i.maintenanceMethod);
                 if (i.maintenanceIntervalMonths) setMaintenanceIntervalMonths(i.maintenanceIntervalMonths);
+                if (i.minimumStock) setMinimumStock(i.minimumStock);
                 setSupplier(i.supplier);
                 if (i.lifeSpan) setLifeSpan(i.lifeSpan);
                 if (i.models && i.models.length > 0) setModels(i.models);
@@ -232,9 +237,11 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
             userManualLink: saveLinks ? newLinks.userManualLink ?? userManualLink : undefined,
             serviceManualLink: saveLinks ? newLinks.serviceManualLink ?? serviceManualLink : undefined,
             hebrewManualLink: saveLinks ? newLinks.hebrewManualLink ?? hebrewManualLink : undefined,
+            schemasLink: saveLinks ? newLinks.schemasLink ?? schemasLink : undefined,
             emergency: emergency,
             maintenanceMethod,
             maintenanceIntervalMonths,
+            minimumStock,
             supplier: supplier,
             price,
             lifeSpan: lifeSpan,
@@ -294,6 +301,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
             userManualLink: getIfFile({ value: userManualLink, setter: setUserManualLink, contentType: 'application/pdf', isUploadingSetter: setIsUserManualUploading }),
             serviceManualLink: getIfFile({ value: serviceManualLink, setter: setServiceManualLink, contentType: 'application/pdf', isUploadingSetter: setServiceManualUploading }),
             hebrewManualLink: getIfFile({ value: hebrewManualLink, setter: setHebrewManualLink, contentType: 'application/pdf', isUploadingSetter: setIsHebrewManualUploading }),
+            schemasLink: getIfFile({ value: schemasLink, setter: setSchemasLink, contentType: 'application/pdf', isUploadingSetter: setIsSchemasUploading }),
         };
 
         const newLinks: Record<string, string> = {};
@@ -429,12 +437,15 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     serviceManualLink={getFilename(serviceManualLink)}
                     isServiceManualUploading={isServiceManualUploading}
                     hebrewManualLink={getFilename(hebrewManualLink)}
+                    schemasLink={getFilename(schemasLink)}
                     isHebrewManualUploading={isHebrewManualUploading}
+                    isSchemasUploading={isSchemasUploading}
                     supplier={supplier}
                     price={price}
                     maintenanceMethod={maintenanceMethod}
                     maintenanceMethodsToChooseFrom={maintenanceMethodsToChooseFrom}
-                    maintenanceIntervalMonths={maintenanceIntervalMonths}                    
+                    maintenanceIntervalMonths={maintenanceIntervalMonths} 
+                    minimumStock={minimumStock}                   
                     models={models}
                     accessories={accessories}
                     consumables={consumables}
@@ -446,10 +457,12 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     setUserManualLink={setUserManualLink}
                     setServiceManualLink={setServiceManualLink}
                     setHebrewManualLink={setHebrewManualLink}
+                    setSchemasLink={setSchemasLink}
                     setSupplier={setSupplier}
                     handleSetPrice={setPrice}
                     handleSetMaintenanceMethod={handleSetMaintenanceMethod}
-                    handleSetMaintenanceIntervalMonths={setMaintenanceIntervalMonths}                        
+                    handleSetMaintenanceIntervalMonths={setMaintenanceIntervalMonths}
+                    handleMinimumStock={setMinimumStock}
                     setModels={setModels}
                     setAccessories={setAccessories}
                     setConsumables={setConsumables}
@@ -460,15 +473,20 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     isImageUploading={isImageUploading}
                     userManualLink={getFilename(userManualLink)}
                     isUserManualUploading={isUserManualUploading}
+                    schemasLink={getFilename(schemasLink)}
+                    isSchemasUploading={isSchemasUploading}
                     supplier={supplier}
                     price={price}
+                    minimumStock={minimumStock}
                     models={models}
                     belongsToDevices={belongsToDevices}
                     handleInput={handleInput}
                     setImageLink={setImageLink}
                     setUserManualLink={setUserManualLink}
+                    setSchemasLink={setSchemasLink}
                     setSupplier={setSupplier}
                     handleSetPrice={setPrice}
+                    handleSetMinimumStock={setMinimumStock}
                     setModels={setModels}
                     setBelongsToDevices={setBelongsToDevices}
                 />}
@@ -477,16 +495,21 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     isImageUploading={isImageUploading}
                     userManualLink={getFilename(userManualLink)}
                     isUserManualUploading={isUserManualUploading}
+                    schemasLink={getFilename(schemasLink)}
+                    isSchemasUploading={isSchemasUploading}
                     supplier={supplier}
                     price={price}
+                    minimumStock={minimumStock}
                     lifeSpan={lifeSpan}
                     models={models}
                     belongsToDevices={belongsToDevices}
                     handleInput={handleInput}
                     setImageLink={setImageLink}
                     setUserManualLink={setUserManualLink}
+                    setSchemasLink={setSchemasLink}
                     setSupplier={setSupplier}
                     handleSetPrice={setPrice}
+                    handleSetMinimumStock={setMinimumStock}
                     setLifeSpan={setLifeSpan}
                     setModels={setModels}
                     setBelongsToDevices={setBelongsToDevices}
@@ -496,15 +519,20 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     isImageUploading={isImageUploading}
                     userManualLink={getFilename(userManualLink)}
                     isUserManualUploading={isUserManualUploading}
+                    schemasLink={getFilename(schemasLink)}
+                    isSchemasUploading={isSchemasUploading}
                     supplier={supplier}
                     price={price}
+                    minimumStock={minimumStock}
                     models={models}
                     belongsToDevices={belongsToDevices}
                     handleInput={handleInput}
                     setImageLink={setImageLink}
                     setUserManualLink={setUserManualLink}
+                    setSchemasLink={setSchemasLink}
                     setSupplier={setSupplier}
                     handleSetPrice={setPrice}
+                    handleSetMinimumStock={setMinimumStock}
                     setModels={setModels}
                     setBelongsToDevices={setBelongsToDevices}
                 />}
