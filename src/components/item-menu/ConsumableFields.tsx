@@ -166,8 +166,8 @@ const ConsumableFields = (props: ConsumableFieldsProps) => {
         />},
         { name: 'minimumStock', element: <LabeledInput
             type="number"
-            label='קווים אדומים'
-            placeholder='קווים אדומים'
+            label='מלאי קו אדום'
+            placeholder='מלאי קו אדום'
             min={0}
             value={minimumStock ?? ''}
             onChange={(e) => handleInput(val => handleSetMinimumStock?.(Number.parseInt(val) ? +val : null), e)}

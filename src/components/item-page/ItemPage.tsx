@@ -132,7 +132,7 @@ const ItemPage = () => {
                 {item.catType === "מכשיר" && <p>{`חירום: ${item.emergency ? "כן" : "לא"}`}</p>}
                 {item.catType === "מכשיר" && <p>{`שיטת אחזקה: ${item.maintenanceMethod ?? ''}`}</p>}
                 {item.catType === "מכשיר" && item.maintenanceMethod === MaintenanceMethod.PeriodicTestAndCalibration && <p>{`תדירות אחזקה בחודשים: ${item.maintenanceIntervalMonths ?? ''}`}</p>}
-                {[ Role.Admin, Role.Technician].includes(frontEndPrivilege as Role) && <p>{`קווים אדומים: ${item.minimumStock ?? ''}`}</p>}
+                {[ Role.Admin, Role.Technician].includes(frontEndPrivilege as Role) && <p>{`מלאי קו אדום: ${item.minimumStock ?? ''}`}</p>}
                 <p>{'ספק בארץ: '}
                 {actualSupplier.supplier && 
                 <>
