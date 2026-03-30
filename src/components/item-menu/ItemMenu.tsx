@@ -461,7 +461,8 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     setSupplier={setSupplier}
                     handleSetPrice={setPrice}
                     handleSetMaintenanceMethod={handleSetMaintenanceMethod}
-                    handleSetMaintenanceIntervalMonths={setMaintenanceIntervalMonths}                        
+                    handleSetMaintenanceIntervalMonths={setMaintenanceIntervalMonths}
+                    handleMinimumStock={setMinimumStock}
                     setModels={setModels}
                     setAccessories={setAccessories}
                     setConsumables={setConsumables}
@@ -498,6 +499,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     isSchemasUploading={isSchemasUploading}
                     supplier={supplier}
                     price={price}
+                    minimumStock={minimumStock}
                     lifeSpan={lifeSpan}
                     models={models}
                     belongsToDevices={belongsToDevices}
@@ -507,6 +509,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     setSchemasLink={setSchemasLink}
                     setSupplier={setSupplier}
                     handleSetPrice={setPrice}
+                    handleSetMinimumStock={setMinimumStock}
                     setLifeSpan={setLifeSpan}
                     setModels={setModels}
                     setBelongsToDevices={setBelongsToDevices}
@@ -520,6 +523,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     isSchemasUploading={isSchemasUploading}
                     supplier={supplier}
                     price={price}
+                    minimumStock={minimumStock}
                     models={models}
                     belongsToDevices={belongsToDevices}
                     handleInput={handleInput}
@@ -528,6 +532,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     setSchemasLink={setSchemasLink}
                     setSupplier={setSupplier}
                     handleSetPrice={setPrice}
+                    handleSetMinimumStock={setMinimumStock}
                     setModels={setModels}
                     setBelongsToDevices={setBelongsToDevices}
                 />}
