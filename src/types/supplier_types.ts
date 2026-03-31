@@ -4,8 +4,12 @@ export type Supplier = {
     street?: string;
     city?: string;
     officePhone?: string;
-    contact?: string;
-    contactCell?: string;
-    contactEmail?: string;
-    _id: string
+    contacts?: {
+        fullName: string;
+        role?: string;
+        cell?: string;
+        email?: string;        
+        comments?: string;
+    }[];
+    _id: string;
 };
