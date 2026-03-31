@@ -155,3 +155,22 @@
     justify-self: flex-end;
     font-size: 25px;
 }
+
+@media (max-width: 768px) {
+    .searchMenu select {
+        font-size: 1rem;
+    }
+
+    .listItem {
+        height: 70px;
+        gap: 10px;
+    }
+
+    .listItem h2 {
+        font-size: 0.8rem;
+    }
+
+    .listItem p {
+        font-size: 0.6rem;
+    }
+}

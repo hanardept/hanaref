@@ -56,7 +56,7 @@ const SearchMenu = ({ hideArchive = false }: { hideArchive?: boolean }) => {
         <div className={classes.searchMenu}> 
             <div className={classes.searchRow}>
                 <div className={classes.searchBarWrapper}>
-                    <DebouncingSearchBar />
+                    <DebouncingSearchBar placeholder="חיפוש לפי שם פריט או מק''ט" />
                 </div>
                 {!hideArchive && (
                     <div className={classes.archiveToggle}>

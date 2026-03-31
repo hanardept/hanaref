@@ -36,7 +36,8 @@ const initialViewState = {
         department: "",
         showArchived: false,
         page: 0,
-        blockScrollSearch: false
+        blockScrollSearch: false,
+        searchBy: "supplier"
     }
  };
 
@@ -91,12 +92,13 @@ const viewingSlice = createSlice({
         changesAppliedToSupplier(state, action: PayloadAction<boolean>) {
             state.supplierManagement.changesApplied = action.payload;
         },        
-        changeSearchCriteria(state, action: PayloadAction<{ searchVal?: string, sector?: string, department?: string, showArchived?: boolean, page?: number }>) {
+        changeSearchCriteria(state, action: PayloadAction<{ searchVal?: string, sector?: string, department?: string, showArchived?: boolean, page?: number, searchBy?: string }>) {
             if (typeof action.payload.searchVal === "string") state.searching.searchVal = action.payload.searchVal;
             if (typeof action.payload.sector === "string") state.searching.sector = action.payload.sector;
             if (typeof action.payload.department === "string") state.searching.department = action.payload.department;
             if (typeof action.payload.showArchived === "boolean") state.searching.showArchived = action.payload.showArchived;
             if (typeof action.payload.page === "number") state.searching.page = action.payload.page;
+            if (typeof action.payload.searchBy === "string") state.searching.searchBy = action.payload.searchBy;
         },
         emptySearchCriteria(state) {
             state.searching = initialViewState.searching;

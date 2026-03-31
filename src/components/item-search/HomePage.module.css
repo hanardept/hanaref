@@ -182,3 +182,14 @@
         display: block;
     }
 }
+
+@media (max-width: 768px) {
+    .searchBarWrapper input {
+        font-size: 1.2rem;
+    }
+    .searchRow {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: stretch;
+    }
+}

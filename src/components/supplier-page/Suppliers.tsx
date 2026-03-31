@@ -14,7 +14,7 @@ const Suppliers = () => {
     const navigate = useNavigate();
     const searchComplete = useAppSelector(state => state.suppliers.searchComplete);
     const suppliers = useAppSelector(state => state.suppliers.suppliers);
-    const { searchVal, page, blockScrollSearch } = useAppSelector(state => state.viewing.searching);
+    const { searchVal, page, blockScrollSearch, searchBy } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
     const dispatch = useAppDispatch();
     //const [initialized, setInitialized] = useState(false);
@@ -31,7 +31,7 @@ const Suppliers = () => {
         if (!blockScrollSearch && scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
             scrollThrottler = false;
             
-            fetch(encodeURI(`${backendFirebaseUri}/suppliers?page=${page}`), {
+            fetch(encodeURI(`${backendFirebaseUri}/suppliers?page=${page}&searchBy=${searchBy}`), {
                 headers: { 'auth-token': authToken }
             })
             .then(res => res.json())
@@ -52,7 +52,7 @@ const Suppliers = () => {
     useEffect(() => {
 
         const triggerNewSearch = () => {
-            fetch(encodeURI(`${backendFirebaseUri}/suppliers?search=${searchVal}`), {
+            fetch(encodeURI(`${backendFirebaseUri}/suppliers?search=${searchVal}&searchBy=${searchBy}`), {
                 headers: { 'auth-token': authToken }
             })
             .then(res => res.json())
@@ -68,7 +68,7 @@ const Suppliers = () => {
 
         triggerNewSearch();
 
-    }, [dispatch, authToken, searchVal /*initialized*/]);
+    }, [dispatch, authToken, searchVal, searchBy /*initialized*/]);
 
     return (
             <>
