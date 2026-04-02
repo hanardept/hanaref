@@ -31,8 +31,7 @@ const Suppliers = () => {
         if (!blockScrollSearch && scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
             scrollThrottler = false;
             
-            fetch(encodeURI(`${backendFirebaseUri}/suppliers?page=${page}&searchBy=${searchBy}`), {
-                headers: { 'auth-token': authToken }
+fetch(encodeURI(`${backendFirebaseUri}/suppliers?search=${searchVal}&page=${page}&searchBy=${searchBy}`), {                headers: { 'auth-token': authToken }
             })
             .then(res => res.json())
             .then((jsonedRes) => {
