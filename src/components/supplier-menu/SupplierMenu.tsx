@@ -93,6 +93,12 @@ const SupplierMenu = () => {
             return;
         }
 
+        if (supplierDetails.contacts.some(contact => !contact.fullName?.trim().length)) {
+            alert("כל אנשי הקשר חייבים לכלול שם מלא");
+            return;
+        }
+
+
         let promise;
         const body = JSON.stringify(supplierDetails);
         if (!params.supplierid) {
@@ -153,8 +159,9 @@ const SupplierMenu = () => {
             <hr style={{ width: '100%', margin: '2rem 0' }} />
             
             <h3>אנשי קשר</h3>
+            <div className={classes.contactsContainer}>
             {contacts.map((contact, index) => (
-                <div key={index} style={{ border: '1px solid #ccc', padding: '1rem', marginBottom: '1rem', borderRadius: '8px', position: 'relative' }}>
+                <div key={index} className={classes.contactContainer}>
                     <h4 style={{marginTop: 0}}>איש קשר {index + 1}</h4>
                     <LabeledInput 
                         label="שם מלא" 
@@ -184,15 +191,16 @@ const SupplierMenu = () => {
                     />
                     
                     <button 
+                        className={classes.removeContactButton}
                         onClick={() => removeContact(index)} 
-                        style={{ backgroundColor: '#CE1F1F', color: 'white', border: 'none', padding: '0.5rem', cursor: 'pointer', borderRadius: '4px' }}
                     >
                         מחק איש קשר
                     </button>
                 </div>
             ))}
+            </div>
 
-            <BigButton text="הוסף איש קשר" action={addContact} overrideStyle={{ backgroundColor: '#4CAF50', marginTop: '1rem' }} />
+            <BigButton className={classes.addContactButton} text="הוסף איש קשר" action={addContact} />
 
             <hr style={{ width: '100%', margin: '2rem 0' }} />
 

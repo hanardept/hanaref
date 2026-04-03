@@ -47,3 +47,89 @@
     align-self: self-start;
     font-weight: bold;
 }
+
+/* Container for the entire contacts section */
+.contactsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Space between each contact card */
+    margin-top: 1rem;
+}
+
+/* Ensure the contact block looks distinct */
+.contactBlock {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #fafafa;
+}
+
+
+/* Optional: Slight lift effect when hovering over a contact */
+.contactBlock:hover {
+    border-color: #007bff;
+    transform: translateY(-2px);
+}
+
+/* Styling the contact's name header */
+.contactBlock h3 {
+    margin: 0 0 0.75rem 0;
+    color: #333;
+    font-size: 1.2rem;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+/* Specific styling for the links to make them stand out */
+.contactBlock a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.contactBlock a:hover {
+    text-decoration: underline;
+}
+
+.role {
+    font-style: italic;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* The styling for the comments text */
+.comments {
+    margin-top: 0.75rem;
+    padding-top: 0.5rem;
+    font-style: italic;
+    color: #666;
+    font-size: 0.95rem;
+    border-top: 1px dashed #ddd;
+}
+
+/* A clean horizontal line to separate general info from contacts */
+.separator {
+    border: 0;
+    height: 1px;
+    background: #eee;
+    margin: 2rem 0;
+}
+
+.roleText {
+    font-size: 1rem;
+    font-weight: normal;
+    color: #555;
+    margin-right: 5px; /* Adjust for RTL/LTR context */
+}
+
+.generalInfo p {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.noContacts {
+    color: #888;
+    font-style: italic;
+    margin-top: 1rem;
+}
