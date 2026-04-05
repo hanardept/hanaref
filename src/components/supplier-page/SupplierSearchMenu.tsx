@@ -30,6 +30,7 @@ const SupplierSearchMenu = () => {
                         {/* The values must be strictly English for the backend to understand */}
                         <option value="supplier">ספק</option>
                         <option value="itemCat">מק"ט פריט</option>
+                         <option value="itemName">שם פריט</option>
                     </select>
                 </div>
             </div>
