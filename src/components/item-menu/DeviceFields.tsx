@@ -12,6 +12,7 @@ import { default as SupplierListItem } from "../supplier-page/ListItem"
 import MaintenanceMethodSelection from "./MaintenanceMethodSelection";
 
 interface DeviceFieldsProps {
+    cat: string;
     imageLink: string;
     isImageUploading?: boolean;
     qaStandardLink: string;
@@ -59,7 +60,7 @@ interface DeviceFieldsProps {
 
 const DeviceFields = (props: DeviceFieldsProps) => {
     const {
-        imageLink, isImageUploading, qaStandardLink, isQaStandardUploading, medicalEngineeringManualLink, isMedicalEngineeringManualUploading, userManualLink, isUserManualUploading, serviceManualLink, isServiceManualUploading,
+        cat, imageLink, isImageUploading, qaStandardLink, isQaStandardUploading, medicalEngineeringManualLink, isMedicalEngineeringManualUploading, userManualLink, isUserManualUploading, serviceManualLink, isServiceManualUploading,
         hebrewManualLink, isHebrewManualUploading, schemasLink, isSchemasUploading, supplier, price, maintenanceMethod, maintenanceMethodsToChooseFrom, maintenanceIntervalMonths, minimumStock, models, accessories, consumables, spareParts, handleInput, setImageLink,
         setQaStandardLink, setMedicalEngineeringManualLink, setUserManualLink, setServiceManualLink, setHebrewManualLink, setSchemasLink, setSupplier, handleSetPrice,
         handleSetMaintenanceMethod, handleSetMaintenanceIntervalMonths, handleMinimumStock, setModels, setAccessories, setConsumables, setSpareParts, fields, elementWrapper
@@ -89,6 +90,19 @@ const DeviceFields = (props: DeviceFieldsProps) => {
 
 
     console.log(`fields: ${JSON.stringify(fields)}`);
+
+    const getAutomaticCat = (collection: AbbreviatedItem[], collectionChar: string): string => {
+        console.log(`getting auto cat`);
+        let i = 1;
+        let autoCat: string;
+        const catExists = (cat: string) => collection.some(item => item.cat === cat);
+        do {
+            autoCat = `${cat}-${collectionChar}${i++}`;
+        }
+        while (catExists(autoCat));
+        console.log(`found auto cat: ${autoCat}`);
+        return autoCat;
+    }
 
     const namedElements = [
         { name: 'imageLink', element:
@@ -201,6 +215,13 @@ const DeviceFields = (props: DeviceFieldsProps) => {
                     itemSuggestions={itemSuggestions}
                     allowNewItem={true}
                     onFetchSuggestions={(value: string, field: string) => {
+                        // console.log(`fetching suggestions for value: ${value}`);
+                        // if (!value.length) {
+                        //     console.log(`returning empty suggestions`);
+                        //     const newSug = ['פריט ללא מקט'] as any;
+                        //     setItemSuggestions(newSug);
+                        //     return Promise.resolve(newSug);
+                        // }
                         return fetch(encodeURI(`${backendFirebaseUri}/items?catType=אביזר&search=${value}&searchFields=${field}`), {
                             method: 'GET',
                             headers: {
@@ -212,6 +233,7 @@ const DeviceFields = (props: DeviceFieldsProps) => {
                         .catch((err) => console.log(`Error getting item suggestions: ${err}`));
                     }}
                     onClearSuggestions={() => setItemSuggestions([])}
+                    getAutomaticCat={() => getAutomaticCat(accessories, 'a')}
                 
                 />},
             {name: 'consumables', element:
@@ -233,6 +255,7 @@ const DeviceFields = (props: DeviceFieldsProps) => {
                         .catch((err) => console.log(`Error getting item suggestions: ${err}`));
                     }}
                     onClearSuggestions={() => setItemSuggestions([])}
+                    getAutomaticCat={() => getAutomaticCat(consumables, 'c')}
                 
                 />},
             {name: 'spareParts', element:
@@ -254,6 +277,7 @@ const DeviceFields = (props: DeviceFieldsProps) => {
                         .catch((err) => console.log(`Error getting item suggestions: ${err}`));
                     }}
                     onClearSuggestions={() => setItemSuggestions([])}
+                    getAutomaticCat={() => getAutomaticCat(spareParts, 's')}
                 />
             }
         ];

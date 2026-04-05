@@ -3,7 +3,7 @@ import { AbbreviatedItem } from '../../types/item_types';
 import InfoSectionLine from './InfoSectionLine';
 import classes from './ItemMenu.module.css';
 
-const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, allowNewItem, onFetchSuggestions, onClearSuggestions, onBlur }: { 
+const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, allowNewItem, onFetchSuggestions, onClearSuggestions, getAutomaticCat }: { 
         title: string,
         items: AbbreviatedItem[],
         setItems?: React.Dispatch<React.SetStateAction<AbbreviatedItem[]>>
@@ -11,7 +11,7 @@ const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, allowNewItem
         allowNewItem?: boolean,
         onFetchSuggestions?: (value: string, field: string) => any,
         onClearSuggestions?: () => any,
-        onBlur?: () => any,
+        getAutomaticCat?: () => string,
     }) => {
     const editItemCat = (index: number, cat: string) => {
         setItems?.(prev => {
@@ -78,7 +78,7 @@ const InfoSectionMenu = ({ title, items, setItems, itemSuggestions, allowNewItem
                             allowNewItem={allowNewItem}
                             onFetchSuggestions={onFetchSuggestions}
                             onClearSuggestions={onClearSuggestions}
-                            onBlur={onBlur}
+                            getAutomaticCat={getAutomaticCat}
                         />
             })}
         </div>

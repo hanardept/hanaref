@@ -4,7 +4,7 @@ import { AbbreviatedItem } from '../../types/item_types';
 import classes from './ItemMenu.module.css';
 import DebouncingInput from '../UI/DebouncingInput';
 
-const InfoSectionLine = ({ isLast, item, allowNewItem, addLine, deleteLine, editItemCat, editItemName, editItemManufacturer, first, modelsLine, itemSuggestions, onFetchSuggestions, onClearSuggestions, onBlur }
+const InfoSectionLine = ({ isLast, item, allowNewItem, addLine, deleteLine, editItemCat, editItemName, editItemManufacturer, modelsLine, itemSuggestions, onFetchSuggestions, onClearSuggestions, getAutomaticCat }
     : { 
         isLast: boolean,
         item: AbbreviatedItem,
@@ -19,7 +19,7 @@ const InfoSectionLine = ({ isLast, item, allowNewItem, addLine, deleteLine, edit
         itemSuggestions?: AbbreviatedItem[],
         onFetchSuggestions?: (value: string, field: string) => any,
         onClearSuggestions?: () => any,
-        onBlur?: () => any,
+        getAutomaticCat?: () => string,
     }) => {
 
     const [ itemCatSearchText, setItemCatSearchText] = useState<string | null>(null);
@@ -51,9 +51,27 @@ const InfoSectionLine = ({ isLast, item, allowNewItem, addLine, deleteLine, edit
         }
     }
 
-    const getSuggestions = (typedValue: string, suggestionField: keyof AbbreviatedItem) => {
-        return (allowNewItem && itemSuggestions && !itemSuggestions.some(s => s[suggestionField] === typedValue)) ? 
-            [ { cat: editingNewItem ? item.cat : "", name: editingNewItem ? item.name : "", [suggestionField]: typedValue, isNew: true }, ...itemSuggestions ] : itemSuggestions;
+    
+    const getCatSuggestions = (typedValue: string | null, getAutomaticCat?: () => string) => {
+        const res = (allowNewItem && !itemSuggestions?.some(s => s.cat === typedValue)) ?
+            [ {
+                cat: editingNewItem ? item.cat : (typedValue?.length ? typedValue : (getAutomaticCat?.() ?? '')),
+                name: editingNewItem ? item.name : "",
+                isNew: true,
+                isAuto: !typedValue?.length,
+            }, ...(itemSuggestions ?? [])] : itemSuggestions;
+        return res;
+    };
+
+    const getNameSuggestions = (typedValue: string | null) => {
+        const res = (allowNewItem && !itemSuggestions?.some(s => s.name === typedValue)) ?
+            [ {
+                
+                cat: editingNewItem ? item.cat : '',
+                name: typedValue,
+                isNew: true,
+            }, ...(itemSuggestions ?? [])] : itemSuggestions;
+        return res;
     };
 
     return (
@@ -78,9 +96,10 @@ const InfoSectionLine = ({ isLast, item, allowNewItem, addLine, deleteLine, edit
                 }}
                 getSuggestionValue={s => s.cat}
                 placeholder={modelsLine ? 'מק"ט יצרן' : 'מק"ט'}
-                suggestions={itemCatSearchText ? getSuggestions(itemCatSearchText, 'cat') : itemSuggestions}
+                suggestions={getCatSuggestions(itemCatSearchText, getAutomaticCat)}
+                shouldRenderSuggestions={() => true}
                 onFetchSuggestions={s => onFetchSuggestions?.(s, 'cat')}
-                renderSuggestion={s => <span>{s.cat} {s.name}{s.isNew ? ` (פריט חדש)` : ``}</span>}
+                renderSuggestion={s => <span>{s.cat} {s.name}{s.isNew ? (s.isAuto ? ` (פריט חדש ללא מק"ט)` : ` (פריט חדש)`): ``}</span>}
                 onClearSuggestions={onClearSuggestions}
                 onBlur={() => {
                     if (editingNewItem && itemCatSearchText) {
@@ -111,7 +130,7 @@ const InfoSectionLine = ({ isLast, item, allowNewItem, addLine, deleteLine, edit
                 }}
                 getSuggestionValue={s => s.name}
                 placeholder={modelsLine ? 'שם דגם' : 'שם'}
-                suggestions={itemNameSearchText ? getSuggestions(itemNameSearchText, 'name') : itemSuggestions}
+                suggestions={itemNameSearchText ? getNameSuggestions(itemNameSearchText) : itemSuggestions}
                 onFetchSuggestions={s => onFetchSuggestions?.(s, 'name')}
                 renderSuggestion={s => <span>{s.cat} {s.name}{s.isNew ? ` (פריט חדש)` : ``}</span>}
                 onClearSuggestions={onClearSuggestions}
