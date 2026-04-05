@@ -5,7 +5,7 @@ import './AutoSuggest.css';
 
 const DEBOUNCE_LAG = 800;
 
-const DebouncingInput = ({ inputValue, onValueErased, onValueChanged, onSuggestionSelected, suggestions, placeholder, disabled, required, getSuggestionValue, renderSuggestion, onFetchSuggestions, onClearSuggestions, onBlur, ...props }: {
+const DebouncingInput = ({ inputValue, onValueErased, onValueChanged, onSuggestionSelected, suggestions, placeholder, disabled, required, shouldRenderSuggestions, getSuggestionValue, renderSuggestion, onFetchSuggestions, onClearSuggestions, onBlur, ...props }: {
     inputValue: string,
     suggestions?: any[],
     placeholder: string,
@@ -72,6 +72,7 @@ const DebouncingInput = ({ inputValue, onValueErased, onValueChanged, onSuggesti
                 onSuggestionsClearRequested={onClearSuggestions}
                 getSuggestionValue={getSuggestionValue}
                 renderSuggestion={s => renderSuggestion?.(s) ?? <span>{s}</span>}
+                shouldRenderSuggestions={shouldRenderSuggestions}
                 inputProps={inputProps}
             />
         </div>

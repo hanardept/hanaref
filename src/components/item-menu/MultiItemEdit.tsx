@@ -296,6 +296,7 @@ const MultiItemEdit = () => {
                     </span>)}
                 />
                 <DeviceFields
+                    cat=''
                     imageLink=''
                     qaStandardLink=''
                     medicalEngineeringManualLink=''

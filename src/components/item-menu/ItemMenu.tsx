@@ -426,6 +426,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
             </div>
             <div className={classes.relations}>
                 {catType === "מכשיר" && <DeviceFields
+                    cat={cat}
                     imageLink={getFilename(imageLink)}
                     isImageUploading={isImageUploading}
                     qaStandardLink={getFilename(qaStandardLink)}
