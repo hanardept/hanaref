@@ -76,7 +76,7 @@ const SupplierMenu = () => {
     };
 
     const addContact = () => {
-        setContacts([...contacts, { fullName: "", role: "", cell: "", email: "", comments: "" }]);
+        setContacts([...contacts, { fullName: "", role: "", officePhone: "", cell: "", email: "", comments: "" }]);
         dispatch(viewingActions.changesAppliedToSupplier(true));
     };
 
@@ -174,6 +174,11 @@ const SupplierMenu = () => {
                         value={contact.role} 
                         onChange={(e) => handleContactChange(index, 'role', e.target.value)} 
                     />
+                    <LabeledInput 
+                        label="טלפון משרדי" 
+                        value={contact.officePhone} 
+                        onChange={(e) => handleContactChange(index, 'officePhone', e.target.value)} 
+                    />                    
                     <LabeledInput 
                         label="נייד" 
                         value={contact.cell} 

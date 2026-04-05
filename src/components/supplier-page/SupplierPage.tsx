@@ -74,6 +74,9 @@ const SupplierPage = () => {
                                         {contact.role && <span className={classes.roleText}>{` - ${contact.role}`}</span>}
                                     </h3>
                                     
+                                    {contact.officePhone && (
+                                        <p><strong>טלפון משרדי:</strong> <a href={`tel:${contact.officePhone}`}>{contact.officePhone}</a></p>
+                                    )}
                                     {contact.cell && (
                                         <p><strong>נייד:</strong> <a href={`tel:${contact.cell}`}>{contact.cell}</a></p>
                                     )}
