@@ -15,7 +15,10 @@ const SupplierSearchMenu = () => {
     };
 
     // Change the text inside the search bar based on the dropdown choice
-    const placeholder = searchBy === 'supplier' ? "חיפוש ספק/מס' ספק" : "חיפוש לפי מק''ט פריט";
+    const placeholder =
+        searchBy === 'supplier' ? "חיפוש ספק/מס' ספק" :
+        searchBy === 'itemCat' ? "חיפוש לפי מק''ט פריט" :
+        "חיפוש לפי שם פריט";
 
     return (
         <div className={classes.searchMenu}>
