@@ -8,7 +8,6 @@ import { suppliersActions } from "../../store/supplier-slice";
 import { viewingActions } from "../../store/viewing-slice";
 import { useNavigate } from "react-router-dom";
 
-
 const Suppliers = () => {
 
     const navigate = useNavigate();
@@ -17,7 +16,6 @@ const Suppliers = () => {
     const { searchVal, page, blockScrollSearch, searchBy } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
     const dispatch = useAppDispatch();
-    //const [initialized, setInitialized] = useState(false);
 
     const goToSupplierPage = (id: string) => {
         console.log(`Navigating to supplier page with ID: ${id}`);
@@ -25,32 +23,32 @@ const Suppliers = () => {
     }
 
     const handleScroll = (event: UIEvent<HTMLDivElement>) => {
-        console.log("Scroll event triggered");
-
         let scrollThrottler = true;
         if (!blockScrollSearch && scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
             scrollThrottler = false;
             
-fetch(encodeURI(`${backendFirebaseUri}/suppliers?search=${searchVal}&page=${page}&searchBy=${searchBy}`), {                headers: { 'auth-token': authToken }
+            // FIX: Added search, page, and searchBy parameters for perfect pagination
+            fetch(encodeURI(`${backendFirebaseUri}/suppliers?search=${searchVal}&page=${page}&searchBy=${searchBy}`), {
+                headers: { 'auth-token': authToken }
             })
             .then(res => res.json())
             .then((jsonedRes) => {
                 if (jsonedRes.length > 0) {
                     dispatch(suppliersActions.addSuppliers(jsonedRes));
                     dispatch(viewingActions.changeSearchCriteria({ page: page + 1 }));
-                    //dispatch(suppliersActions.declareSearchComplete(true));
                 } else {
                     dispatch(viewingActions.changeBlockSearcScroll(true));
                 }
+            })
+            .catch(err => {
+                console.error("Error during scroll fetch:", err);
             });
-        } else {
-            console.log(`no suppliers search!`);
         }
     }
 
     useEffect(() => {
-
         const triggerNewSearch = () => {
+            // FIX: Added searchBy parameter to the initial search
             fetch(encodeURI(`${backendFirebaseUri}/suppliers?search=${searchVal}&searchBy=${searchBy}`), {
                 headers: { 'auth-token': authToken }
             })
@@ -67,7 +65,8 @@ fetch(encodeURI(`${backendFirebaseUri}/suppliers?search=${searchVal}&page=${page
 
         triggerNewSearch();
 
-    }, [dispatch, authToken, searchVal, searchBy /*initialized*/]);
+    // FIX: Added searchBy to the dependency array so changing the dropdown instantly triggers a search
+    }, [dispatch, authToken, searchVal, searchBy]); 
 
     return (
             <>
@@ -76,11 +75,10 @@ fetch(encodeURI(`${backendFirebaseUri}/suppliers?search=${searchVal}&page=${page
                 <div className={classes.itemsWrapper} onScroll={handleScroll}>
                     {suppliers.map(c => {
                         return (
-                            <span className={classes.supplierItemContainer}>
+                            <span className={classes.supplierItemContainer} key={c._id}>
                                 <ListItem
                                     className={classes.listItem}
                                     textContentClassName={classes.itemTextContent}
-                                    key={c._id}
                                     _id={c._id}
                                     supplier={c}
                                     goToSupplierPage={goToSupplierPage}
