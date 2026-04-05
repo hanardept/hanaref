@@ -275,3 +275,32 @@ html {
 input:invalid, select:invalid {
   outline: red solid 1px;
 }
+
+.contactsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.contactContainer {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    position: relative;
+}
+
+.removeContactButton {
+    margin-top: 1rem;
+    background-color: #CE1F1F;
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.addContactButton {
+    background-color: #4CAF50;
+    margin-top: 1rem
+}

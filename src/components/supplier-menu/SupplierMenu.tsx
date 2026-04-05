@@ -11,28 +11,29 @@ import LabeledInput from '../UI/LabeledInput';
 
 const SupplierMenu = () => {
     const params = useParams();
-    const { jwt: authToken }  = useAppSelector(state => state.auth);
+    const { jwt: authToken } = useAppSelector(state => state.auth);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+
+    // General Supplier State
     const [id, setId] = useState("");
     const [name, setName] = useState("");
     const [street, setStreet] = useState("");
     const [city, setCity] = useState("");
     const [officePhone, setOfficePhone] = useState("");
-    const [contact, setContact] = useState("");
-    const [contactCell, setContactCell] = useState("")
-    const [contactEmail, setContactEmail] = useState("")
+    
+    // Contacts State (Array)
+    const [contacts, setContacts] = useState<NonNullable<Supplier['contacts']>>([]);
+    
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
     const supplierDetails = {
-        id: id,
+        id,
         name,
         street,
         city,
         officePhone,
-        contact,
-        contactCell,
-        contactEmail,
+        contacts,
     };
 
     useEffect(() => {        
@@ -53,30 +54,50 @@ const SupplierMenu = () => {
                     setName(s.name ?? "");
                     setStreet(s.street ?? "");
                     setCity(s.city ?? "");
-                    setOfficePhone(s.officePhone ??"");
-                    setContact(s.contact ?? "");
-                    setContactCell(s.contactCell ?? "");
-                    setContactEmail(s.contactEmail ?? "");
+                    setOfficePhone(s.officePhone ?? "");
+                    setContacts(s.contacts ?? []);
                 })
                 .catch(e => console.log(`Error fetching supplier details: ${e}`));
         }
-        
     }, [params.supplierid, authToken]);
 
     const handleInput = (setFunc: (val: string) => any, event: ChangeEvent<HTMLInputElement>) => {
         setFunc(event.target.value);
         dispatch(viewingActions.changesAppliedToSupplier(true));
     }
-    
+
+    // --- Contact Management Logic ---
+
+    const handleContactChange = (index: number, field: string, value: string) => {
+        const updatedContacts = [...contacts];
+        updatedContacts[index] = { ...updatedContacts[index], [field]: value };
+        setContacts(updatedContacts);
+        dispatch(viewingActions.changesAppliedToSupplier(true));
+    };
+
+    const addContact = () => {
+        setContacts([...contacts, { fullName: "", role: "", cell: "", email: "", comments: "" }]);
+        dispatch(viewingActions.changesAppliedToSupplier(true));
+    };
+
+    const removeContact = (index: number) => {
+        setContacts(contacts.filter((_, i) => i !== index));
+        dispatch(viewingActions.changesAppliedToSupplier(true));
+    };
+
+    // --- Save and Delete Logic ---
+
     const handleSave = () => {
         if (!supplierDetails.id?.length || !supplierDetails.name?.length) {
-            // if the required fields of the Supplier mongo schema are not filled then don't save
-            console.log("Please make sure to enter a supplier id and name");
-            alert("לא כל שדות החובה מולאו");
+            alert("לא כל שדות החובה מולאו (מספר ספק ושם)");
             return;
         }
 
-        console.log(`Saving supplier with details: ${JSON.stringify(supplierDetails, null, 4)}`);
+        if (supplierDetails.contacts.some(contact => !contact.fullName?.trim().length)) {
+            alert("כל אנשי הקשר חייבים לכלול שם מלא");
+            return;
+        }
+
 
         let promise;
         const body = JSON.stringify(supplierDetails);
@@ -89,7 +110,7 @@ const SupplierMenu = () => {
                     'auth-token': authToken
                 },
                 body
-            })
+            });
         } else {
             promise = fetchBackend(encodeURI(`suppliers/${params.supplierid}`), {
                 method: 'PUT',
@@ -103,26 +124,21 @@ const SupplierMenu = () => {
         }
         return promise
             .then(() => {
-                console.log("Successfully saved supplier!");
                 dispatch(viewingActions.changesAppliedToSupplier(false));
                 navigate(-1);
             })
             .catch((err) => console.log(`Error saving/updating supplier: ${err}`));
     }
-    // edit mode only:
+
     const handleDelete = () => {
         fetchBackend(encodeURI(`suppliers/${params.supplierid}`), {
             method: 'DELETE',
-            headers: {
-                'auth-token': authToken
-            }
+            headers: { 'auth-token': authToken }
         })
         .then((res) => {
-            console.log(`Delete supplier response status: ${res.status}`);
             if (res.status === 409) {
                 alert("לא ניתן למחוק ספק שמקושר למכשירים במערכת");
             } else {
-                console.log("Successfully deleted supplier!");
                 dispatch(viewingActions.changesAppliedToSupplier(false));
                 navigate("/suppliers");
             }
@@ -133,17 +149,80 @@ const SupplierMenu = () => {
     return (
         <div className={classes.supplierMenu}>
             <h1>{params.supplierid ? "עריכת ספק" : "הוספת ספק"}</h1>       
-            <LabeledInput label="מספר ספק במשרד הביטחון" placeholder="מספר ספק במשרד הביטחון" value={id} onChange={(e) => handleInput(setId, e)} required/>
-            <LabeledInput label="שם" placeholder="שם" value={name} onChange={(e) => handleInput(setName, e)} required/>
-            <LabeledInput label="רחוב" placeholder="רחוב" value={street} onChange={(e) => handleInput(setStreet, e)} />
-            <LabeledInput label="עיר" placeholder="עיר" value={city} onChange={(e) => handleInput(setCity, e)} />
-            <LabeledInput label="מספר טלפון משרדי" placeholder="מספר טלפון משרדי" value={officePhone} onChange={(e) => handleInput(setOfficePhone, e)} />
-            <LabeledInput label="איש קשר" placeholder="איש קשר" value={contact} onChange={(e) => handleInput(setContact, e)} />
-            <LabeledInput label="נייד של איש קשר" placeholder="נייד של איש קשר" value={contactCell} onChange={(e) => handleInput(setContactCell, e)} />
-            <LabeledInput label="מייל של איש קשר" placeholder="מייל של איש קשר" value={contactEmail} onChange={(e) => handleInput(setContactEmail, e)} />
-            <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "2.5rem" }} />
-            {params.supplierid && <BigButton text="מחק ספק" action={() => setAreYouSureDelete(true)} overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} />}
-            {areYouSureDelete && <AreYouSure text="האם באמת למחוק ספק?" leftText='מחק' leftAction={handleDelete} rightText='לא' rightAction={() => setAreYouSureDelete(false)} />}
+            
+            <LabeledInput label="מספר ספק במשרד הביטחון" value={id} onChange={(e) => handleInput(setId, e)} required/>
+            <LabeledInput label="שם" value={name} onChange={(e) => handleInput(setName, e)} required/>
+            <LabeledInput label="רחוב" value={street} onChange={(e) => handleInput(setStreet, e)} />
+            <LabeledInput label="עיר" value={city} onChange={(e) => handleInput(setCity, e)} />
+            <LabeledInput label="מספר טלפון משרדי" value={officePhone} onChange={(e) => handleInput(setOfficePhone, e)} />
+
+            <hr style={{ width: '100%', margin: '2rem 0' }} />
+            
+            <h3>אנשי קשר</h3>
+            <div className={classes.contactsContainer}>
+            {contacts.map((contact, index) => (
+                <div key={index} className={classes.contactContainer}>
+                    <h4 style={{marginTop: 0}}>איש קשר {index + 1}</h4>
+                    <LabeledInput 
+                        label="שם מלא" 
+                        value={contact.fullName} 
+                        onChange={(e) => handleContactChange(index, 'fullName', e.target.value)} 
+                        required 
+                    />
+                    <LabeledInput 
+                        label="תפקיד"
+                        value={contact.role} 
+                        onChange={(e) => handleContactChange(index, 'role', e.target.value)} 
+                    />
+                    <LabeledInput 
+                        label="נייד" 
+                        value={contact.cell} 
+                        onChange={(e) => handleContactChange(index, 'cell', e.target.value)} 
+                    />
+                    <LabeledInput 
+                        label="מייל" 
+                        value={contact.email} 
+                        onChange={(e) => handleContactChange(index, 'email', e.target.value)} 
+                    />
+                    <LabeledInput 
+                        label="הערות" 
+                        value={contact.comments} 
+                        onChange={(e) => handleContactChange(index, 'comments', e.target.value)} 
+                    />
+                    
+                    <button 
+                        className={classes.removeContactButton}
+                        onClick={() => removeContact(index)} 
+                    >
+                        מחק איש קשר
+                    </button>
+                </div>
+            ))}
+            </div>
+
+            <BigButton className={classes.addContactButton} text="הוסף איש קשר" action={addContact} />
+
+            <hr style={{ width: '100%', margin: '2rem 0' }} />
+
+            <BigButton text="שמור" action={handleSave} overrideStyle={{ marginTop: "1rem" }} />
+            
+            {params.supplierid && (
+                <BigButton 
+                    text="מחק ספק" 
+                    action={() => setAreYouSureDelete(true)} 
+                    overrideStyle={{ marginTop: "1rem", backgroundColor: "#CE1F1F" }} 
+                />
+            )}
+            
+            {areYouSureDelete && (
+                <AreYouSure 
+                    text="האם באמת למחוק ספק?" 
+                    leftText='מחק' 
+                    leftAction={handleDelete} 
+                    rightText='לא' 
+                    rightAction={() => setAreYouSureDelete(false)} 
+                />
+            )}
         </div>
     )
 };
