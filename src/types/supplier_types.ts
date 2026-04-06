@@ -7,6 +7,7 @@ export type Supplier = {
     contacts?: {
         fullName: string;
         role?: string;
+        officePhone?: string;
         cell?: string;
         email?: string;        
         comments?: string;
