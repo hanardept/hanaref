@@ -5,7 +5,7 @@ import classes from './HomePage.module.css';
 
 const DEBOUNCE_LAG = 800;
 
-const DebouncingSearchBar = () => {
+const DebouncingSearchBar = ({ placeholder }: { placeholder?: string }) => {
     const dispatch = useAppDispatch();
     const searchVal = useAppSelector(state => state.viewing.searching.searchVal);
 
@@ -23,7 +23,7 @@ const DebouncingSearchBar = () => {
 
     return (
         <div className={classes.searchBarWrapper}>
-            <input type="text" value={localSearchVal} onChange={(event) => { 
+            <input type="text" value={localSearchVal} placeholder={placeholder || ""} onChange={(event) => { 
                 setLocalSearchVal(event.target.value);
                 console.log("setting local search val to:", event.target.value);
                 if (debouncer.current) {

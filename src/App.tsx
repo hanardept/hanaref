@@ -29,7 +29,7 @@ import { backendFirebaseUri } from './backend-variables/address';
 import LoadingSpinner from './components/UI/LoadingSpinner';
 import { Role, UserStatus } from './types/user_types';
 import SupplierPage from './components/supplier-page/SupplierPage';
-import Suppliers from './components/supplier-page/Suppliers';
+import SupplierSearchPage from './components/supplier-page/SupplierSearchPage';
 import SupplierMenu from './components/supplier-menu/SupplierMenu';
 import MultiItemEdit from './components/item-menu/MultiItemEdit';
 
@@ -201,7 +201,7 @@ function App() {
           <Route path="/usermenu/:userid" element={<AdminOnly><UserMenu /></AdminOnly>} />
           <Route path="/usermenu/newuser/:newuserid" element={<AdminOnly><UserMenu /></AdminOnly>} />
 
-          <Route path="/suppliers" element={<AdminOnly><Suppliers /></AdminOnly>} />
+          <Route path="/suppliers" element={<AdminOnly><SupplierSearchPage /></AdminOnly>} />
           <Route path="/suppliers/:supplierid" element={<AdminOnly><SupplierPage /></AdminOnly>} />
           <Route path="/suppliermenu" element={<AdminOnly><SupplierMenu /></AdminOnly>} />          
           <Route path="/suppliermenu/:supplierid" element={<AdminOnly><SupplierMenu /></AdminOnly>} />
