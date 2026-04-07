@@ -39,6 +39,7 @@ const SectorMenu = ({ exit, sector, reload }: { exit: () => void, sector?: Secto
     const [warningBeforeDeletion, setWarningBeforeDeletion] = useState(false); // useful only in edit mode;
 
     const handleDepartmentChangeByIndex = (index: number, event: ChangeEvent<HTMLInputElement>) => {
+        console.log(`departemnt changed: ${event.target.value}`);
         dispatch(viewingActions.changesAppliedToSector(true));
         setDepartments(prev => {
             const newDepartments = [...prev];
@@ -75,7 +76,7 @@ const SectorMenu = ({ exit, sector, reload }: { exit: () => void, sector?: Secto
         const departmentsToSave = vacateItemListIfEmpty(departments);
 
         if (sector) { // if editing an existing sector
-            fetch(encodeURI(`${backendFirebaseUri}/sectors/${sectorName}`), {
+            fetch(encodeURI(`${backendFirebaseUri}/sectors/${sector._id}`), {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -141,14 +142,13 @@ const SectorMenu = ({ exit, sector, reload }: { exit: () => void, sector?: Secto
         setWarningBeforeDeletion(true);
     }
     const handleDeleteSector = () => {
-        fetch(`${backendFirebaseUri}/sectors`, {
+        fetch(`${backendFirebaseUri}/sectors/${sector!._id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
                 'auth-token': authToken
             },
-            body: JSON.stringify({ sectorName: sector!.sectorName })
         })
             .then((res) => {
                 console.log("Deleted sector successfully!");
