@@ -43,8 +43,6 @@
 }
 
 .toolbarSpan {
-    /* margin: 0.5rem; */
-    /* margin-left: 0.5rem; */
     display: flex;
     align-items: center;
     column-gap: 0.7rem;
@@ -52,9 +50,6 @@
     width: fit-content;
     justify-self: left;
     height: 16px;
+    z-index: 2 !important;
 }
 
-
-/* .toolbarSpan span {
-    margin: auto;
-} */

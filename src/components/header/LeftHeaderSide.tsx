@@ -23,14 +23,11 @@ const LeftHeaderSide = () => {
 
     const addItemAndManageSectors = 
         <span className={classes.toolbarSpan}>
-            <AdminOnly hide={true}><FileImport><CiImport data-tooltip-id="import-items" data-tooltip-content="ייבא פריטים"/></FileImport></AdminOnly> 
-            <AdminOnly hide={true}><span onClick={() =>  dispatch(exportItemsToCsv())} style={{ lineHeight: 0, cursor: "pointer" }} data-tooltip-id="export-items" data-tooltip-content="ייצא פריטים"><CiExport/></span></AdminOnly> 
-            <RolesOnly hide={true} roles={[ Role.Admin, Role.Technician ]}><span onClick={() => navigate('/itemmenu')} style={{ lineHeight: 0, cursor: "pointer" }} data-tooltip-id="add-item" data-tooltip-content="הוסף פריט חדש">+</span></RolesOnly>
-            <AdminOnly hide={true}><span onClick={() => navigate('/managesectors')} style={{ lineHeight: 0, cursor: "pointer" }} data-tooltip-id="edit-sectors" data-tooltip-content="ערוך מדורים">⋮</span></AdminOnly>
-            <Tooltip id="import-items" place="bottom" />
-            <Tooltip id="export-items" place="bottom" />
-            <Tooltip id="add-item" place="bottom" />
-            <Tooltip id="edit-sectors" place="bottom" />
+            <AdminOnly hide={true}><FileImport><CiImport data-tooltip-id="tooltip-item" data-tooltip-content="ייבא פריטים"/></FileImport></AdminOnly> 
+            <AdminOnly hide={true}><span onClick={() =>  dispatch(exportItemsToCsv())} style={{ lineHeight: 0, cursor: "pointer" }} data-tooltip-id="tooltip-item" data-tooltip-content="ייצא פריטים"><CiExport/></span></AdminOnly> 
+            <RolesOnly hide={true} roles={[ Role.Admin, Role.Technician ]}><span onClick={() => navigate('/itemmenu')} style={{ lineHeight: 0, cursor: "pointer" }} data-tooltip-id="tooltip-item" data-tooltip-content="הוסף פריט חדש">+</span></RolesOnly>
+            <AdminOnly hide={true}><span onClick={() => navigate('/managesectors')} style={{ lineHeight: 0, cursor: "pointer" }} data-tooltip-id="tooltip-item" data-tooltip-content="ערוך מדורים">⋮</span></AdminOnly>
+            <Tooltip id="tooltip-item" place="bottom" />
         </span>
     
 
