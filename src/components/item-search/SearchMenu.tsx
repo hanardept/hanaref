@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Sector } from "../../types/sector_types";
-import DebouncingSearchBar from "./DebouncingSearchBar";
+import DebouncingSearchBar from "../UI/DebouncingSearchBar";
 import DepartmentSelection from "./DepartmentSelection";
 import SectorSelection from "./SectorSelection";
 import classes from './HomePage.module.css';

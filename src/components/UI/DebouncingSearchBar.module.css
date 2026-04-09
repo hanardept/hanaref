@@ -1,0 +1,23 @@
+.searchBarWrapper {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+.searchBarWrapper input {
+    font-size: 1.6rem;
+    padding: var(--searchPadding);
+    height: var(--searchInputHeight);
+    border: 1px solid #999;
+    grid-area: container;
+    width: 100%;
+}
+.xButton {
+    grid-area: container;
+    width: 2.5rem;
+    font-size: 2rem;
+    color: #888;
+    justify-self: end;
+}

@@ -103,10 +103,11 @@ const Technicians = () => {
         setSearchParams(params, { replace: true });
     }, [searchVal, showArchived, setSearchParams]);    
 
+    console.log(`technicians: ${JSON.stringify(technicians)}`);
+
     return (
         <>
             <SearchMenu/>
-            {/* <div className={classes.listItemPusher}></div> */}
             {!searchComplete && <LoadingSpinner />}
             {searchComplete && technicians.length === 0 && <p className={classes.noResults}>לא נמצאו טכנאים</p>}
             <div className={classes.itemsWrapper} onScroll={handleScroll}>

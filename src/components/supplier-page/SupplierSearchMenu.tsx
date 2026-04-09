@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { viewingActions } from "../../store/viewing-slice";
-import DebouncingSearchBar from "../item-search/DebouncingSearchBar";
+import DebouncingSearchBar from "../UI/DebouncingSearchBar";
 import classes from '../item-search/HomePage.module.css';
 
 const SupplierSearchMenu = () => {

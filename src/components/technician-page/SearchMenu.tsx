@@ -1,6 +1,7 @@
 import classes from './Technicians.module.css';
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { viewingActions } from "../../store/viewing-slice";
+import DebouncingSearchBar from '../UI/DebouncingSearchBar';
 
 const SearchMenu = ({ hideArchive = false }: { hideArchive?: boolean }) => {
     const dispatch = useAppDispatch();
@@ -14,6 +15,9 @@ const SearchMenu = ({ hideArchive = false }: { hideArchive?: boolean }) => {
     return (
         <div className={classes.searchMenu}> 
             <div className={classes.searchRow}>
+                <div className={classes.searchBarWrapper}>
+                    <DebouncingSearchBar placeholder="חיפוש לפי שם פרטי, שם משפחה או שיוך" />
+                </div>
                 {!hideArchive && (
                     <div className={classes.archiveToggle}>
                         <label>

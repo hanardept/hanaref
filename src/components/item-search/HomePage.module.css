@@ -132,13 +132,13 @@
     grid-area: container;
     width: 100%;
 }
-.xButton {
+/* .xButton {
     grid-area: container;
     width: 2.5rem;
     font-size: 2rem;
     color: #888;
     justify-self: end;
-}
+} */
 
 .archiveToggle {
     flex: 0 0 auto;
