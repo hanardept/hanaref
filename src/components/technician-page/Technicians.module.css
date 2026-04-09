@@ -1,12 +1,25 @@
 @import '../../css-variables/constants.css';
 
-.searchMenu {
+/* .searchMenu {
     display: flex;
     flex-direction: column;
     padding: 0.5rem;
     position: fixed;
     z-index: 1;
     top: var(--navbarHeight);
+    width: calc(100vw - 1rem);
+    background-color: white;
+    border-bottom: 1px solid #e4e4e4;
+} */
+ .searchMenu {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem;
+    z-index: 1;
+    /* position: fixed;*/
+    position: sticky;
+    top: 0;
+    /* top: var(--navbarHeight); */
     width: calc(100vw - 1rem);
     background-color: white;
     border-bottom: 1px solid #e4e4e4;

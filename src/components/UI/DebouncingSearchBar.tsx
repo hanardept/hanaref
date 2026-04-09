@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { viewingActions } from "../../store/viewing-slice";
-import classes from './HomePage.module.css';
+import classes from './DebouncingSearchBar.module.css';
 
 const DEBOUNCE_LAG = 800;
 
