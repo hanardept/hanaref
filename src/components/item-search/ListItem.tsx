@@ -111,13 +111,14 @@ const ListItem = (props: ListItemProps) => {
 
             //onPointerMove={e => {
             onTouchMove={e => {
-            //console.log(`current mouse pos: ${JSON.stringify({ x: e.clientX, y: e.clientY })}`);
-            console.log(`on touch move. start mouse: ${JSON.stringify(startMousePosition.current)}, start scroll: ${JSON.stringify(startScrollLocation.current)}`);
-            lastMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-            if (startScrollLocation.current !== undefined && startMousePosition.current === undefined) {
-                startMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
-                console.log(`set start mouse position to: ${JSON.stringify(startMousePosition.current)}`);
-            }}} className={props.className} style={style}>
+                //console.log(`current mouse pos: ${JSON.stringify({ x: e.clientX, y: e.clientY })}`);
+                console.log(`on touch move. start mouse: ${JSON.stringify(startMousePosition.current)}, start scroll: ${JSON.stringify(startScrollLocation.current)}`);
+                lastMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                if (startScrollLocation.current !== undefined && startMousePosition.current === undefined) {
+                    startMousePosition.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+                    console.log(`set start mouse position to: ${JSON.stringify(startMousePosition.current)}`);
+                }
+            }} className={props.className} style={style}>
             <div className={props.textContentClassName} data-custom-element={props.customElement}>
                 <h2>{props.name}</h2>
                 <p>{catText}</p>

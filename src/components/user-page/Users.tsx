@@ -2,11 +2,11 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import LoadingSpinner from '../UI/LoadingSpinner';
 import ListItem from './ListItem';
 import classes from './Users.module.css';
-import { UIEvent, useEffect } from "react";
+import { UIEvent, useEffect, useRef, useState } from "react";
 import { fetchBackend } from "../../backend-variables/address";
 import { usersActions } from "../../store/users-slice";
 import { viewingActions } from "../../store/viewing-slice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 
 
@@ -14,10 +14,12 @@ import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 const Users = () => {
 
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
     const searchComplete = useAppSelector(state => state.users.searchComplete);
     const users = useAppSelector(state => state.users.users);
     const { searchVal, showArchived, page, blockScrollSearch } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
+    const [initialized, setInitialized] = useState(false);
     const dispatch = useAppDispatch();
 
     const goToUserPage = (id: string) => {
@@ -27,23 +29,23 @@ const Users = () => {
 
     const { loginWithRedirect } = useAuth0();
 
+    let scrollThrottler = true;
+
     const handleScroll = (event: UIEvent<HTMLDivElement>) => {
         console.log("Scroll event triggered");
 
-        let scrollThrottler = true;
         if (!blockScrollSearch && scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
             scrollThrottler = false;
             fetchBackend(encodeURI(`users?page=${page}`), {
                 headers: { 'auth-token': authToken }
-            //}, () => loginWithRedirect({ authorizationParams: { redirect_uri: window.location.href } }))
             },loginWithRedirect)
             .then(res => res.json())
             .then((jsonedRes) => {
                 if (jsonedRes.length > 0) {
-                    dispatch(usersActions.addUsers(jsonedRes));
                     dispatch(viewingActions.changeSearchCriteria({ page: page + 1 }));
+                    dispatch(usersActions.addUsers(jsonedRes));
                 } else {
-                    dispatch(usersActions.declareSearchComplete(true));
+                    dispatch(viewingActions.changeBlockSearcScroll(true));
                 }
             });
         } else {
@@ -53,15 +55,21 @@ const Users = () => {
 
     useEffect(() => {
 
+        if (!initialized) return;
+
         const triggerNewSearch = () => {
             console.log(`origin: ${window.location.href}`);
-            fetchBackend(encodeURI(`users?search=${searchVal}`), {
+            dispatch(viewingActions.changeSearchCriteria({ page: 0 }));
+
+            fetchBackend(encodeURI(`users?page=0&search=${searchVal}`), {
                 headers: { 'auth-token': authToken }
             //}, () => loginWithRedirect({ authorizationParams: { redirect_uri: window.location.href } }))
             },() => loginWithRedirect({ appState: { returnTo: window.location.pathname } }))
             .then(res => res.json())
             .then(jsonedRes => {
                 dispatch(usersActions.setUsers(jsonedRes)); 
+                dispatch(viewingActions.changeSearchCriteria({ page: 1 }));
+                dispatch(viewingActions.changeBlockSearcScroll(false));                
                 dispatch(usersActions.declareSearchComplete(true));
             })
             .catch(err => {
@@ -72,7 +80,29 @@ const Users = () => {
 
         triggerNewSearch();
 
-    }, [dispatch, authToken, searchVal, showArchived, loginWithRedirect]);
+    }, [dispatch, authToken, searchVal, showArchived, loginWithRedirect, initialized]);
+
+     useEffect(() => {
+        const urlSearchVal = searchParams.get('search') || '';
+
+        if (urlSearchVal) {
+            dispatch(viewingActions.changeSearchCriteria({
+                searchVal: urlSearchVal
+            }));
+        } else {
+            dispatch(viewingActions.emptySearchCriteria());
+        }
+        setInitialized(true);
+    }, [dispatch, searchParams]);    
+
+    useEffect(() => {
+        const params = new URLSearchParams();
+        if (searchVal) params.set('search', searchVal);
+        
+        setSearchParams(params, { replace: true });
+    }, [searchVal, setSearchParams]);    
+
+    const scrollContainerRef = useRef<any>();
 
     return (
         <>
@@ -80,8 +110,21 @@ const Users = () => {
             {/* <div className={classes.listItemPusher}></div> */}
             {!searchComplete && <LoadingSpinner />}
             {searchComplete && users.length === 0 && <p className={classes.noResults}>לא נמצאו משתמשים</p>}
-            <div className={classes.itemsWrapper} onScroll={handleScroll}>
-                {users.map(u => <ListItem className={classes.listItem} textContentClassName={classes.itemTextContent} key={u._id} _id={u._id} shouldBeColored={false} firstName={u.firstName} lastName={u.lastName} username={u.username} role={u.role} goToUserPage={goToUserPage} />)}
+            <div className={classes.itemsWrapper} onScroll={handleScroll} ref={scrollContainerRef}>
+                {users.map(u => 
+                    <ListItem 
+                        className={classes.listItem}
+                        textContentClassName={classes.itemTextContent}
+                        key={u._id}
+                        _id={u._id}
+                        shouldBeColored={false}
+                        firstName={u.firstName}
+                        lastName={u.lastName}
+                        username={u.username}
+                        role={u.role}
+                        goToUserPage={goToUserPage}
+                        scrollContainerRef={scrollContainerRef.current}
+                    />)}
             </div>
         </>
     )

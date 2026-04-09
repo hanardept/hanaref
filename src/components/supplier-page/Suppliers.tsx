@@ -2,19 +2,21 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import LoadingSpinner from '../UI/LoadingSpinner';
 import ListItem from './ListItem';
 import classes from './Suppliers.module.css';
-import { UIEvent, useEffect } from "react";
+import { UIEvent, useEffect, useState } from "react";
 import { backendFirebaseUri } from "../../backend-variables/address";
 import { suppliersActions } from "../../store/supplier-slice";
 import { viewingActions } from "../../store/viewing-slice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const Suppliers = () => {
 
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
     const searchComplete = useAppSelector(state => state.suppliers.searchComplete);
     const suppliers = useAppSelector(state => state.suppliers.suppliers);
     const { searchVal, page, blockScrollSearch, searchBy } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
+    const [initialized, setInitialized] = useState(false);
     const dispatch = useAppDispatch();
 
     const goToSupplierPage = (id: string) => {
@@ -22,8 +24,10 @@ const Suppliers = () => {
         navigate(`/suppliers/${id}`);
     }
 
+    let scrollThrottler = true;
+
     const handleScroll = (event: UIEvent<HTMLDivElement>) => {
-        let scrollThrottler = true;
+
         if (!blockScrollSearch && scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
             scrollThrottler = false;
             
@@ -34,8 +38,8 @@ const Suppliers = () => {
             .then(res => res.json())
             .then((jsonedRes) => {
                 if (jsonedRes.length > 0) {
-                    dispatch(suppliersActions.addSuppliers(jsonedRes));
                     dispatch(viewingActions.changeSearchCriteria({ page: page + 1 }));
+                    dispatch(suppliersActions.addSuppliers(jsonedRes));
                 } else {
                     dispatch(viewingActions.changeBlockSearcScroll(true));
                 }
@@ -47,14 +51,19 @@ const Suppliers = () => {
     }
 
     useEffect(() => {
+
+        if (!initialized) return;
+
         const triggerNewSearch = () => {
             // FIX: Added searchBy parameter to the initial search
-            fetch(encodeURI(`${backendFirebaseUri}/suppliers?search=${searchVal}&searchBy=${searchBy}`), {
+            fetch(encodeURI(`${backendFirebaseUri}/suppliers?page=0&search=${searchVal}&searchBy=${searchBy}`), {
                 headers: { 'auth-token': authToken }
             })
             .then(res => res.json())
             .then(jsonedRes => {
                 dispatch(suppliersActions.setSuppliers(jsonedRes)); 
+                dispatch(viewingActions.changeSearchCriteria({ page: 1 }));
+                dispatch(viewingActions.changeBlockSearcScroll(false));
                 dispatch(suppliersActions.declareSearchComplete(true));
             })
             .catch(err => {
@@ -66,7 +75,30 @@ const Suppliers = () => {
         triggerNewSearch();
 
     // FIX: Added searchBy to the dependency array so changing the dropdown instantly triggers a search
-    }, [dispatch, authToken, searchVal, searchBy]); 
+    }, [dispatch, authToken, searchVal, searchBy, initialized]); 
+
+     useEffect(() => {
+        const urlSearchVal = searchParams.get('search') || '';
+        const urlSearchBy = searchParams.get('searchBy') || '';
+
+        if (urlSearchVal) {
+            dispatch(viewingActions.changeSearchCriteria({
+                searchVal: urlSearchVal,
+                searchBy: urlSearchBy,
+            }));
+        } else {
+            dispatch(viewingActions.emptySearchCriteria());
+        }
+        setInitialized(true);
+    }, [dispatch, searchParams]);    
+
+    useEffect(() => {
+        const params = new URLSearchParams();
+        if (searchVal) params.set('search', searchVal);
+        if (searchBy) params.set('searchBy', searchBy);
+        
+        setSearchParams(params, { replace: true });
+    }, [searchVal, searchBy, setSearchParams]);       
 
     return (
             <>
