@@ -2,21 +2,23 @@ import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import LoadingSpinner from '../UI/LoadingSpinner';
 import ListItem from './ListItem';
 import classes from './Technicians.module.css';
-import { UIEvent, useEffect } from "react";
+import { UIEvent, useEffect, useState } from "react";
 import { backendFirebaseUri } from "../../backend-variables/address";
 import { techniciansActions } from "../../store/technicians-slice";
 import { viewingActions } from "../../store/viewing-slice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import SearchMenu from "./SearchMenu";
 
 
 const Technicians = () => {
 
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
     const searchComplete = useAppSelector(state => state.technicians.searchComplete);
     const technicians = useAppSelector(state => state.technicians.technicians);
     const { searchVal, showArchived, page, blockScrollSearch } = useAppSelector(state => state.viewing.searching);
     const authToken = useAppSelector(state => state.auth.jwt);
+    const [initialized, setInitialized] = useState(false);
     const dispatch = useAppDispatch();
     //const [initialized, setInitialized] = useState(false);
 
@@ -25,10 +27,10 @@ const Technicians = () => {
         navigate(`/technicians/${id}`);
     }
 
+    let scrollThrottler = true;
     const handleScroll = (event: UIEvent<HTMLDivElement>) => {
         console.log("Scroll event triggered");
 
-        let scrollThrottler = true;
         if (!blockScrollSearch && scrollThrottler && (event.currentTarget.scrollHeight - event.currentTarget.scrollTop < event.currentTarget.clientHeight + 70)) {
             scrollThrottler = false;
 
@@ -40,10 +42,10 @@ const Technicians = () => {
             .then(res => res.json())
             .then((jsonedRes) => {
                 if (jsonedRes.length > 0) {
-                    dispatch(techniciansActions.addTechnicians(jsonedRes));
                     dispatch(viewingActions.changeSearchCriteria({ page: page + 1 }));
+                    dispatch(techniciansActions.addTechnicians(jsonedRes));
                 } else {
-                    dispatch(techniciansActions.declareSearchComplete(true));
+                    dispatch(viewingActions.changeBlockSearcScroll(true));
                 }
             });
         } else {
@@ -53,14 +55,18 @@ const Technicians = () => {
 
     useEffect(() => {
 
+        if (!initialized) return;
+
         const triggerNewSearch = () => {
             const archiveStatus = showArchived ? 'all' : 'active';
-            fetch(encodeURI(`${backendFirebaseUri}/technicians?search=${searchVal}&status=${archiveStatus}`), {
+            fetch(encodeURI(`${backendFirebaseUri}/technicians?page=0&search=${searchVal}&status=${archiveStatus}`), {
                 headers: { 'auth-token': authToken }
             })
             .then(res => res.json())
             .then(jsonedRes => {
                 dispatch(techniciansActions.setTechnicians(jsonedRes)); 
+                dispatch(viewingActions.changeSearchCriteria({ page: 1 }));
+                dispatch(viewingActions.changeBlockSearcScroll(false));
                 dispatch(techniciansActions.declareSearchComplete(true));
             })
             .catch(err => {
@@ -71,7 +77,31 @@ const Technicians = () => {
 
         triggerNewSearch();
 
-    }, [dispatch, authToken, searchVal, showArchived /*initialized*/]);
+    }, [dispatch, authToken, searchVal, showArchived, initialized ]);
+
+
+     useEffect(() => {
+        const urlSearchVal = searchParams.get('search') || '';
+        const urlShowArchived = searchParams.get('showArchived') === 'true';
+
+        if (urlSearchVal) {
+            dispatch(viewingActions.changeSearchCriteria({
+                searchVal: urlSearchVal,
+                showArchived: urlShowArchived,
+            }));
+        } else {
+            dispatch(viewingActions.emptySearchCriteria());
+        }
+        setInitialized(true);
+    }, [dispatch, searchParams]);    
+
+    useEffect(() => {
+        const params = new URLSearchParams();
+        if (searchVal) params.set('search', searchVal);
+        if (showArchived) params.set('showArchived', showArchived.toString());
+        
+        setSearchParams(params, { replace: true });
+    }, [searchVal, showArchived, setSearchParams]);    
 
     return (
         <>

@@ -48,6 +48,7 @@ const HomePage = () => {
         // This function will be called to start a new search
         const triggerNewSearch = () => {
             dispatch(viewingActions.changeSelectedItems({ selectAll: false, excludedItems: [], selectedItems: [] }));
+            dispatch(viewingActions.changeSearchCriteria({ page: 0 }));
 
             const archiveStatus = showArchived ? 'all' : 'active';
             fetchBackend(encodeURI(`items?search=${searchVal}&sector=${sector}&department=${department}&page=0&status=${archiveStatus}`), {
