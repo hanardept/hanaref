@@ -32,12 +32,70 @@ const toggleItemArchiveStatus = async (itemCat: string, authToken: string) => {
     return response.json();
 };
 
+interface DiffFieldProps {
+    label: string;
+    fieldName: keyof Item;
+    item: Item;
+    isAdmin: boolean;
+    decision?: 'approve' | 'reject'; // Current local decision
+    onDecision: (field: string, action: 'approve' | 'reject' | null) => void;
+    renderValue?: (val: any) => React.ReactNode;
+}
+
+const DiffField = ({ label, fieldName, item, isAdmin, decision, onDecision, renderValue }: DiffFieldProps) => {
+    const liveValue = item[fieldName];
+    const pendingValue = (item as any).pendingChanges?.[fieldName];
+    const hasChange = pendingValue !== undefined && JSON.stringify(pendingValue) !== JSON.stringify(liveValue);
+
+    const display = (val: any) => {
+        if (val === undefined || val === null || val === '') return 'ריק';
+        return renderValue ? renderValue(val) : String(val);
+    };
+
+    if (!hasChange) {
+        return (
+            <div className={classes.fieldRow}>
+                {/* <span className={classes.fieldLabel}>{label}:</span> */}
+                <span className={classes.fieldValue}>{display(liveValue)}</span>
+            </div>
+        );
+    }
+
+    return (
+        <div className={`${classes.diffContainer} ${decision ? classes[decision] : ''}`}>
+            {/* <label className={classes.diffLabel}>{label}:</label> */}
+            <div className={classes.diffBox}>
+                <div className={classes.valueOld}>{display(liveValue)}</div>
+                <div className={classes.valueNew}>{display(pendingValue)}</div>
+                {isAdmin && (
+                    <div className={classes.diffActions}>
+                        <button 
+                            onClick={() => onDecision(fieldName as string, decision === 'approve' ? null : 'approve')} 
+                            className={`${classes.approveBtn} ${decision === 'approve' ? classes.active : ''}`}
+                        >
+                            {decision === 'approve' ? 'ביטול בחירה' : 'אשר'}
+                        </button>
+                        <button 
+                            onClick={() => onDecision(fieldName as string, decision === 'reject' ? null : 'reject')} 
+                            className={`${classes.rejectBtn} ${decision === 'reject' ? classes.active : ''}`}
+                        >
+                            {decision === 'reject' ? 'ביטול בחירה' : 'דחה'}
+                        </button>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
 
 const ItemPage = () => {
     const params = useParams();
     const { jwt: authToken, frontEndPrivilege } = useAppSelector(state => state.auth);
     const [item, setItem] = useState<Item | null>(null);
     const [loading, setLoading] = useState(true);
+    const [decisions, setDecisions] = useState<Record<string, 'approve' | 'reject'>>({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [isArchiving, setIsArchiving] = useState(false); // State to handle button disabling
@@ -114,6 +172,40 @@ const ItemPage = () => {
         actualSupplier.isParent = true;
     }
 
+    const handleDecisionChange = (field: string, action: 'approve' | 'reject' | null) => {
+        setDecisions(prev => {
+            const newDecisions = { ...prev };
+            if (action === null) delete newDecisions[field];
+            else newDecisions[field] = action;
+            return newDecisions;
+        });
+    };
+
+    const submitAllReviews = async () => {
+        if (Object.keys(decisions).length === 0) return;
+        setIsSubmitting(true);
+        try {
+            const response = await fetch(`${backendFirebaseUri}/items/${params.itemid}/review-batch`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'auth-token': authToken },
+                body: JSON.stringify({ reviews: decisions })
+            });
+            const updatedItem = await response.json();
+            setItem(updatedItem);
+            setDecisions({}); // Reset local state after success
+            alert("השינויים עודכנו בהצלחה");
+        } catch (err) {
+            alert("הפעולה נכשלה");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const isAdmin = frontEndPrivilege === Role.Admin;
+    const pendingChangesCount = Object.keys((item as any)?.pendingChanges || {}).length;
+    const decisionsCount = Object.keys(decisions).length;
+    const allDecisionsMade = pendingChangesCount > 0 && decisionsCount === pendingChangesCount;
+
     return (
         <>
             {loading && <LoadingSpinner />}
@@ -124,8 +216,9 @@ const ItemPage = () => {
                     {/* Visual marker for archived items */}
                     {item.archived && <h6 className={classes.archivedMarker}> (בארכיון)</h6>}
                 </header>
-                <h1>{item.name}</h1>
-                <p>{`מק"ט: ${item.cat}`}</p>
+                {/* <h1>{item.name}</h1> */}
+                <DiffField label='שם הפריט' fieldName="name" item={item} isAdmin={isAdmin} decision={decisions['name']} onDecision={handleDecisionChange} renderValue={name => <h1>{name}</h1>} />
+                <DiffField label='מק"ט' fieldName="cat" item={item} isAdmin={isAdmin} decision={decisions['cat']} onDecision={handleDecisionChange} renderValue={cat => <p>{`מק"ט: ${cat}`}</p>}/>
                 {item.catType === "מכשיר" && <p>{`מק"ט ערכה: ${item.kitCats?.[0] ?? ''}`}</p>}
                 {[ Role.Admin, Role.Technician].includes(frontEndPrivilege as Role) && item.catType === "מכשיר" && <p>{`תוקף הסמכה בחודשים: ${item.certificationPeriodMonths ?? ''}`}</p>}
                 {item.catType === "מתכלה" && <p>{`אורך חיים בחודשים: ${item.lifeSpan ?? ''}`}</p>}
@@ -160,12 +253,44 @@ const ItemPage = () => {
                             (!privilegeRequired || privilegeRequired.includes(frontEndPrivilege as Role)) && link && <a href={link}>לחץ להגעה ל{name}</a>)
                 }
                 
-                {item.models && item.models.length > 0 && <InfoSection title="דגמים" elements={item.models} unclickable={true} />}
-                {item.belongsToDevices && item.belongsToDevices.length > 0 && <InfoSection title="שייך למכשיר" elements={item.belongsToDevices} />}
-                {item.accessories && item.accessories.length > 0 && <InfoSection title="אביזרים" elements={item.accessories} />}
-                {item.consumables && item.consumables.length > 0 && <InfoSection title="מתכלים" elements={item.consumables} />}
-                {item.spareParts && item.spareParts.length > 0 && <InfoSection title="חלקי חילוף" elements={item.spareParts} />}
+                {/* {item.models && item.models.length > 0 && <InfoSection title="דגמים" elements={item.models} unclickable={true} />*/}
+                {(item.models || (item as any).pendingChanges?.models) && (
+                    <InfoSection 
+                        title="דגמים" 
+                        fieldName="models" 
+                        item={item} 
+                        isAdmin={isAdmin} 
+                        decision={decisions['models']} 
+                        onDecision={handleDecisionChange} 
+                    />
+                )}                
+                {/* {item.belongsToDevices && item.belongsToDevices.length > 0 && <InfoSection title="שייך למכשיר" elements={item.belongsToDevices} />} */}
+                {/* {item.accessories && item.accessories.length > 0 && <InfoSection title="אביזרים" elements={item.accessories} />} */}
+                {(item.accessories || (item as any).pendingChanges?.accessories) && (
+                    <InfoSection 
+                        title="אביזרים" 
+                        fieldName="accessories" 
+                        item={item} 
+                        isAdmin={isAdmin} 
+                        decision={decisions['accessories']} 
+                        onDecision={handleDecisionChange} 
+                    />
+                )}
+                {/* {item.consumables && item.consumables.length > 0 && <InfoSection title="מתכלים" elements={item.consumables} />}
+                {item.spareParts && item.spareParts.length > 0 && <InfoSection title="חלקי חילוף" elements={item.spareParts} />} */}
 
+                {isAdmin && allDecisionsMade && (
+                <div className={classes.stickySubmit}>
+                    <BigButton 
+                        text={isSubmitting ? "מעבד..." : "אשר את כל הפעולות שנבחרו"}
+                        action={submitAllReviews}
+                        disabled={isSubmitting}
+                        overrideStyle={{ backgroundColor: "#2c3e50" }}
+                    />
+                </div>
+            )}
+                
+                
                 {/* The new Archive/Restore button, only for admins */}
                 {frontEndPrivilege === 'admin' && (
                     <BigButton

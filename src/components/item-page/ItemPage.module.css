@@ -81,3 +81,82 @@
     text-transform: uppercase;
 }
 
+.fieldRow {
+    margin-bottom: 0.8rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.fieldLabel {
+    font-weight: bold;
+    color: #444;
+}
+
+.diffContainer {
+    margin-bottom: 1.5rem;
+    border-right: 3px solid #eee;
+    padding-right: 10px;
+}
+
+.diffLabel {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: #2c3e50;
+}
+
+.diffBox {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.valueOld {
+    background-color: #ffdce0;
+    color: #af1919;
+    padding: 8px 12px;
+    border-radius: 4px;
+    text-decoration: line-through;
+    border: 1px solid #f85149;
+    width: fit-content;
+}
+
+.valueNew {
+    background-color: #dcffe4;
+    color: #1a7f37;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+    border: 1px solid #3fb950;
+    width: fit-content;
+}
+
+.diffActions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.approveBtn, .rejectBtn {
+    border: none;
+    padding: 4px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    color: white;
+    font-size: 0.8rem;
+}
+
+.stickySubmit {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+}
+
+.approveBtn { background-color: #2ea44f; }
+.rejectBtn { background-color: #cf222e; }
+
