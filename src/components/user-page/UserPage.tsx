@@ -5,7 +5,7 @@ import classes from './UserPage.module.css';
 import { viewingActions } from "../../store/viewing-slice";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { backendFirebaseUri } from "../../backend-variables/address";
-import { roleNames, User } from "../../types/user_types";
+import { Role, roleNames, User } from "../../types/user_types";
 import BigButton from "../UI/BigButton";
 
 const toggleUserArchiveStatus = async (userId: string, authToken: string) => {
@@ -142,7 +142,7 @@ const UserPage = () => {
                 <p>{`שם משתמש: ${user.username}`}</p>
                 <p>דואר אלקטרוני: <a href={`mailto:${user.email}`}>{user.email}</a></p>
                 <p>{`תפקיד: ${roleNames[user.role]}`}</p>
-                <p>{`שיוך: ${user.association ?? ''}`}</p>
+                {user.role !== Role.Viewer && <p>{`שיוך: ${user.association ?? ''}`}</p>}
                 {user.status !== "active" && <BigButton
                     text="אשר משתמש"
                     action={handleConfirmUser}
