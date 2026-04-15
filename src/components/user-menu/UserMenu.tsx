@@ -139,11 +139,12 @@ const UserMenu = () => {
                 placeholder="תפקיד"
                 customInputElement={<RoleSelection selectRole={handleSetRole} currentRole={role} />}
             />
+            {role !== Role.Viewer &&
             <LabeledInput 
                 label="שיוך"
                 placeholder="שיוך"            
                 customInputElement={<AssociationSelection priorChosenAssociation={association} selectAssociation={association => setAssociation(association)} />}
-            />
+            />}
             {/* {status !== "active" && <label>
                 <input
                     type="checkbox"
