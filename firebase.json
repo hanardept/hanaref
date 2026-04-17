@@ -7,15 +7,6 @@
       "**/node_modules/**"
     ],
     "rewrites": [
-      {{
-  "hosting": {
-    "public": "build",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
       {
         "source": "!**/*.{js,css,png,jpg,jpeg,gif,svg,ico,json,map,woff,woff2,ttf}",
         "function": "geoGatekeeper"
@@ -34,10 +25,4 @@
       ]
     }
   ]
-}
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  }
 }
