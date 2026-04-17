@@ -8,9 +8,21 @@
     ],
     "rewrites": [
       {
-        "source": "**",
-        "destination": "/index.html"
+        "source": "!**/*.{js,css,png,jpg,jpeg,gif,svg,ico,json,map,woff,woff2,ttf}",
+        "function": "geoGatekeeper"
       }
     ]
-  }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    }
+  ]
 }
