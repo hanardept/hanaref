@@ -65,8 +65,12 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
     const [consumables, setConsumables] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [spareParts, setSpareParts] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
     const [belongsToDevices, setBelongsToDevices] = useState<AbbreviatedItem[]>([{ cat: "", name: "" }]);
-    const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
+    const [isReviewMode, setIsReviewMode] = useState(false);
+    const [pendingChanges, setPendingChanges] = useState<Record<string, any>>({});
+    const [fieldReviews, setFieldReviews] = useState<Record<string, { decision: string, value?: any }>>({});
+
+    const [areYouSureDelete, setAreYouSureDelete] = useState(false);
     const [showLockError, setShowLockError] = useState(false);
     const [lockingUser, setLockingUser] = useState<string | null>(null);
 
@@ -126,68 +130,62 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
     }, [ params.itemid, authToken]);
 
     useEffect(() => {
-            const getSectors = async () => {
-            const params: any = {};
-            if (frontEndPrivilege === Role.Technician) {
-                params.isMaintenance = true;
-            }
-            const searchParams = new URLSearchParams(params);
-            const fetchedSectors = await fetchBackend(`sectors?` + searchParams, {
-                headers: { 'auth-token': authToken }
-            });
-            return await fetchedSectors.json();
-        };
-        
-        if (params.itemid) {
-            const getItem = async () => {
-                const fetchedItem = await fetchBackend(`items/${params.itemid}`, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'auth-token': authToken
+        const fetchData = async () => {
+            try {
+                const sectorsRes = await fetchBackend(`sectors`, { headers: { 'auth-token': authToken } });
+                const sectors = await sectorsRes.json();
+                setSectorsToChooseFrom(sectors);
+
+                if (params.itemid) {
+                    const itemRes = await fetchBackend(`items/${params.itemid}`, {
+                        headers: { 'auth-token': authToken }
+                    });
+                    const i: Item & { pendingChanges?: Record<string, any> } = await itemRes.json();
+
+                    // Detect Review Mode
+                    if (i.pendingChanges && Object.keys(i.pendingChanges).length > 0 && frontEndPrivilege === Role.Admin) {
+                        setIsReviewMode(true);
+                        setPendingChanges(i.pendingChanges);
+                        // Initialize all reviews to 'reject' or leave empty to force selection
+                        const initialReviews: Record<string, 'approve' | 'reject'> = {};
+                        Object.keys(i.pendingChanges).forEach(key => initialReviews[key] = 'reject');
+                        setFieldReviews(initialReviews);
                     }
-                });
-                return await fetchedItem.json();
-            };
-            getSectors().then(s => {
-                setSectorsToChooseFrom(s);
-                return getItem();
-            }).then((i: Item) => {
 
-
-                setName(i.name);
-                setCat(i.cat);
-                setSector(i.sector);
-                setDepartment(i.department);
-                setCatType(i.catType);
-                setCertificationPeriodMonths(i.certificationPeriodMonths ?? null);
-                setDescription(i.description);
-                if (i.imageLink) setImageLink(i.imageLink);
-                if (i.qaStandardLink) setQaStandardLink(i.qaStandardLink);
-                if (i.medicalEngineeringManualLink) setMedicalEngineeringManualLink(i.medicalEngineeringManualLink);
-                if (i.userManualLink) setUserManualLink(i.userManualLink);
-                if (i.serviceManualLink) setServiceManualLink(i.serviceManualLink);
-                if (i.hebrewManualLink) setHebrewManualLink(i.hebrewManualLink);
-                if (i.schemasLink) setSchemasLink(i.schemasLink);
-                if (i.emergency) setEmergency(i.emergency);
-                if (i.maintenanceMethod) setMaintenanceMethod(i.maintenanceMethod);
-                if (i.maintenanceIntervalMonths) setMaintenanceIntervalMonths(i.maintenanceIntervalMonths);
-                if (i.minimumStock) setMinimumStock(i.minimumStock);
-                setSupplier(i.supplier);
-                if (i.lifeSpan) setLifeSpan(i.lifeSpan);
-                if (i.models && i.models.length > 0) setModels(i.models);
-                if (i.accessories && i.accessories.length > 0) setAccessories(i.accessories);
-                if (i.consumables && i.consumables.length > 0) setConsumables(i.consumables);
-                if (i.spareParts && i.spareParts.length > 0) setSpareParts(i.spareParts);
-                if (i.belongsToDevices && i.belongsToDevices.length > 0) setBelongsToDevices(i.belongsToDevices);
-                if (i.kitCats) setKitCats(i.kitCats);
-            }).catch(e => console.log(`Error fetching item details: ${e}`));
-        }
-        if (!params.itemid) {
-            getSectors().then(s => {
-                setSectorsToChooseFrom(s);
-            }).catch(err => console.log(`Error fetching sectors: ${err}`));
-        }
+                    // Populate State with ORIGINAL values
+                    setName(i.name);
+                    setCat(i.cat);
+                    setSector(i.sector);
+                    setDepartment(i.department);
+                    setCatType(i.catType);
+                    setCertificationPeriodMonths(i.certificationPeriodMonths ?? null);
+                    setDescription(i.description);
+                    if (i.imageLink) setImageLink(i.imageLink);
+                    if (i.qaStandardLink) setQaStandardLink(i.qaStandardLink);
+                    if (i.medicalEngineeringManualLink) setMedicalEngineeringManualLink(i.medicalEngineeringManualLink);
+                    if (i.userManualLink) setUserManualLink(i.userManualLink);
+                    if (i.serviceManualLink) setServiceManualLink(i.serviceManualLink);
+                    if (i.hebrewManualLink) setHebrewManualLink(i.hebrewManualLink);
+                    if (i.schemasLink) setSchemasLink(i.schemasLink);
+                    setEmergency(!!i.emergency);
+                    setMaintenanceMethod(i.maintenanceMethod || MaintenanceMethod.PeriodicTestAndCalibration);
+                    setMaintenanceIntervalMonths(i.maintenanceIntervalMonths || null);
+                    setMinimumStock(i.minimumStock || null);
+                    setSupplier(i.supplier);
+                    setPrice(i.price || null);
+                    setLifeSpan(i.lifeSpan || "");
+                    if (i.models?.length) setModels(i.models);
+                    if (i.accessories?.length) setAccessories(i.accessories);
+                    if (i.consumables?.length) setConsumables(i.consumables);
+                    if (i.spareParts?.length) setSpareParts(i.spareParts);
+                    if (i.belongsToDevices?.length) setBelongsToDevices(i.belongsToDevices);
+                    if (i.kitCats) setKitCats(i.kitCats);
+                }
+            } catch (e) {
+                console.error("Error fetching data:", e);
+            }
+        };
+        fetchData();
     }, [params.itemid, authToken, frontEndPrivilege]);
 
     const handleInput = (setFunc: ((val: string) => any) | undefined, event: ChangeEvent<HTMLInputElement>) => {
@@ -216,7 +214,19 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
     const handleSetMaintenanceMethod = (maintenanceMethod: MaintenanceMethod) => {
         setMaintenanceMethod(maintenanceMethod);
         dispatch(viewingActions.changesAppliedToItem(true));
-    }    
+    }  
+    
+    const handleReviewDecision = (field: string, decision: 'approve' | 'reject' | 'edit', value?: any) => {
+        setFieldReviews(prev => ({
+            ...prev,
+            [field]: { 
+                decision, 
+                // If it's an edit, we store the value. 
+                // If it's approve/reject, we don't need a value.
+                value: decision === 'edit' ? (value ?? pendingChanges[field]) : undefined 
+            }
+        }));
+    };    
 
     const saveItem = (newItem: boolean, saveLinks: boolean, newLinks: Record<string, string>): Promise<any> => {
 
@@ -344,7 +354,7 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
         })).then(() => newLinks);
     }
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (!cat || !name || !sector || !department) {
             // if the required fields of the Item mongo schema are not filled then don't save
             console.log("Please make sure to enter a name, catalog number, sector and department");
@@ -353,25 +363,37 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
         }
 
         if (params.itemid) {
-            saveLinks()
-                .then(newLinks => saveItem(false, true, newLinks))
-                .then(() => fetchBackend(`items/${params.itemid}/unlock`, { 
+            const newLinks = await saveLinks();     
+
+            if (isReviewMode) {
+                let finalReviewsPayload = Object.entries(fieldReviews).map(([field, data]) => ({
+                    field,
+                    decision: data.decision,
+                    value: data.decision === 'edit' && newLinks[field] ? newLinks[field] : data.value 
+                }));                       
+
+                await fetchBackend(`items/${params.itemid}/review`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'auth-token': authToken },
+                    body: JSON.stringify({ reviews: finalReviewsPayload })
+                });
+
+            } else {
+                await saveItem(false, true, newLinks);
+                await fetchBackend(`items/${params.itemid}/unlock`, { 
                     method: 'POST',
                     headers: { 'auth-token': authToken }
-                }))
-                .then(() => {
-                    dispatch(viewingActions.changesAppliedToItem(false));
-                    navigate(-1);
-                })
+                });
+            }
+
         } else {
-            saveItem(true, false, {})
-                .then(saveLinks)
-                .then(newLinks => saveItem(false, true, newLinks))
-                .then(() => {
-                    dispatch(viewingActions.changesAppliedToItem(false));
-                    navigate(-1);
-                })
+            await saveItem(true, false, {});
+            const newLinks = await saveLinks();
+            await saveItem(false, true, newLinks);
         }
+
+        dispatch(viewingActions.changesAppliedToItem(false));
+        navigate(-1);
     }
     // edit mode only:
     const handleDelete = () => {
@@ -422,6 +444,10 @@ const ItemMenu = ({ fields }: { fields?: string[] }) => {
                     setCat={setCat}
                     setKitCats={setKitCats}
                     fields={fields}
+                    isReviewMode={isReviewMode}
+                    pendingChanges={pendingChanges}
+                    fieldReviews={fieldReviews}
+                    onReviewDecision={handleReviewDecision}                    
                 />
             </div>
             <div className={classes.relations}>

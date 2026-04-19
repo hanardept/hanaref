@@ -9,13 +9,11 @@
     height: 100%;
     overflow: scroll;
 }
+
 .multiItemMenu {
-    /* display: grid;
-    grid-template-columns: 1fr 1fr; */
     grid-template-areas: "title title" "fields fields" "details details" "buttons buttons";
-    /* padding: 0 var(--gutterHorizontal);
-    gap: 1rem 3rem; */
 }
+
 .removableField {
     display: flex;
     flex-direction: row;
@@ -24,29 +22,33 @@
     width: 100%;
     flex-wrap: nowrap;
 }
+
 .title {
     grid-area: title;
 }
+
 .details {
     grid-area: details;
     display: flex;
     flex-direction: column;
 }
+
 .relations {
     grid-area: relations;
 }
+
 .buttons {
     grid-area: buttons;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
+
 .fields {
     grid-area: fields;
-
 }
+
 .fieldSelectionContainer {
-    display: flex;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -59,8 +61,9 @@
     flex-grow: 1;
 }
 
-.multiItemMenu select, input[type]:not("checkbox"),
-.inputGroup{
+.multiItemMenu select,
+input[type]:not("checkbox"),
+.inputGroup {
     flex-grow: 1;
 }
 
@@ -73,6 +76,7 @@
         grid-template-columns: 1fr;
         grid-template-areas: "title" "details" "relations" "buttons";
     }
+
     .button {
         width: 100%;
     }
@@ -81,24 +85,29 @@
 .itemMenu * {
     margin-bottom: 0.5rem;
 }
+
 .itemMenu h1 {
     margin-top: 0.5rem;
     font-size: 1.4rem;
 }
+
 .itemMenu input {
     width: 100%;
     font-size: 1.3rem;
     padding: 5px;
 }
+
 .itemMenu select {
     font-size: 1.1rem;
     padding: 5px;
 }
+
 .itemMenu textarea {
     font-size: 1.1rem;
     padding: 5px;
     height: 7rem;
 }
+
 .itemMenu h3 {
     margin-top: 2rem;
 }
@@ -118,6 +127,7 @@
     height: 1.4rem;
     margin-bottom: calc(1rem + 5px);
 }
+
 .infoSectionLine input .autosuggest {
     width: 100%;
     height: 100%;
@@ -138,26 +148,26 @@
 }
 
 .react-autosuggest__container {
-  position: relative;
-  width: 100%;
-  direction: rtl;
-  display: flex;
-  align-items: center;
+    position: relative;
+    width: 100%;
+    direction: rtl;
+    display: flex;
+    align-items: center;
 }
 
-/* Ensure the dropdown is absolutely positioned */
-.react-autosuggest__suggestions-container, .react-autosuggest__suggestions-container--open {
-  position: absolute !important;
-  top: 100% !important;
-  right: 0 !important; /* For RTL */
-  left: auto !important;
-  width: 100% !important;
-  z-index: 10;
-  background: white;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  max-height: 200px;
-  overflow-y: auto;
+.react-autosuggest__suggestions-container,
+.react-autosuggest__suggestions-container--open {
+    position: absolute !important;
+    top: 100% !important;
+    right: 0 !important;
+    left: auto !important;
+    width: 100% !important;
+    z-index: 10;
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
+    overflow-y: auto;
 }
 
 .infoSectionLine div :not(.autosuggest *) {
@@ -167,6 +177,7 @@
     justify-content: center;
     align-items: center;
 }
+
 .infoSectionPlusGrayed {
     background-color: #f1f1f1;
     color: #d1d1d1;
@@ -174,6 +185,7 @@
     justify-content: center;
     align-items: center;
 }
+
 .infoSectionPlusClickable {
     background-color: #f1f1f1;
     color: #797979;
@@ -188,14 +200,13 @@
     flex-direction: row;
     flex-grow: 1;
     align-items: center;
-    gap: 10px; /* Your desired gap */
-    width: 100%; /* Important: This means 100% of the parent's content area (368px) */
+    gap: 10px;
+    width: 100%;
     max-width: 100%;
-    min-width: 0; /* Ensures the container itself can shrink */
-    overflow: hidden; /* Hides any visual overflow */
-    box-sizing: border-box; /* Proper box model */
-    flex-shrink: 1; /* Allows this container to shrink */
-    /* flex-basis: auto; // Keep or remove, default is fine */
+    min-width: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+    flex-shrink: 1;
 }
 
 .supplierListItem {
@@ -203,42 +214,31 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    gap: 5px; /* Your desired gap */
+    gap: 5px;
     height: 80px;
-    padding: 0 1rem; /* 16px horizontal padding each side */
-    border: 1px solid #ccc; /* 1px border each side */
+    padding: 0 1rem;
+    border: 1px solid #ccc;
     border-radius: 8px;
-    box-sizing: border-box;
-
-    flex-grow: 1; /* Allows it to grow to fill space within listItemContainer */
-    flex-shrink: 1; /* Allows it to shrink */
-    flex-basis: 0; /* Ensures it starts shrinking from 0 for available space calculation */
-    min-width: 0; /* Crucial for text truncation */
-    overflow-x: hidden; /* Hides horizontal overflow within this element */
+    box-sizing: border-box !important;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
+    min-width: 0 !important;
+    overflow-x: hidden;
 }
 
-/* Ensure text content inside also respects borders/padding if any were added */
 .supplierTextContent {
-    flex-grow: 1; /* Allows text to grow */
-    flex-shrink: 1; /* Allows text to shrink */
-    flex-basis: 0; /* Ensures text starts shrinking from 0 for available space calculation */
-
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0;
     display: flex;
     flex-direction: column;
-    width: 0; 
-
-    /* ***** THE MOST CRITICAL PART ***** */
-    /* Explicitly setting min-width to 0 is key, but sometimes a browser's
-       internal min-content calculation can interfere.
-       Using 'initial' can sometimes help reset it more forcefully. */
-    min-width: 0 !important; /* Force min-width to 0, ensuring it can always collapse */
-    /* Or, if the above doesn't work, try a non-zero, very small pixel value,
-       like min-width: 1px; for edge cases, but 0 is preferred. */
-    
-    overflow: hidden; /* Essential for ellipsis */
-    text-overflow: ellipsis; /* Essential for ellipsis */
-    white-space: nowrap; /* Keeps text on one line */
-    text-align: right; /* Your original alignment */
+    width: 0;
+    min-width: 0 !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: right;
     box-sizing: border-box;
 }
 
@@ -252,9 +252,9 @@
     height: 90%;
     width: auto;
     object-fit: contain;
-    max-width: 80px; /* Explicitly limits the image's max size */
-    flex-shrink: 0; /* Prevents image from shrinking */
-    flex-basis: auto; /* Allows it to take its natural size up to max-width */
+    max-width: 80px;
+    flex-shrink: 0;
+    flex-basis: auto;
 }
 
 .supplierListItem h2 {
@@ -264,36 +264,17 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    box-sizing: border-box; /* Explicitly set here too */
+    box-sizing: border-box;
 }
 
-
-.supplierListItem {
-    /* ... existing styles like display, flex-direction, gap, height, padding, border, border-radius, box-sizing ... */
-    display: flex;
-    box-sizing: border-box !important; /* THIS IS THE KEY FIX */
-    min-width: 0 !important;
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: 0; /* ADD or ensure this line is present */
-    overflow-x: hidden;
-}
-
-    /* box-sizing: border-box !important;
-    min-width: 0 !important;
-    width: 100% !important;
-    
-    margin: 0 !important; 
-    padding: 0 !important; 
-    display: flex; */
-
-.listItemContainer svg { /* The MdEdit icon */
-    flex-shrink: 0; /* Prevents SVG from shrinking */
-    flex-basis: auto; /* Allows it to take its natural size (24px) */
-    width: 24px; /* Ensure its fixed width */
+.listItemContainer svg {
+    flex-shrink: 0;
+    flex-basis: auto;
+    width: 24px;
     height: 24px;
     color: var(--primary-color);
 }
+
 .emergencyToggle {
     text-align: start;
     flex: 0 0 auto;
@@ -308,13 +289,13 @@
 
 .emergencyToggle input {
     width: auto;
-    margin-left: 8px; /* Space between checkbox and text */
+    margin-left: 8px;
 }
 
 .parentSupplierBadge {
     top: 8px;
     left: 8px;
-    background-color: #7f8c8d; /* A muted grey color for the badge */
+    background-color: #7f8c8d;
     color: white;
     padding: 2px 8px;
     margin-right: 1rem;
@@ -349,6 +330,99 @@
     flex-grow: 1;
 }
 
-input:invalid, select:invalid {
-  outline: red solid 1px;
+input:invalid,
+select:invalid {
+    outline: red solid 1px;
+}
+
+/* ========================================= */
+/* ADMIN REVIEW MODE STYLES                  */
+/* ========================================= */
+
+.reviewFieldContainer {
+    background-color: #fdfae6; /* Light warning/review tint */
+    border: 2px solid #e1d48c;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 2rem !important;
+}
+
+.comparisonGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.reviewLabel {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 4px;
+}
+
+.valueBox {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 8px;
+    border-radius: 4px;
+    min-height: 1.5rem;
+    font-size: 1rem;
+    word-break: break-word;
+}
+
+.highlightedValue {
+    background-color: #e3f2fd; /* Light blue to highlight the "Proposed" change */
+    border-color: #bbdefb;
+    font-weight: 500;
+}
+
+.reviewActionButtons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+.approveBtn, .rejectBtn {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    background-color: #fff;
+    transition: all 0.2s ease;
+}
+
+.approveBtn:hover {
+    background-color: #e8f5e9;
+}
+
+.rejectBtn:hover {
+    background-color: #ffebee;
+}
+
+/* Active Decision States */
+.activeApprove {
+    background-color: #4caf50 !important;
+    color: white;
+    border-color: #388e3c;
+}
+
+.activeReject {
+    background-color: #f44336 !important;
+    color: white;
+    border-color: #d32f2f;
+}
+
+.manualEditZone {
+    border-top: 1px dashed #ccc;
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+}
+
+.manualEditZone .reviewLabel {
+    color: #2c3e50;
+    margin-bottom: 8px;
 }

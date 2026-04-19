@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Sector } from "../../types/sector_types";
 import DebouncingSearchBar from "../UI/DebouncingSearchBar";
 import DepartmentSelection from "./DepartmentSelection";
-import SectorSelection from "./SectorSelection";
+import SectorSelection from "../UI/SectorSelection";
 import classes from './HomePage.module.css';
 import { useAppDispatch, useAppSelector } from "../../hooks/redux-hooks";
 import { viewingActions } from "../../store/viewing-slice";

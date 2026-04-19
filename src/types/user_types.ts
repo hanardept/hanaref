@@ -1,3 +1,5 @@
+import { Sector } from "./sector_types";
+
 export enum Role {
     Admin = 'admin',
     Technician = 'technician',
@@ -22,6 +24,7 @@ export type User = {
     email: string,
     role: Role,
     association: string,
+    sector?: Sector,
     archived?: boolean,
     status?: UserStatus,
     _id: string

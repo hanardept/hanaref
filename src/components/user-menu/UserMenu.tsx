@@ -10,6 +10,8 @@ import { Role, User } from '../../types/user_types';
 import AssociationSelection, { associationOptions } from './AssociationSelection';
 import RoleSelection from './RoleSelection';
 import LabeledInput from '../UI/LabeledInput';
+import SectorSelection from '../UI/SectorSelection';
+import { Sector } from '../../types/sector_types';
 
 const UserMenu = () => {
     const params = useParams();
@@ -22,6 +24,8 @@ const UserMenu = () => {
     const [email, setEmail] = useState("");
     const [role, setRole] = useState(Role.Technician);
     const [association, setAssociation] = useState(associationOptions[0]);
+    const [sector, setSector] = useState<Sector | undefined>();
+    const [sectorsToChooseFrom, setSectorsToChooseFrom] = useState<Sector[]>([]);
     const [areYouSureDelete, setAreYouSureDelete] = useState(false);
 
     const userDetails = {
@@ -52,6 +56,19 @@ const UserMenu = () => {
                 setEmail(u.email);
                 setRole(u.role);
             }).catch(e => console.log(`Error fetching user details: ${e}`));
+
+            const getSectors = async () => {
+                const params: any = {};
+                const searchParams = new URLSearchParams(params);
+                const fetchedSectors = await fetchBackend(`sectors?` + searchParams, {
+                    headers: { 'auth-token': authToken }
+                });
+                return await fetchedSectors.json();
+            };            
+
+             getSectors().then(s => {
+                setSectorsToChooseFrom(s);
+            });
         }
        
     }, [params.userid, authToken]);
@@ -127,6 +144,8 @@ const UserMenu = () => {
 
     console.log(`current role: ${role}`);
 
+    const sectorNames = sectorsToChooseFrom.map(s => s.sectorName);
+
     return (
         <div className={classes.userMenu}>
             <h1>{params.userid ? "עריכת משתמש" : "הוספת משתמש"}</h1>
@@ -142,9 +161,14 @@ const UserMenu = () => {
             {role !== Role.Viewer &&
             <LabeledInput 
                 label="שיוך"
+                placeholder="שיוך"                 
+                customInputElement={<SectorSelection sectorNames={sectorNames} handleSetSector={sector => setSector(sectorsToChooseFrom.find(s => s.sectorName === sector))} priorChosenSector={sector?.sectorName}/>}
+            />}
+            {/* <LabeledInput 
+                label="שיוך"
                 placeholder="שיוך"            
                 customInputElement={<AssociationSelection priorChosenAssociation={association} selectAssociation={association => setAssociation(association)} />}
-            />}
+            />
             {/* {status !== "active" && <label>
                 <input
                     type="checkbox"
